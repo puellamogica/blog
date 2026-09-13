@@ -29,6 +29,7 @@
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
+    "html_handling": "drop-trailing-slash",
   },
   "placement": {
     "mode": "smart",

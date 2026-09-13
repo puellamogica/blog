@@ -1,10 +1,79 @@
 // @ts-check
-import { defineConfig } from "astro/config";
-
+import { defineConfig, fontProviders } from "astro/config";
 import cloudflare from "@astrojs/cloudflare";
+import expressiveCode from "astro-expressive-code";
+import sitemap from "@astrojs/sitemap";
+import tailwindcss from "@tailwindcss/vite";
+import { satteri } from "@astrojs/markdown-satteri";
+import { mdastReadingTimePlugin } from "./src/mdast/mdast-reading-time";
+import { hastExternalLinks } from "./src/hast/hast-external-links";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://20190716.xyz",
-  adapter: cloudflare(),
+  trailingSlash: "never",
+  adapter: cloudflare({
+    imageService: {
+      build: "cloudflare-binding",
+      runtime: "cloudflare-binding",
+    },
+  }),
+  integrations: [expressiveCode(), sitemap()],
+  vite: {
+    build: {
+      minify: false,
+    },
+    plugins: [tailwindcss()],
+  },
+  session: {
+    cookie: {
+      sameSite: "strict",
+    },
+    ttl: 604800,
+  },
+  markdown: {
+    processor: satteri({
+      features: {
+        math: true,
+        smartPunctuation: true,
+      },
+      mdastPlugins: [mdastReadingTimePlugin],
+      hastPlugins: [hastExternalLinks],
+    }),
+  },
+  fonts: [
+    {
+      provider: fontProviders.google(),
+      name: "M PLUS 1",
+      cssVariable: "--font-mplus",
+      weights: ["100 900"],
+      subsets: ["latin", "latin-ext", "japanese"],
+    },
+    {
+      provider: fontProviders.google(),
+      name: "M PLUS 1 Code",
+      cssVariable: "--font-mplus-code",
+      fallbacks: ["monospace"],
+      weights: ["100 700"],
+      subsets: ["latin", "latin-ext", "japanese"],
+    },
+    {
+      provider: fontProviders.googleicons(),
+      name: "Material Symbols Outlined",
+      cssVariable: "--font-symbol",
+      weights: ["100 700"],
+      options: {
+        experimental: {
+          glyphs: ["menu"],
+        },
+      },
+      display: "block",
+    },
+    {
+      provider: fontProviders.google(),
+      name: "Noto Color Emoji",
+      cssVariable: "--font-emoji",
+      subsets: ["emoji"],
+    },
+  ],
 });
