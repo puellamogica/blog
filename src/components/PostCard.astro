@@ -1,0 +1,33 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import FormattedDate from "./FormattedDate.astro";
+
+interface Props {
+  post: CollectionEntry<"article">;
+}
+
+const { post } = Astro.props;
+const { title, description, pubDate, heroImage } = post.data;
+---
+
+<a href={`/article/${post.id}`} class="card post-card">
+  {heroImage && (
+    <figure class="aspect-video">
+      <Image
+        width={720}
+        height={360}
+        src={heroImage}
+        alt=""
+        class="h-full w-full object-cover"
+      />
+    </figure>
+  )}
+  <div class="card-body">
+    <h2 class="card-title text-balance">{title}</h2>
+    <p class="line-clamp-2">{description}</p>
+    <p class="mt-2 text-xs text-base-content/70">
+      <FormattedDate date={pubDate} />
+    </p>
+  </div>
+</a>

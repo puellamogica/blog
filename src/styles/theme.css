@@ -1,0 +1,30 @@
+@theme inline {
+  --font-sans:
+    var(--font-mplus), var(--font-emoji), ui-sans-serif, system-ui, sans-serif;
+  --font-mono:
+    var(--font-mplus-code), var(--font-emoji), ui-monospace, monospace;
+  --font-icon: var(--font-symbol);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-sans antialiased;
+  }
+
+  code,
+  kbd,
+  pre,
+  samp {
+    @apply font-mono;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}

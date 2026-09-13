@@ -1,0 +1,44 @@
+---
+import Icon from "./Icon.astro";
+---
+
+<label class="swap swap-rotate size-11 rounded-field hover:bg-base-200">
+  <input
+    type="checkbox"
+    class="theme-controller"
+    value="aqua"
+    data-theme-toggle
+    aria-label="Use dark theme"
+  />
+  <Icon name="sun" class="swap-off size-5" />
+  <Icon name="moon" class="swap-on size-5" />
+</label>
+
+<script is:inline>
+  (() => {
+    const toggle = document.querySelector("[data-theme-toggle]");
+    if (!(toggle instanceof HTMLInputElement)) return;
+
+    let stored = null;
+    try {
+      stored = localStorage.getItem("theme");
+    } catch {
+      stored = null;
+    }
+
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
+    toggle.checked = (stored ?? (prefersDark ? "aqua" : "acid")) === "aqua";
+
+    toggle.addEventListener("change", () => {
+      const theme = toggle.checked ? "aqua" : "acid";
+      try {
+        localStorage.setItem("theme", theme);
+      } catch {
+        /* storage can be unavailable; the theme still applies for this page */
+      }
+      document.documentElement.dataset.theme = theme;
+    });
+  })();
+</script>

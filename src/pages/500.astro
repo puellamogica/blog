@@ -1,9 +1,31 @@
 ---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
 interface Props {
   error: unknown;
 }
 
 const { error } = Astro.props;
+const message =
+  error instanceof Error ? error.message : "An unexpected error occurred.";
 ---
 
-<div>{error instanceof Error ? error.message : "Unknown error"}</div>
+<BaseLayout
+  title="Server error"
+  description="Something went wrong on the server."
+>
+  <section class="hero min-h-[70vh]">
+    <div class="hero-content text-center">
+      <div class="max-w-md">
+        <p class="text-7xl font-extrabold text-error">500</p>
+        <h1 class="mt-4 text-2xl font-bold tracking-tight">
+          Something went wrong
+        </h1>
+        <p class="py-6 text-pretty text-base-content/70">{message}</p>
+        <a href="/" class="btn btn-primary">
+          Back home
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,32 @@
+/*
+ * Reusable class combinations that would otherwise be repeated across templates.
+ */
+@layer components {
+  .site-container {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .article-container {
+    @apply mx-auto w-full max-w-3xl px-4 sm:px-6;
+  }
+
+  .page-title {
+    @apply text-3xl font-bold tracking-tight text-balance sm:text-4xl;
+  }
+
+  .page-lead {
+    @apply text-base-content/70 max-w-prose text-base text-pretty sm:text-lg;
+  }
+
+  .section-title {
+    @apply text-2xl font-bold tracking-tight;
+  }
+
+  .post-card {
+    @apply bg-base-200 transition-transform duration-200 ease-out hover:-translate-y-1 hover:shadow-md;
+  }
+
+  .icon-button {
+    @apply btn btn-ghost btn-square;
+  }
+}
