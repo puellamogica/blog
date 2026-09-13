@@ -10,7 +10,6 @@ export const GET: APIRoute = async (context) => {
     description: SITE_DESCRIPTION,
     site: context.site!,
     trailingSlash: false,
-    stylesheet: "/rss/styles.xsl",
     items: posts.map((post) => ({
       ...post.data,
       link: `/article/${post.id}`,
