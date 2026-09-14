@@ -10,5 +10,8 @@ export default {
       },
     ],
     "at-rule-prelude-no-invalid": [true, { ignoreAtRules: ["apply"] }],
+    // Expressive Code fixes the names of its theme variables, e.g. `--ec-codeBg`.
+    "custom-property-pattern":
+      "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$|^ec-[A-Za-z0-9-]+$",
   },
 };

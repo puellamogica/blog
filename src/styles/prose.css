@@ -54,10 +54,25 @@
   border-radius: var(--radius-box);
 }
 
+/*
+ * Inline code shares the fenced blocks' surface so the two read as one system.
+ * Expressive Code publishes its theme variables on :root for the base (dark)
+ * theme, but scopes the alternate (light) theme to `.expressive-code`, so the
+ * light pair is mirrored here. Keep in step with `themes` in ec.config.mjs.
+ *
+ * The `:root` in the selector is load-bearing: it outweighs Expressive Code's
+ * own `:root` declaration no matter which stylesheet the browser applies last.
+ */
+:root[data-theme="acid"] {
+  --ec-codeBg: #eff1f5;
+  --ec-codeFg: #4c4f69;
+}
+
 .prose :where(code):not(:where(pre *)) {
   padding: 0.125em 0.4em;
   border-radius: var(--radius-selector);
-  background-color: var(--color-base-300);
+  background-color: var(--ec-codeBg);
+  color: var(--ec-codeFg);
   font-weight: 500;
 }
 
@@ -68,6 +83,16 @@
 
 .prose :where(kbd) {
   @apply kbd kbd-sm;
+}
+
+/*
+ * An attribution inside a blockquote is not part of the quote, so drop the
+ * blockquote's italic and mute it to set the two apart.
+ */
+.prose :where(blockquote footer) {
+  margin-top: 0.5em;
+  font-style: normal;
+  color: color-mix(in oklab, var(--color-base-content) 70%, transparent);
 }
 
 /*
