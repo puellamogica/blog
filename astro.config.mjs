@@ -5,8 +5,10 @@ import expressiveCode from "astro-expressive-code";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { satteri } from "@astrojs/markdown-satteri";
+import { mdastQuestionHtmlPlugin } from "./src/mdast/mdast-question-html";
 import { mdastReadingTimePlugin } from "./src/mdast/mdast-reading-time";
 import { hastExternalLinks } from "./src/hast/hast-external-links";
+import { markdownFeatures } from "./src/markdown";
 
 // https://astro.build/config
 export default defineConfig({
@@ -21,7 +23,10 @@ export default defineConfig({
   integrations: [
     expressiveCode(),
     sitemap({
-      filter: (page) => !page.includes("/vault/"),
+      filter: (page) =>
+        !page.includes("/vault/") &&
+        !page.includes("/login/") &&
+        !page.includes("/api/"),
     }),
   ],
   vite: {
@@ -39,18 +44,8 @@ export default defineConfig({
   },
   markdown: {
     processor: satteri({
-      features: {
-        gfm: {
-          footnotes: {
-            label: "注釈",
-            backContent: "↑",
-            backLabel: "注釈{reference}に戻る",
-          },
-        },
-        math: true,
-        smartPunctuation: true,
-      },
-      mdastPlugins: [mdastReadingTimePlugin],
+      features: markdownFeatures,
+      mdastPlugins: [mdastReadingTimePlugin, mdastQuestionHtmlPlugin],
       hastPlugins: [hastExternalLinks],
     }),
   },

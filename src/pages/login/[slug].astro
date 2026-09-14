@@ -1,0 +1,229 @@
+---
+export const prerender = false;
+
+import { render } from "astro:content";
+import { env } from "cloudflare:workers";
+import Toast from "../../components/Toast.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import {
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_PATTERN,
+} from "../../utils/password";
+import { getVaultEntry } from "../../utils/posts";
+
+const { slug } = Astro.params;
+if (slug === undefined) {
+  return Astro.redirect("/404");
+}
+
+const post = await getVaultEntry(slug);
+if (post === undefined) {
+  return new Response(null, { status: 404 });
+}
+
+const { remarkPluginFrontmatter } = await render(post);
+const questionHtml =
+  (remarkPluginFrontmatter.questionHtml as string | undefined) ?? "";
+
+const siteKey = env.TURNSTILE_SITEKEY;
+---
+
+<BaseLayout
+  title={`Unlock · ${post.data.title}`}
+  description={post.data.description}
+  noindex
+>
+  <section class="site-container py-12 sm:py-16">
+    <div class="mx-auto flex max-w-xl flex-col gap-6">
+      <header class="flex flex-col gap-2">
+        <h1 class="page-title">Locked post</h1>
+        <p class="page-lead">
+          Answer the question to read{" "}
+          <span class="font-medium">{post.data.title}</span>.
+        </p>
+      </header>
+
+      {questionHtml && (
+        <div class="prose card bg-base-200 p-6">
+          <Fragment set:html={questionHtml} />
+        </div>
+      )}
+
+      <form
+        id="unlock-form"
+        method="POST"
+        action="/api/auth"
+        class="flex flex-col gap-4"
+      >
+        <input type="hidden" name="slug" value={slug} />
+
+        <label class="form-control w-full">
+          <span class="label-text mb-1">Password</span>
+          <input
+            type="password"
+            name="password"
+            class="input input-bordered w-full"
+            autocomplete="current-password"
+            minlength={PASSWORD_MIN_LENGTH}
+            maxlength={PASSWORD_MAX_LENGTH}
+            pattern={PASSWORD_PATTERN.source}
+            title={`${PASSWORD_MIN_LENGTH}-${PASSWORD_MAX_LENGTH} characters: letters, digits, and ! @ # $ % ^ & *`}
+            required
+          />
+        </label>
+
+        <div
+          id="turnstile-container"
+          data-sitekey={siteKey}
+          class="min-h-16"
+        ></div>
+
+        <button
+          id="unlock-submit"
+          type="submit"
+          class="btn btn-primary"
+          disabled
+        >
+          Unlock
+        </button>
+      </form>
+    </div>
+
+    <Toast />
+  </section>
+</BaseLayout>
+
+<script>
+  const TURNSTILE_SRC =
+    "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+
+  const ERROR_MESSAGES: Record<string, string> = {
+    invalid: "Incorrect password.",
+    blocked:
+      "Verification failed. Please complete the challenge and try again.",
+    rate_limited: "Too many attempts. Please try again later.",
+    server: "Something went wrong. Please try again.",
+  };
+
+  type TurnstileApi = {
+    render: (
+      container: HTMLElement,
+      options: Record<string, unknown>,
+    ) => string;
+    reset: (widgetId: string) => void;
+  };
+
+  const turnstileWindow = window as Window & { turnstile?: TurnstileApi };
+  const form = document.getElementById("unlock-form");
+  const submit = document.getElementById("unlock-submit");
+  const container = document.getElementById("turnstile-container");
+  const toast = document.getElementById("toast");
+  const toastMessage = document.getElementById("toast-message");
+
+  if (
+    !(form instanceof HTMLFormElement) ||
+    !(submit instanceof HTMLButtonElement) ||
+    !(container instanceof HTMLElement)
+  ) {
+    throw new Error("Unlock form is missing required elements.");
+  }
+
+  let widgetId: string | undefined;
+  let challengeSolved = false;
+  let submitting = false;
+  let toastTimer: number | undefined;
+
+  const syncSubmit = () => {
+    submit.disabled = submitting || !challengeSolved;
+    submit.textContent = submitting ? "Checking…" : "Unlock";
+  };
+
+  const showToast = (message: string) => {
+    if (
+      !(toast instanceof HTMLElement) ||
+      !(toastMessage instanceof HTMLElement)
+    ) {
+      return;
+    }
+
+    toastMessage.textContent = message;
+    toast.hidden = false;
+    window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => {
+      toast.hidden = true;
+    }, 6000);
+  };
+
+  const renderWidget = () => {
+    if (turnstileWindow.turnstile === undefined) return;
+
+    widgetId = turnstileWindow.turnstile.render(container, {
+      sitekey: container.dataset.sitekey,
+      action: "vault-unlock",
+      callback: () => {
+        challengeSolved = true;
+        syncSubmit();
+      },
+      "expired-callback": () => {
+        challengeSolved = false;
+        syncSubmit();
+      },
+      "error-callback": () => {
+        challengeSolved = false;
+        syncSubmit();
+      },
+    });
+  };
+
+  if (turnstileWindow.turnstile !== undefined) {
+    renderWidget();
+  } else {
+    const script = document.createElement("script");
+    script.src = TURNSTILE_SRC;
+    script.async = true;
+    script.addEventListener("load", renderWidget, { once: true });
+    document.head.appendChild(script);
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (widgetId === undefined) return;
+
+    submitting = true;
+    syncSubmit();
+
+    try {
+      const response = await fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { accept: "application/json" },
+      });
+      const data = (await response.json()) as {
+        ok?: boolean;
+        redirect?: string;
+        error?: string;
+      };
+
+      if (data.ok === true && typeof data.redirect === "string") {
+        window.location.assign(data.redirect);
+        return;
+      }
+
+      showToast(
+        ERROR_MESSAGES[data.error ?? "server"] ?? ERROR_MESSAGES.server,
+      );
+    } catch {
+      showToast(ERROR_MESSAGES.server);
+    } finally {
+      challengeSolved = false;
+      submitting = false;
+      if (widgetId !== undefined) {
+        turnstileWindow.turnstile?.reset(widgetId);
+      }
+      syncSubmit();
+    }
+  });
+
+  syncSubmit();
+</script>

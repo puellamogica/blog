@@ -2,28 +2,35 @@
 export const prerender = false; // Not needed in 'server' mode
 
 import { render } from "astro:content";
+import { env } from "cloudflare:workers";
 import BlogPost from "../../layouts/BlogPost.astro";
-import { getVaultEntries } from "../../utils/posts";
+import { getVaultEntry } from "../../utils/posts";
+import { isUnlocked } from "../../utils/vault-auth";
 
-// 1. Get the slug from the incoming server request
 const { slug } = Astro.params;
 if (slug === undefined) {
   return Astro.redirect("/404");
 }
 
-// 2. Find the entry whose slug matches the request slug
-const post = (await getVaultEntries()).find(({ data }) => data.slug === slug);
-
-// 3. Redirect if the entry does not exist
+const post = await getVaultEntry(slug);
 if (post === undefined) {
-  return Astro.redirect("/404");
+  return new Response(null, { status: 404 });
 }
 
-// 4. Render the entry to HTML in the template
+const userid = await Astro.session?.get("userid");
+const nowSeconds = Math.floor(Date.now() / 1000);
+
+if (
+  userid === undefined ||
+  !(await isUnlocked(env.DB, userid, slug, nowSeconds))
+) {
+  return Astro.redirect(`/login/${slug}`);
+}
+
 const { Content, remarkPluginFrontmatter } = await render(post);
 ---
 
-<BlogPost {...post.data}>
+<BlogPost {...post.data} noindex>
   <p>{remarkPluginFrontmatter.minutesRead}</p>
   <Content />
 </BlogPost>

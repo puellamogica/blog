@@ -1,0 +1,8 @@
+# Local dev fallback for the bindings declared in wrangler.jsonc.
+# Copy to `.dev.vars` (gitignored) and fill in real values.
+ARGON2_ENDPOINT="https://your-project.vercel.app/<verify-route>"
+ARGON2_HMAC_SECRET="openssl rand -base64 32 output"
+ARGON2_PEPPER="openssl rand -base64 32 output"
+VERCEL_PROTECTION_BYPASS=""
+TURNSTILE_SITEKEY=""
+TURNSTILE_SECRET=""

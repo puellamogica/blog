@@ -7,6 +7,8 @@
     "build": "astro check && astro build",
     "preview": "astro build && astro preview",
     "astro": "astro",
+    "test": "vitest run --config vitestconfig.ts",
+    "hash:vault": "node scripts/hash-vault-password.mts",
     "generate-types": "wrangler types",
     "deploy": "astro build && wrangler deploy",
     "cf-typegen": "wrangler types",

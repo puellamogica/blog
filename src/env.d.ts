@@ -1,6 +1,7 @@
-type Runtime = import("@astrojs/cloudflare").Runtime<Env>;
+/// <reference types="@astrojs/cloudflare/types.d.ts" />
 
 declare namespace App {
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface Locals extends Runtime {}
+  interface SessionData {
+    userid: string;
+  }
 }
