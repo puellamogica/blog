@@ -5,6 +5,7 @@ import expressiveCode from "astro-expressive-code";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { satteri } from "@astrojs/markdown-satteri";
+import { mdastKatexPlugin } from "./src/mdast/mdast-katex";
 import { mdastQuestionHtmlPlugin } from "./src/mdast/mdast-question-html";
 import { mdastReadingTimePlugin } from "./src/mdast/mdast-reading-time";
 import { hastExternalLinks } from "./src/hast/hast-external-links";
@@ -45,7 +46,11 @@ export default defineConfig({
   markdown: {
     processor: satteri({
       features: markdownFeatures,
-      mdastPlugins: [mdastReadingTimePlugin, mdastQuestionHtmlPlugin],
+      mdastPlugins: [
+        mdastReadingTimePlugin,
+        mdastQuestionHtmlPlugin,
+        mdastKatexPlugin,
+      ],
       hastPlugins: [hastExternalLinks],
     }),
   },

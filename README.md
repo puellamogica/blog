@@ -2,6 +2,10 @@
 
 An astro framework blog theme
 
+## Plugin sources
+
+- [satteri-katex](https://github.com/Ashish-CodeJourney/satteri-plugins/tree/main/packages/satteri-katex)
+
 ## Astro Starter Kit: Blog
 
 ```sh
