@@ -6,10 +6,6 @@
     @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
   }
 
-  .article-container {
-    @apply mx-auto w-full max-w-3xl px-4 sm:px-6;
-  }
-
   .page-title {
     @apply text-3xl font-bold tracking-tight text-balance sm:text-4xl;
   }
@@ -28,5 +24,25 @@
 
   .icon-button {
     @apply btn btn-ghost btn-square;
+  }
+
+  .toc {
+    @apply text-sm;
+  }
+
+  .toc-title {
+    @apply text-base-content/70 mb-2 pl-3 text-xs font-semibold tracking-wide uppercase;
+  }
+
+  .toc-link {
+    @apply text-base-content/70 hover:border-base-content/40 hover:text-base-content border-base-300 block border-l py-1 pl-3 leading-snug transition-colors;
+  }
+
+  .toc-link-nested {
+    @apply pl-6;
+  }
+
+  .toc-link[aria-current="location"] {
+    @apply border-primary text-primary font-medium;
   }
 }

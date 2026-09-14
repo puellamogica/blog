@@ -1,11 +1,16 @@
 ---
+import type { MarkdownHeading } from "astro";
 import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import CategoryBadge from "../components/CategoryBadge.astro";
 import FormattedDate from "../components/FormattedDate.astro";
+import TableOfContents from "../components/TableOfContents.astro";
 import BaseLayout from "./BaseLayout.astro";
 
-type Props = CollectionEntry<"article">["data"] & { noindex?: boolean };
+type Props = CollectionEntry<"article">["data"] & {
+  headings: MarkdownHeading[];
+  noindex?: boolean;
+};
 type Crumb = { href?: string; label: string };
 
 const {
@@ -15,6 +20,7 @@ const {
   updatedDate,
   heroImage,
   category,
+  headings,
   noindex = false,
 } = Astro.props;
 
@@ -33,47 +39,57 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
   image={heroImage}
   noindex={noindex}
 >
-  <article class="article-container py-8 sm:py-12">
-    <nav class="breadcrumbs mb-4 text-sm" aria-label="Breadcrumb">
-      <ul>
-        {crumbs.map((crumb) => (
-          <li class="max-w-64 truncate">
-            {crumb.href ? <a href={crumb.href}>{crumb.label}</a> : crumb.label}
-          </li>
-        ))}
-      </ul>
-    </nav>
+  <article class="site-container py-8 sm:py-12">
+    <div class="lg:flex lg:justify-center lg:gap-10">
+      <div class="mx-auto w-full max-w-3xl">
+        <nav class="breadcrumbs mb-4 text-sm" aria-label="Breadcrumb">
+          <ul>
+            {crumbs.map((crumb) => (
+              <li class="max-w-64 truncate">
+                {crumb.href ? (
+                  <a href={crumb.href}>{crumb.label}</a>
+                ) : (
+                  crumb.label
+                )}
+              </li>
+            ))}
+          </ul>
+        </nav>
 
-    <header class="mb-8 flex flex-col gap-3">
-      <div class="flex flex-wrap items-center gap-2">
-        <CategoryBadge category={category} />
-        <span class="badge badge-neutral">
-          <FormattedDate date={pubDate} />
-        </span>
-        {updatedDate && (
-          <span class="badge badge-ghost">
-            Updated <FormattedDate date={updatedDate} />
-          </span>
+        <header class="mb-8 flex flex-col gap-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <CategoryBadge category={category} />
+            <span class="badge badge-neutral">
+              <FormattedDate date={pubDate} />
+            </span>
+            {updatedDate && (
+              <span class="badge badge-ghost">
+                Updated <FormattedDate date={updatedDate} />
+              </span>
+            )}
+          </div>
+          <h1 class="page-title">{title}</h1>
+          <p class="page-lead">{description}</p>
+        </header>
+
+        {heroImage && (
+          <figure class="rounded-box mb-10 overflow-hidden">
+            <Image
+              width={1020}
+              height={510}
+              src={heroImage}
+              alt=""
+              class="h-auto w-full object-cover"
+            />
+          </figure>
         )}
+
+        <div class="prose max-w-none lg:prose-lg">
+          <slot />
+        </div>
       </div>
-      <h1 class="page-title">{title}</h1>
-      <p class="page-lead">{description}</p>
-    </header>
 
-    {heroImage && (
-      <figure class="rounded-box mb-10 overflow-hidden">
-        <Image
-          width={1020}
-          height={510}
-          src={heroImage}
-          alt=""
-          class="h-auto w-full object-cover"
-        />
-      </figure>
-    )}
-
-    <div class="prose max-w-none lg:prose-lg">
-      <slot />
+      <TableOfContents headings={headings} />
     </div>
   </article>
 </BaseLayout>

@@ -27,10 +27,10 @@ if (
   return Astro.redirect(`/login/${slug}`);
 }
 
-const { Content, remarkPluginFrontmatter } = await render(post);
+const { Content, headings, remarkPluginFrontmatter } = await render(post);
 ---
 
-<BlogPost {...post.data} noindex>
+<BlogPost {...post.data} headings={headings} noindex>
   <p>{remarkPluginFrontmatter.minutesRead}</p>
   <Content />
 </BlogPost>
