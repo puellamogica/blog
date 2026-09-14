@@ -1,14 +1,16 @@
 ---
-import { getCollection } from "astro:content";
 import PostCard from "../../components/PostCard.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+import {
+  byPinnedThenDate,
+  getArticles,
+  getVaultEntries,
+} from "../../utils/posts";
 
-const posts = (
-  await Promise.all([getCollection("article"), getCollection("vault")])
-)
+const posts = (await Promise.all([getArticles(), getVaultEntries()]))
   .flat()
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  .sort(byPinnedThenDate);
 ---
 
 <BaseLayout title={`Posts · ${SITE_TITLE}`} description={SITE_DESCRIPTION}>

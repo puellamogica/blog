@@ -4,6 +4,14 @@
 export const SITE_TITLE = "Astro Blog";
 export const SITE_DESCRIPTION = "Welcome to my website!";
 
+export const DEFAULT_VAULT_QUESTION = "What is the password?";
+
+export const VAULT_ARGON2_OPTIONS = {
+  memoryCost: 19456,
+  timeCost: 2,
+  parallelism: 1,
+} as const;
+
 export const NAV_ITEMS = [
   { href: "/", label: "Home", match: ["/"] },
   { href: "/posts", label: "Posts", match: ["/posts", "/article"] },

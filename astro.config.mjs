@@ -18,7 +18,12 @@ export default defineConfig({
       runtime: "cloudflare-binding",
     },
   }),
-  integrations: [expressiveCode(), sitemap()],
+  integrations: [
+    expressiveCode(),
+    sitemap({
+      filter: (page) => !page.includes("/vault/"),
+    }),
+  ],
   vite: {
     build: {
       minify: false,

@@ -1,12 +1,10 @@
 ---
-import { getCollection } from "astro:content";
 import PostCard from "../components/PostCard.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import { byPinnedThenDate, getArticles } from "../utils/posts";
 
-const posts = (await getCollection("article"))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 3);
+const posts = (await getArticles()).sort(byPinnedThenDate).slice(0, 3);
 ---
 
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>

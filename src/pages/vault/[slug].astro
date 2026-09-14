@@ -1,8 +1,9 @@
 ---
 export const prerender = false; // Not needed in 'server' mode
 
-import { getEntry, render } from "astro:content";
+import { render } from "astro:content";
 import BlogPost from "../../layouts/BlogPost.astro";
+import { getVaultEntries } from "../../utils/posts";
 
 // 1. Get the slug from the incoming server request
 const { slug } = Astro.params;
@@ -10,8 +11,8 @@ if (slug === undefined) {
   return Astro.redirect("/404");
 }
 
-// 2. Query for the entry directly using the request slug
-const post = await getEntry("vault", slug);
+// 2. Find the entry whose slug matches the request slug
+const post = (await getVaultEntries()).find(({ data }) => data.slug === slug);
 
 // 3. Redirect if the entry does not exist
 if (post === undefined) {

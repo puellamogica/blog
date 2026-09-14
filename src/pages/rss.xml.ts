@@ -1,10 +1,10 @@
-import { getCollection } from "astro:content";
 import rss from "@astrojs/rss";
 import type { APIRoute } from "astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import { getArticles } from "../utils/posts";
 
 export const GET: APIRoute = async (context) => {
-  const posts = await getCollection("article");
+  const posts = await getArticles();
   return rss({
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
@@ -12,7 +12,7 @@ export const GET: APIRoute = async (context) => {
     trailingSlash: false,
     items: posts.map((post) => ({
       ...post.data,
-      link: `/article/${post.id}`,
+      link: `/article/${post.data.slug}`,
     })),
   });
 };

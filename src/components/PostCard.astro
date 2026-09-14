@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
+import CategoryBadge from "./CategoryBadge.astro";
 import FormattedDate from "./FormattedDate.astro";
 
 interface Props {
@@ -8,8 +9,8 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, description, pubDate, heroImage } = post.data;
-const href = `/${post.collection}/${post.id}`;
+const { title, description, pubDate, heroImage, category } = post.data;
+const href = `/${post.collection}/${post.data.slug}`;
 ---
 
 <a href={href} class="card post-card">
@@ -25,6 +26,7 @@ const href = `/${post.collection}/${post.id}`;
     </figure>
   )}
   <div class="card-body">
+    <CategoryBadge category={category} />
     <h2 class="card-title text-balance">{title}</h2>
     <p class="line-clamp-2">{description}</p>
     <p class="mt-2 text-xs text-base-content/70">

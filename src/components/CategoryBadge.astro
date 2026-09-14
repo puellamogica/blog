@@ -1,0 +1,12 @@
+---
+import { categories, type CategoryKey } from "../data/categories";
+
+interface Props {
+  category: CategoryKey;
+}
+
+const { category } = Astro.props;
+const { name, gradient } = categories[category];
+---
+
+<span class={`badge border-0 text-white ${gradient}`}>{name}</span>
