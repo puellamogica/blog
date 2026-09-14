@@ -1,0 +1,28 @@
+---
+export const prerender = false; // Not needed in 'server' mode
+
+import { getEntry, render } from "astro:content";
+import BlogPost from "../../layouts/BlogPost.astro";
+
+// 1. Get the slug from the incoming server request
+const { slug } = Astro.params;
+if (slug === undefined) {
+  return Astro.redirect("/404");
+}
+
+// 2. Query for the entry directly using the request slug
+const post = await getEntry("vault", slug);
+
+// 3. Redirect if the entry does not exist
+if (post === undefined) {
+  return Astro.redirect("/404");
+}
+
+// 4. Render the entry to HTML in the template
+const { Content, remarkPluginFrontmatter } = await render(post);
+---
+
+<BlogPost {...post.data}>
+  <p>{remarkPluginFrontmatter.minutesRead}</p>
+  <Content />
+</BlogPost>

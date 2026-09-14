@@ -4,14 +4,15 @@ import type { CollectionEntry } from "astro:content";
 import FormattedDate from "./FormattedDate.astro";
 
 interface Props {
-  post: CollectionEntry<"article">;
+  post: CollectionEntry<"article"> | CollectionEntry<"vault">;
 }
 
 const { post } = Astro.props;
 const { title, description, pubDate, heroImage } = post.data;
+const href = `/${post.collection}/${post.id}`;
 ---
 
-<a href={`/article/${post.id}`} class="card post-card">
+<a href={href} class="card post-card">
   {heroImage && (
     <figure class="aspect-video">
       <Image

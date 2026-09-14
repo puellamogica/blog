@@ -14,4 +14,16 @@ const article = defineCollection({
     }),
 });
 
-export const collections = { article };
+const vault = defineCollection({
+  loader: glob({ base: "./src/content/vault", pattern: "**/*.md" }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      description: z.string(),
+      pubDate: z.coerce.date(),
+      updatedDate: z.coerce.date().optional(),
+      heroImage: z.optional(image()),
+    }),
+});
+
+export const collections = { article, vault };
