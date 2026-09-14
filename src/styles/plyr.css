@@ -1,0 +1,43 @@
+/*
+ * Plyr media player theming.
+ *
+ * Plyr exposes its appearance through `--plyr-*` custom properties. They are
+ * remapped here onto daisyUI color tokens, the same way prose.css remaps the
+ * typography plugin, so both the acid/aqua themes and every future theme follow
+ * without a `dark:` variant. Scoped to `.prose` so only post content changes.
+ */
+
+.prose .plyr {
+  --plyr-color-main: var(--color-primary);
+  --plyr-font-family: var(--font-sans);
+
+  /*
+   * The video controls sit on top of the video, so they stay white; the audio
+   * controls sit on the page and take the daisyUI surface instead.
+   */
+  --plyr-audio-controls-background: var(--color-base-200);
+  --plyr-audio-control-color: var(--color-base-content);
+  --plyr-audio-control-color-hover: var(--color-primary-content);
+  --plyr-audio-range-track-background: var(--color-base-300);
+  --plyr-audio-progress-buffered-background: var(--color-base-300);
+  --plyr-video-control-color-hover: var(--color-primary-content);
+  --plyr-range-fill-background: var(--color-primary);
+  --plyr-range-thumb-background: var(--color-primary);
+  --plyr-tooltip-background: var(--color-base-100);
+  --plyr-tooltip-color: var(--color-base-content);
+  --plyr-menu-background: var(--color-base-100);
+  --plyr-menu-color: var(--color-base-content);
+  --plyr-badge-background: var(--color-neutral);
+  --plyr-badge-text-color: var(--color-neutral-content);
+  --plyr-control-radius: var(--radius-selector);
+  --plyr-tooltip-radius: var(--radius-field);
+  --plyr-menu-radius: var(--radius-box);
+  --plyr-badge-border-radius: var(--radius-selector);
+
+  /*
+   * `.plyr__video-wrapper` and `.plyr--audio .plyr__controls` both use
+   * `border-radius: inherit`, so rounding the container is enough to match the
+   * media the layout already rounds via `.prose :where(img, video)`.
+   */
+  border-radius: var(--radius-box);
+}

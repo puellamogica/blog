@@ -157,3 +157,20 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
     observer.observe(block);
   }
 </script>
+
+<script>
+  // Markdown emits raw <audio>/<video> elements, so Plyr is wired up here in
+  // the browser. It is only fetched on pages that actually contain media, and
+  // the icons are served from this site rather than Plyr's default CDN.
+  const media = document.querySelectorAll<HTMLMediaElement>(
+    ".prose audio, .prose video",
+  );
+
+  if (media.length > 0) {
+    void import("plyr").then(({ default: Plyr }) => {
+      for (const element of media) {
+        new Plyr(element, { iconUrl: "/plyr.svg" });
+      }
+    });
+  }
+</script>
