@@ -55,6 +55,16 @@
 }
 
 /*
+ * The post layout wraps every content image in a link for PhotoSwipe. Block
+ * display keeps that link from adding line-box space around the image, and the
+ * cursor signals that the image can be opened.
+ */
+.prose :where(a.pswp-item) {
+  display: block;
+  cursor: zoom-in;
+}
+
+/*
  * Inline code shares the fenced blocks' surface so the two read as one system.
  * Expressive Code publishes its theme variables on :root for the base (dark)
  * theme, but scopes the alternate (light) theme to `.expressive-code`, so the

@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "katex/dist/katex.min.css";
+@import "photoswipe/style.css";
+@import "photoswipe-dynamic-caption-plugin/photoswipe-dynamic-caption-plugin.css";
 @import "./theme.css";
 @import "./prose.css";
 @import "./components.css";

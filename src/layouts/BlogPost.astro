@@ -79,6 +79,51 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
 </BaseLayout>
 
 <script>
+  import PhotoSwipeDynamicCaption from "photoswipe-dynamic-caption-plugin";
+  import PhotoSwipeLightbox from "photoswipe/lightbox";
+
+  // Astro resolves markdown images to their optimised URLs while rendering,
+  // which is after the markdown plugins have run, so the lightbox is wired up
+  // here in the browser. PhotoSwipe reads the large image and its dimensions
+  // from the link around each thumbnail, so wrap every content image in one and
+  // carry the rendered size across as data attributes.
+  const gallery = document.querySelector<HTMLElement>(".prose");
+  const images = gallery?.querySelectorAll<HTMLImageElement>("img") ?? [];
+
+  for (const image of images) {
+    if (image.closest("a")) continue;
+
+    const width = Number(image.getAttribute("width")) || image.naturalWidth;
+    const height = Number(image.getAttribute("height")) || image.naturalHeight;
+    if (!width || !height) continue;
+
+    const link = document.createElement("a");
+    link.className = "pswp-item";
+    link.href = image.currentSrc || image.src;
+    link.dataset.pswpWidth = String(width);
+    link.dataset.pswpHeight = String(height);
+
+    image.replaceWith(link);
+    link.appendChild(image);
+  }
+
+  if (gallery?.querySelector("a.pswp-item")) {
+    const lightbox = new PhotoSwipeLightbox({
+      gallery,
+      children: "a.pswp-item",
+      pswpModule: () => import("photoswipe"),
+    });
+
+    // Captions fall back to each image's `alt` text and are placed beside or
+    // below the photo depending on the space the viewport has for them.
+    new PhotoSwipeDynamicCaption(lightbox, { type: "auto" });
+
+    // PhotoSwipe has to be initialised after its plugins are attached.
+    lightbox.init();
+  }
+</script>
+
+<script>
   // Expressive Code makes wide code blocks horizontally scrollable. Without a
   // tab stop they cannot be scrolled by keyboard, so mark the overflowing ones
   // focusable and keep that in sync as the viewport changes.
