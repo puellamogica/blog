@@ -1,14 +1,10 @@
 ---
-import PostCard from "../../components/PostCard.astro";
-import PostFilter from "../../components/PostFilter.astro";
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
-import { getPostYears, toFilterablePost } from "../../utils/post-filter";
-import {
-  byPinnedThenDate,
-  getArticles,
-  getVaultEntries,
-} from "../../utils/posts";
+import PostCard from "@components/PostCard.astro";
+import PostFilter from "@components/PostFilter.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import { getPostYears, toFilterablePost } from "@utils/post-filter";
+import { byPinnedThenDate, getArticles, getVaultEntries } from "@utils/posts";
 
 const posts = (await Promise.all([getArticles(), getVaultEntries()]))
   .flat()
