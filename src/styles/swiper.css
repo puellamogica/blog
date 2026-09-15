@@ -1,0 +1,93 @@
+/*
+ * Swiper gallery.
+ *
+ * A gallery is plain images inside a `.swiper-gallery` container until the
+ * enhancement script in `src/scripts/swiper-gallery.ts` turns it into a
+ * carousel, so the rules here cover both states: the images stack on their own
+ * when JavaScript is unavailable, and the controls below only exist once Swiper
+ * has been initialised.
+ *
+ * Swiper exposes its appearance through `--swiper-*` custom properties, which
+ * are remapped onto daisyUI color tokens the same way prose.css remaps the
+ * typography plugin and plyr.css themes the media player.
+ */
+
+/*
+ * The typography plugin gives prose images a margin, which inside a slide would
+ * pad the carousel and push the controls off the photo, so it is reset here.
+ * `prose.css` still supplies the rounded corners.
+ */
+.swiper-gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  border-radius: var(--radius-box);
+}
+
+/*
+ * Only the un-enhanced container needs the stack spacing; once the script adds
+ * `.swiper`, Swiper's own layout takes over.
+ */
+.swiper-gallery:not(.swiper) img + img {
+  margin-top: 0.75rem;
+}
+
+.swiper-gallery {
+  --swiper-theme-color: var(--color-primary);
+  --swiper-navigation-size: 2.25rem;
+  --swiper-navigation-color: var(--color-base-content);
+  --swiper-pagination-color: var(--color-primary);
+  --swiper-pagination-bullet-inactive-color: var(--color-base-content);
+  --swiper-pagination-bullet-inactive-opacity: 0.35;
+
+  /* Shared by the arrow buttons and the bullet pill. */
+  --swiper-gallery-control-surface: color-mix(
+    in oklab,
+    var(--color-base-100) 75%,
+    transparent
+  );
+}
+
+/*
+ * The controls sit on top of a photo rather than on the page background, so
+ * they carry their own surface instead of using the surrounding color. Bullets
+ * and arrows share it, so they read as one set of controls, and the theme
+ * colors above are legible on top of it whatever the photo is.
+ */
+.swiper-gallery :where(.swiper-button-prev, .swiper-button-next) {
+  border-radius: var(--radius-selector);
+  background-color: var(--swiper-gallery-control-surface);
+  backdrop-filter: blur(0.25rem);
+  transition: background-color 150ms ease-out;
+}
+
+.swiper-gallery :where(.swiper-button-prev, .swiper-button-next):hover {
+  background-color: var(--color-base-100);
+}
+
+/*
+ * Swiper stretches the arrow to fill its button. Keep it at the size the icon
+ * was drawn for instead.
+ */
+.swiper-gallery .swiper-navigation-icon {
+  width: 0.625rem;
+  height: 1.125rem;
+}
+
+/*
+ * Swiper centres the bullets by stretching the pagination across the container.
+ * Shrink it to its contents so it can carry the surface as a pill.
+ */
+.swiper-gallery.swiper .swiper-pagination {
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  margin-inline: auto;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-selector);
+  background-color: var(--swiper-gallery-control-surface);
+  backdrop-filter: blur(0.25rem);
+}

@@ -109,6 +109,10 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
   for (const image of images) {
     if (image.closest("a")) continue;
 
+    // A gallery image belongs to its carousel, and the carousel owns the click
+    // that drags it, so it is left out of the post's lightbox.
+    if (image.closest(".swiper-gallery")) continue;
+
     const width = Number(image.getAttribute("width")) || image.naturalWidth;
     const height = Number(image.getAttribute("height")) || image.naturalHeight;
     if (!width || !height) continue;
@@ -173,4 +177,13 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
       }
     });
   }
+</script>
+
+<script>
+  // Galleries are authored in Markdown as plain images inside a container, so
+  // the carousel is built up here rather than by an Astro component the Markdown
+  // pipeline cannot import.
+  import { enhanceSwiperGalleries } from "../scripts/swiper-gallery";
+
+  enhanceSwiperGalleries();
 </script>
