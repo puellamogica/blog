@@ -30,7 +30,11 @@ if (
 const { Content, headings, remarkPluginFrontmatter } = await render(post);
 ---
 
-<BlogPost {...post.data} headings={headings} noindex>
-  <p>{remarkPluginFrontmatter.minutesRead}</p>
+<BlogPost
+  {...post.data}
+  headings={headings}
+  minutesRead={remarkPluginFrontmatter.minutesRead}
+  noindex
+>
   <Content />
 </BlogPost>

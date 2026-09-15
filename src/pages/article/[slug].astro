@@ -16,7 +16,10 @@ const post = Astro.props;
 const { Content, headings, remarkPluginFrontmatter } = await render(post);
 ---
 
-<BlogPost {...post.data} headings={headings}>
-  <p>{remarkPluginFrontmatter.minutesRead}</p>
+<BlogPost
+  {...post.data}
+  headings={headings}
+  minutesRead={remarkPluginFrontmatter.minutesRead}
+>
   <Content />
 </BlogPost>
