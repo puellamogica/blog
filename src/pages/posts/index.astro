@@ -1,7 +1,9 @@
 ---
 import PostCard from "../../components/PostCard.astro";
+import PostFilter from "../../components/PostFilter.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+import { getPostYears, toFilterablePost } from "../../utils/post-filter";
 import {
   byPinnedThenDate,
   getArticles,
@@ -11,6 +13,7 @@ import {
 const posts = (await Promise.all([getArticles(), getVaultEntries()]))
   .flat()
   .sort(byPinnedThenDate);
+const years = getPostYears(posts.map(toFilterablePost));
 ---
 
 <BaseLayout title={`Posts · ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
@@ -19,10 +22,14 @@ const posts = (await Promise.all([getArticles(), getVaultEntries()]))
       <h1 class="page-title">Posts</h1>
       <p class="page-lead mt-3">{posts.length} posts and counting.</p>
     </header>
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <PostFilter years={years} />
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-post-grid>
       {posts.map((post) => (
         <PostCard post={post} />
       ))}
     </div>
+    <p class="mt-8 text-center text-base-content/70" data-post-empty hidden>
+      No posts match this filter.
+    </p>
   </section>
 </BaseLayout>

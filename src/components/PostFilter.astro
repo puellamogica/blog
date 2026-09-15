@@ -1,0 +1,101 @@
+---
+import { categories, categoryKeys } from "../data/categories";
+import { FILTER_ALL } from "../utils/post-filter";
+
+interface Props {
+  years: number[];
+}
+
+const { years } = Astro.props;
+---
+
+<!--
+  Radio groups rather than daisyUI's `filter` component: that one collapses the
+  unselected options, which makes switching between categories a two-step job.
+-->
+<div
+  class="mb-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-3"
+  data-post-filter
+>
+  <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
+    <div class="flex flex-wrap items-center gap-2">
+      <span
+        id="post-filter-category-label"
+        class="text-xs font-semibold tracking-wide text-base-content/70 uppercase"
+      >
+        Category
+      </span>
+      <div
+        class="flex flex-wrap gap-2"
+        role="radiogroup"
+        aria-labelledby="post-filter-category-label"
+      >
+        <input
+          class="btn btn-sm"
+          type="radio"
+          name="post-category"
+          value={FILTER_ALL}
+          aria-label="All"
+          data-filter-group="category"
+          checked
+        />
+        {categoryKeys.map((key) => (
+          <input
+            class="btn btn-sm"
+            type="radio"
+            name="post-category"
+            value={key}
+            aria-label={categories[key].name}
+            data-filter-group="category"
+          />
+        ))}
+      </div>
+    </div>
+    {years.length > 1 && (
+      <div class="flex flex-wrap items-center gap-2">
+        <span
+          id="post-filter-year-label"
+          class="text-xs font-semibold tracking-wide text-base-content/70 uppercase"
+        >
+          Year
+        </span>
+        <div
+          class="flex flex-wrap gap-2"
+          role="radiogroup"
+          aria-labelledby="post-filter-year-label"
+        >
+          <input
+            class="btn btn-sm"
+            type="radio"
+            name="post-year"
+            value={FILTER_ALL}
+            aria-label="All"
+            data-filter-group="year"
+            checked
+          />
+          {years.map((year) => (
+            <input
+              class="btn btn-sm"
+              type="radio"
+              name="post-year"
+              value={year}
+              aria-label={String(year)}
+              data-filter-group="year"
+            />
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+  <p
+    class="text-sm text-base-content/70"
+    data-post-filter-count
+    aria-live="polite"
+  ></p>
+</div>
+
+<script>
+  import { enhancePostFilter } from "../scripts/post-filter";
+
+  enhancePostFilter();
+</script>

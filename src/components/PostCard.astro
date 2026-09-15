@@ -13,7 +13,13 @@ const { title, description, pubDate, heroImage, category } = post.data;
 const href = `/${post.collection}/${post.data.slug}`;
 ---
 
-<a href={href} class="card post-card">
+<a
+  href={href}
+  class="card post-card"
+  data-post
+  data-category={category}
+  data-year={pubDate.getFullYear()}
+>
   {heroImage && (
     <figure class="aspect-video">
       <Image
