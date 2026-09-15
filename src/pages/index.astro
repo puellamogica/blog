@@ -1,5 +1,6 @@
 ---
 import PostCard from "../components/PostCard.astro";
+import WeatherWidget from "../components/WeatherWidget.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 import { byPinnedThenDate, getArticles } from "../utils/posts";
@@ -29,6 +30,8 @@ const posts = (await getArticles()).sort(byPinnedThenDate).slice(0, 3);
       </div>
     </div>
   </section>
+
+  <WeatherWidget />
 
   <section class="site-container py-16">
     <div class="mb-8 flex flex-wrap items-end justify-between gap-4">

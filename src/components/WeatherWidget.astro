@@ -1,0 +1,129 @@
+---
+import { WEATHER_PLACEHOLDER } from "../utils/weather";
+
+interface Props {
+  /** Place the crawler is configured for; see the `cron` worker's wrangler config. */
+  location?: string;
+}
+
+const { location = "Hokkaido, Japan" } = Astro.props;
+---
+
+<!--
+  The snapshot is crawled every ten minutes and served from object storage, so
+  it is filled in by `enhanceWeatherWidget` rather than at build time. The
+  readings that fit on a phone are always visible; the rest of the snapshot is
+  revealed once the card is wide enough for a grid.
+-->
+<section class="site-container pt-16" aria-labelledby="weather-heading">
+  <div class="card bg-base-200 border-base-300 border" data-weather>
+    <div class="card-body gap-6">
+      <div>
+        <h2 id="weather-heading" class="section-title">
+          Weather
+        </h2>
+        <p class="text-sm text-base-content/70">
+          Current conditions in {location}.
+        </p>
+      </div>
+
+      <div aria-live="polite">
+        <div class="flex items-center gap-6" data-weather-loading>
+          <div class="skeleton size-16 shrink-0 rounded-full sm:size-24"></div>
+          <div class="w-full space-y-3">
+            <div class="skeleton h-10 w-32 rounded-field"></div>
+            <div class="skeleton h-4 w-48 rounded-field"></div>
+          </div>
+        </div>
+
+        <p class="text-sm text-base-content/70" data-weather-error hidden></p>
+
+        <div
+          class="flex flex-wrap items-center gap-6"
+          data-weather-content
+          hidden
+        >
+          <div
+            class="flex size-16 shrink-0 items-center justify-center sm:size-24"
+            data-weather-icon
+          ></div>
+          <div class="me-auto">
+            <p class="text-4xl font-bold tracking-tight sm:text-5xl">
+              <span data-weather-temp>{WEATHER_PLACEHOLDER}</span>
+            </p>
+            <p
+              class="text-base text-pretty text-base-content/70"
+              data-weather-description
+            >
+              {WEATHER_PLACEHOLDER}
+            </p>
+            <p
+              class="text-sm text-base-content/70"
+              data-weather-feels-like
+              hidden
+            ></p>
+          </div>
+          <!--
+            A `div` rather than a `p`: daisyUI gives every paragraph in a
+            `card-body` `flex-grow: 1`, which would swallow the space the
+            `me-auto` above uses to push this reading to the far edge.
+          -->
+          <div
+            class="self-start text-xs text-base-content/70"
+            hidden
+            data-weather-updated
+          >
+            Updated <time data-weather-observed></time>
+          </div>
+        </div>
+
+        <div class="mt-6 space-y-2" data-weather-alerts hidden></div>
+      </div>
+
+      <!--
+        The `hidden` class gates the section on width and the `hidden`
+        attribute on the snapshot having readings to show; the script drops the
+        attribute once there are rows.
+      -->
+      <div
+        class="border-base-300 hidden border-t pt-6 lg:block"
+        data-weather-report
+        hidden
+      >
+        <h3 class="mb-3 text-xs font-semibold tracking-wide text-base-content/70 uppercase">
+          Full report
+        </h3>
+        <dl
+          class="grid gap-x-8 gap-y-3 lg:grid-cols-3"
+          data-weather-details
+        ></dl>
+      </div>
+
+      <template data-weather-detail-template>
+        <div class="flex items-baseline justify-between gap-3 text-sm">
+          <dt class="text-base-content/70"></dt>
+          <dd class="text-right font-medium"></dd>
+        </div>
+      </template>
+
+      <template data-weather-alert-template>
+        <div class="alert alert-warning items-start" role="status">
+          <div>
+            <p class="font-semibold" data-alert-event></p>
+            <p class="text-xs" data-alert-time></p>
+            <p
+              class="text-sm text-pretty whitespace-pre-line"
+              data-alert-description
+            ></p>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { enhanceWeatherWidget } from "../scripts/weather-widget";
+
+  enhanceWeatherWidget();
+</script>
