@@ -40,7 +40,7 @@
     "typescript": "^6.0.3"
   },
   "devDependencies": {
-    "@cloudflare/vitest-plugin": "^1.1.8",
+    "@cloudflare/vitest-plugin": "^1.1.9",
     "@eslint/js": "^10.0.1",
     "@inquirer/prompts": "^8.7.2",
     "@types/node": "^24.13.4",
@@ -58,7 +58,7 @@
     "stylelint-config-standard": "^40.0.0",
     "typescript-eslint": "^8.70.0",
     "vitest": "^4.1.11",
-    "wrangler": "^4.131.1"
+    "wrangler": "^4.131.2"
   },
   "lint-staged": {
     "*.{js,mjs,cjs,ts,mts,cts}": [
