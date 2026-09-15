@@ -1,19 +1,7 @@
 ---
 import AboutHeroImage from "../assets/blog-placeholder-about.jpg";
-import GalleryImage1 from "../assets/blog-placeholder-1.jpg";
-import GalleryImage2 from "../assets/blog-placeholder-2.jpg";
-import GalleryImage3 from "../assets/blog-placeholder-3.jpg";
-import GalleryImage4 from "../assets/blog-placeholder-4.jpg";
-import SwiperGallery from "../components/SwiperGallery.astro";
 import Layout from "../layouts/BlogPost.astro";
-
-const galleryImages = [
-  { src: GalleryImage1, alt: "A placeholder illustration 1" },
-  { src: GalleryImage2, alt: "A placeholder illustration 2" },
-  { src: GalleryImage3, alt: "A placeholder illustration 3" },
-  { src: GalleryImage4, alt: "A placeholder illustration 4" },
-  { src: AboutHeroImage, alt: "A placeholder illustration 5" },
-];
+import MizukiGallery from "@components/MizukiGallery.astro";
 ---
 
 <Layout
@@ -89,5 +77,5 @@ const galleryImages = [
     magna.
   </p>
 
-  <SwiperGallery images={galleryImages} label="Placeholder gallery" />
+  <MizukiGallery />
 </Layout>
