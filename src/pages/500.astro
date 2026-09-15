@@ -2,12 +2,12 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 interface Props {
-  error: unknown;
+  error?: unknown;
 }
 
 const { error } = Astro.props;
 const message =
-  error instanceof Error ? error.message : "An unexpected error occurred.";
+  import.meta.env.DEV && error instanceof Error ? error.message : null;
 ---
 
 <BaseLayout
@@ -15,13 +15,27 @@ const message =
   description="Something went wrong on the server."
 >
   <section class="hero min-h-[70vh]">
-    <div class="hero-content text-center">
+    <div class="hero-content flex-col gap-8 text-center lg:flex-row lg:gap-12 lg:text-left">
+      <figure>
+        <img
+          src="/http-cat-500.jpg"
+          alt="A cat sprawled inside an open computer case"
+          width="750"
+          height="600"
+          class="rounded-box w-64 sm:w-80"
+        />
+      </figure>
       <div class="max-w-md">
-        <p class="text-7xl font-extrabold text-error">500</p>
-        <h1 class="mt-4 text-2xl font-bold tracking-tight">
-          Something went wrong
-        </h1>
-        <p class="py-6 text-pretty text-base-content/70">{message}</p>
+        <h1 class="text-2xl font-bold tracking-tight">Something went wrong</h1>
+        <p class="py-6 text-pretty text-base-content/70">
+          The server couldn’t finish that request. It’s most likely temporary,
+          so try again in a moment.
+        </p>
+        {message && (
+          <p class="rounded-box bg-base-200 mb-6 p-4 text-left text-sm break-words">
+            {message}
+          </p>
+        )}
         <a href="/" class="btn btn-primary">
           Back home
         </a>
