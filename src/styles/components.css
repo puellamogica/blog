@@ -409,6 +409,104 @@
   .wordmark-suffix {
     @apply text-base-content/45 font-mono text-[0.6875rem] font-normal tracking-[0.08em];
   }
+
+  /*
+   * The page loader. A veil over the first paint of a session, while the
+   * webfonts and the first images arrive, that lifts once the page is really
+   * loaded and a minimum time has passed.
+   *
+   * It is opt-in from CSS: the veil is `hidden` until the head script sets
+   * `data-loader="on"`. With no JavaScript it therefore never appears and the
+   * page is simply visible, so the loader can only ever stand in front of
+   * content that a script has already decided to cover.
+   *
+   * The rule is the site's own hairline filling with the accent, and the
+   * animation above it is an enhancement the script adds when it arrives.
+   */
+  .loader {
+    @apply bg-base-100 fixed inset-0 z-[100] hidden place-items-center p-6;
+  }
+
+  html[data-loader="on"] .loader {
+    @apply grid;
+  }
+
+  .loader-inner {
+    @apply w-full max-w-[26rem];
+  }
+
+  /*
+   * The animation's box. It is revealed only once there is something in it, so a
+   * failed or unreachable animation leaves the composition exactly as it was.
+   * The animation scales to fit, so a square box suits whatever shape it is.
+   */
+  .loader-anim {
+    @apply mx-auto mb-8 size-28 sm:size-36;
+  }
+
+  .loader-name {
+    @apply text-center text-2xl font-extrabold tracking-tight sm:text-3xl;
+  }
+
+  .loader-track {
+    @apply bg-base-300 mt-10 h-0.5 w-full overflow-hidden;
+  }
+
+  /*
+   * Driven a frame at a time from the script, so it carries no transition: a
+   * transition and a per-frame transform would fight each other and stutter.
+   */
+  .loader-fill {
+    @apply bg-primary h-full w-full origin-left scale-x-0;
+  }
+
+  .loader-meta {
+    @apply mt-3 flex items-baseline justify-between gap-4;
+  }
+
+  /*
+   * Arrival is a short staged rise: the animation, the mark, the rule, then the
+   * readout, 80ms apart. The entrance is over in about two thirds of a second,
+   * which leaves the rest of the minimum time to the progress itself.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    html[data-loader="on"] .loader-chunk {
+      @apply animate-loader-rise;
+    }
+
+    html[data-loader="on"] .loader-chunk:nth-child(2) {
+      @apply delay-[80ms];
+    }
+
+    html[data-loader="on"] .loader-chunk:nth-child(3) {
+      @apply delay-[160ms];
+    }
+
+    html[data-loader="on"] .loader-chunk:nth-child(4) {
+      @apply delay-[240ms];
+    }
+  }
+
+  /*
+   * Leaving is faster than arriving. The script adds `is-done`, the veil fades
+   * and its contents lift a little, and the element is removed once the fade has
+   * run so it can never hold a click or a tab stop.
+   */
+  .loader.is-done {
+    @apply pointer-events-none opacity-0 transition-opacity duration-300 ease-[cubic-bezier(0.2,0,0,1)];
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .loader.is-done .loader-inner {
+      @apply -translate-y-3 transition-transform duration-300 ease-[cubic-bezier(0.2,0,0,1)];
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .loader.is-done {
+      @apply duration-150;
+    }
+  }
 }
 
 /*

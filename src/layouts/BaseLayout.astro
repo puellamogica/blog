@@ -5,7 +5,7 @@ import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import HeaderLink from "../components/HeaderLink.astro";
 import Icon from "../components/Icon.astro";
-import { NAV_ITEMS, SITE_WORDMARK } from "../consts";
+import { NAV_ITEMS, SITE_TITLE, SITE_WORDMARK } from "../consts";
 
 interface Props {
   title: string;
@@ -27,8 +27,61 @@ const drawerId = "site-drawer";
       image={image}
       noindex={noindex}
     />
+
+    <script is:inline>
+      /*
+       * Decide whether this visit gets the loader before anything is painted, so
+       * the veil can never flash on a page it is not going to cover. It runs on
+       * the first page of a session only: every navigation after that is a page
+       * the reader asked for, and standing a veil in front of it would be a toll
+       * rather than an entrance.
+       *
+       * The `data-loader` attribute is the whole switch. Stylesheet absent, or
+       * script disabled, and the veil stays `display: none`.
+       */
+      (() => {
+        let seen = false;
+        try {
+          seen = sessionStorage.getItem("loader") === "seen";
+        } catch {
+          seen = false;
+        }
+        if (seen) return;
+        try {
+          sessionStorage.setItem("loader", "seen");
+        } catch {
+          /* Storage can be unavailable; the loader still runs for this page. */
+        }
+        document.documentElement.dataset.loader = "on";
+      })();
+    </script>
   </head>
   <body class="min-h-dvh">
+    <div class="loader" id="page-loader" aria-hidden="true">
+      <div class="loader-inner">
+        <div
+          class="loader-chunk loader-anim"
+          id="page-loader-anim"
+          hidden
+        ></div>
+        <p class="loader-chunk loader-name">{SITE_TITLE}</p>
+        <div class="loader-chunk loader-track">
+          <div class="loader-fill" id="page-loader-fill"></div>
+        </div>
+        <div class="loader-chunk loader-meta">
+          <span class="label">読み込み中</span>
+          <span class="data" id="page-loader-pct">
+            0%
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      import { enhancePageLoader } from "../scripts/page-loader";
+
+      enhancePageLoader();
+    </script>
     <div class="drawer">
       <input
         id={drawerId}
