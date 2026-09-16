@@ -64,23 +64,6 @@
     @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
   }
 
-  /*
-   * The reading measure.
-   *
-   * The article layout sets the same 65ch as its text column, so a section that
-   * carries prose lands on the width the rest of the site reads at rather than
-   * picking its own. Centred, for the reason the article column is: a measure
-   * this narrow only reads as deliberate when the space either side is equal.
-   *
-   * It composes with `.site-container` rather than replacing it. The container
-   * supplies the gutters, which are what keep the text off the screen edges
-   * once the viewport is narrower than the measure; this supplies the width the
-   * gutters sit outside of.
-   */
-  .reading-measure {
-    @apply mx-auto w-full max-w-[65ch];
-  }
-
   .rule-ink {
     @apply border-base-content/75 border-t;
   }
