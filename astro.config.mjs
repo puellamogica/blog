@@ -88,6 +88,42 @@ export default defineConfig({
       display: "block",
     },
     {
+      provider: fontProviders.googleicons(),
+      name: "Material Symbols Outlined",
+      cssVariable: "--font-player",
+      weights: ["100 700"],
+      /*
+       * The media player's controls are icons from the same family, but they are
+       * only drawn on the one page a player is mounted on, and a subset costs
+       * about a kilobyte a glyph. They get their own subset so that the icons
+       * every page draws — the masthead's menu, the theme toggle — do not carry
+       * them; add a name here when src/scripts/media-player.ts maps one onto a
+       * control.
+       */
+      options: {
+        experimental: {
+          glyphs: [
+            "play_arrow",
+            "pause",
+            "replay",
+            "fast_rewind",
+            "fast_forward",
+            "volume_up",
+            "volume_off",
+            "subtitles",
+            "subtitles_off",
+            "fullscreen",
+            "fullscreen_exit",
+            "settings",
+            "picture_in_picture_alt",
+            "airplay",
+            "download",
+          ],
+        },
+      },
+      display: "block",
+    },
+    {
       provider: fontProviders.google(),
       name: "Noto Color Emoji",
       cssVariable: "--font-emoji",

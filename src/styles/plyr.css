@@ -41,3 +41,23 @@
    */
   border-radius: var(--radius-box);
 }
+
+/*
+ * The controls are drawn from the icon font rather than from Plyr's sprite; the
+ * swap itself is in src/scripts/media-player.ts.
+ *
+ * Plyr sized its own <svg> icons through `--plyr-control-icon-size`, and Plyr
+ * sized the button around them, so the same value drives the glyph here: the
+ * font size is the icon's size, and the controls keep the spacing they had.
+ *
+ * `--font-player` is the icon family subset to the player's own glyphs, kept out
+ * of `--font-icon` so that a page without a player does not download them.
+ *
+ * Scoped to the player rather than to `.prose`, unlike the colors above, which
+ * are a reading choice for post content. These icons belong to the player
+ * wherever one is mounted, and the profile page mounts one outside `.prose`.
+ */
+.plyr .icon {
+  font-family: var(--font-player);
+  font-size: var(--plyr-control-icon-size, 18px);
+}

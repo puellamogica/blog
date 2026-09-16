@@ -250,18 +250,10 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
 <script>
   /*
    * The same media pattern the article layout uses: the markup is a plain
-   * <video controls>, so it plays with scripting off, and Plyr is fetched only
-   * on a page that actually has one. The icons are served from this site rather
-   * than Plyr's default CDN.
+   * <video controls>, so it plays with scripting off, and the player is only
+   * built on a page that actually has one.
    */
-  const media =
-    document.querySelectorAll<HTMLMediaElement>("[data-media] video");
+  import { enhanceMediaPlayers } from "../scripts/media-player";
 
-  if (media.length > 0) {
-    void import("plyr").then(({ default: Plyr }) => {
-      for (const element of media) {
-        new Plyr(element, { iconUrl: "/plyr.svg" });
-      }
-    });
-  }
+  enhanceMediaPlayers("[data-media] video");
 </script>
