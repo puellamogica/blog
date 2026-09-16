@@ -1,8 +1,16 @@
 ---
-import { Image, getImage } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import { getImage } from "astro:assets";
 import MizukiGallery from "@components/MizukiGallery.astro";
 import BaseLayout from "@layouts/BaseLayout.astro";
-import PortraitImage from "../assets/mizuki-gallery/003.webp";
+import NowWorldPc from "../assets/about/now-background-pc.webp";
+import NowWorldPhone from "../assets/about/now-background.webp";
+import NowFigurePc from "../assets/about/now-foreground-pc.webp";
+import NowFigurePhone from "../assets/about/now-foreground.webp";
+import PastWorldPc from "../assets/about/past-background-pc.webp";
+import PastWorldPhone from "../assets/about/past-background.webp";
+import PastFigurePc from "../assets/about/past-foreground-pc.webp";
+import PastFigurePhone from "../assets/about/past-foreground.webp";
 import PosterImage from "../assets/mizuki-gallery/013.webp";
 import { SITE_TITLE } from "../consts";
 import {
@@ -12,7 +20,70 @@ import {
   profile,
   rows,
   video,
+  type Era,
 } from "../data/profile";
+
+/*
+ * The two layers of the character band, per era: the world she is standing in,
+ * and the figure standing in it. Each is authored twice, once as a tall phone
+ * frame and once as a wide one, which is why the band swaps its art direction
+ * at `md` the same way the home masthead does.
+ *
+ * The figure files are byte-identical for now, so the world is the only thing
+ * that visibly changes between eras. They are wired per era anyway, because
+ * that is what the file names promise and it is one edit to make them differ.
+ */
+type Layer = { phone: ImageMetadata; pc: ImageMetadata };
+
+const stage = {
+  past: {
+    world: { phone: PastWorldPhone, pc: PastWorldPc },
+    figure: { phone: PastFigurePhone, pc: PastFigurePc },
+  },
+  now: {
+    world: { phone: NowWorldPhone, pc: NowWorldPc },
+    figure: { phone: NowFigurePhone, pc: NowFigurePc },
+  },
+} satisfies Record<Era, { world: Layer; figure: Layer }>;
+
+// A `<source>` needs a srcset rather than an <Image>, so the widths are built
+// here. Both art directions are wider than any viewport they are shown at, so
+// these stay below the source size and nothing is ever upscaled.
+const srcset = async (src: ImageMetadata, widths: number[]) =>
+  (
+    await Promise.all(
+      widths.map(async (width) => {
+        const { src: url } = await getImage({ src, width, format: "webp" });
+        return `${url} ${width}w`;
+      }),
+    )
+  ).join(", ");
+
+const layers = await Promise.all(
+  eraKeys.map(async (era) => ({
+    era,
+    world: {
+      phone: (
+        await getImage({
+          src: stage[era].world.phone,
+          width: 900,
+          format: "webp",
+        })
+      ).src,
+      pc: await srcset(stage[era].world.pc, [1280, 1920, 2560]),
+    },
+    figure: {
+      phone: (
+        await getImage({
+          src: stage[era].figure.phone,
+          width: 750,
+          format: "webp",
+        })
+      ).src,
+      pc: await srcset(stage[era].figure.pc, [1024, 1600]),
+    },
+  })),
+);
 
 // Cropped to the player's own ratio, so the placeholder poster fills the frame
 // instead of sitting in it with bars down both sides.
@@ -32,9 +103,9 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
 <BaseLayout
   title={`プロフィール · ${SITE_TITLE}`}
   description={`${profile.unit}の${profile.role}。`}
-  image={PortraitImage}
+  image={stage[defaultEra].world.phone}
 >
-  <header class="site-container pt-14 pb-8 sm:pt-20">
+  <header class="site-container pt-14 pb-6 sm:pt-20">
     <h1 class="page-title">プロフィール</h1>
     <p class="data mt-4">
       {profile.unit} ／ {profile.role}
@@ -42,183 +113,190 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
   </header>
 
   <!--
-    The character band, and the only place on this page that carries a
-    background. Two things are layered here, the way the reference page layers
-    them: a graded wash across the whole band, then two panels clipped into
-    slanted shapes over it. Both are built from theme tokens rather than fixed
-    pastels, so the pair survives the dark theme instead of leaving a bright
-    pastel panel under light text.
+    The era toggle, and the two views it switches between.
 
-    The wash stops at the band. Everything below reads on plain paper, which is
-    the one thing a long Japanese paragraph really needs.
-  -->
-  <section class="from-primary/12 via-base-200 to-secondary/12 relative overflow-hidden bg-linear-to-br">
-    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
-      <div class="from-base-100/30 to-base-100 absolute inset-y-0 left-0 w-3/4 bg-linear-to-r [clip-path:polygon(0_0,100%_0,25%_100%,0_100%)]"></div>
-      <div class="from-base-100/30 to-base-100 absolute inset-y-0 right-0 w-3/4 bg-linear-to-l [clip-path:polygon(75%_0,100%_0,100%_100%,0_100%)]"></div>
-    </div>
-
-    <div class="site-container relative py-10 sm:py-14">
-      <div class="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
-        <figure class="overflow-hidden">
-          <Image
-            src={PortraitImage}
-            alt=""
-            widths={[560, 840, 1120]}
-            sizes="(width >= 64rem) 36rem, 100vw"
-            class="aspect-[3/2] h-auto w-full object-cover"
-          />
-        </figure>
-
-        <div class="card bg-base-100/90 backdrop-blur-sm">
-          <div class="card-body">
-            <p class="label">{profile.romanised}</p>
-            <h2 class="display-title mt-3">{profile.name}</h2>
-            <p class="data mt-3">CV. {profile.voice}</p>
-
-            <p class="page-lead mt-6">{profile.quote}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!--
-    The era toggle.
-
-    daisyUI's `tabs` with radio inputs is the whole mechanism: the component
-    hides every `.tab-content` and shows the one that follows a checked input,
-    so the toggle costs no JavaScript at all and works with scripting off.
-
-    The type is markup inside a <label> around the input, not an `aria-label`.
-    daisyUI styles the label and drops the input over it, so the control keeps a
-    real accessible name and a real hit area.
+    daisyUI's `tabs` with radio inputs inside labels is the whole mechanism. The
+    component styles the label, drops the input over it, and fills the one that
+    is checked, so the toggle costs no JavaScript and works with scripting off.
 
     There are no tab roles here on purpose. A tablist whose children are radios
     rather than tabs is a promise the markup cannot keep, so the semantics are
     left to the native radio group and only the shape is borrowed.
 
+    The panels are not daisyUI's `.tab-content`. Those have to be the next
+    sibling of the tab that shows them, which would force the bar and everything
+    it controls into one box. Keying the panels off the radios instead, in
+    components.css, is what lets the toggle sit in the character band and still
+    drive the world behind it and the sheet below it.
+
     Both eras run the same rows through the same map, so only the values that
-    actually differ change, and the two panels cannot drift apart.
-
-    The spec sheet is a real table because the data is: rows hold one name/value
-    pair or two, and that pairing is preserved rather than flattened into a
-    form. A one-pair row spans its value across the remaining columns, which
-    keeps that value flush with the right edge either way.
-
-    The rules between rows come from `table` itself. It draws them on the cells
-    rather than on the row, because it sets `border-collapse: separate`, so a
-    border of our own on the <tr> would only fight it.
-
-    The type sits on spans rather than on the cells. `label` is a daisyUI class
-    and it is `inline-flex`, which on a <th> stops it being a table cell and
-    lets the columns collapse to their content.
-
-    The columns are pinned to even quarters so that a pair always owns half the
-    row. Left to itself the browser sizes them by content and no two pairs line
-    up, which is the whole point of the layout.
+    actually differ change, and the two views cannot drift apart.
   -->
-  <div class="site-container py-14 sm:py-16">
+  <div class="era">
     <!--
-      The era toggle, and the two views it switches between.
+      The character band. Four layers, three of which only exist to be swapped:
+      the era's world behind, the era's figure in front of it, both authored
+      once for the phone and once for the wide screen.
 
-      The bar is daisyUI's `tabs` with radio inputs inside labels: the component
-      styles the label, drops the input over it, and fills the one that is
-      checked, so the toggle costs no JavaScript at all and works with scripting
-      off. `w-fit` keeps the box around the two labels rather than letting it
-      stretch the full measure and leave a grey bar with two words at one end.
+      The art is absolute inside the band and the reading content sits over it,
+      which is the reference page's arrangement. `--stage-art` is the height the
+      art claims on a phone, where the figure needs its own band above the card;
+      at `md` it collapses and the art fills the band instead. Setting it once as
+      a variable is what keeps the layer and the content padding in step.
+    -->
+    <section class="[--stage-art:120vw] md:[--stage-art:0px] relative isolate overflow-hidden">
+      <div
+        class="stage-art pointer-events-none absolute inset-x-0 top-0 h-(--stage-art) md:inset-0 md:h-full"
+        aria-hidden="true"
+      >
+        <!-- The era's world, edge to edge behind everything. -->
+        {layers.map(({ era, world }) => (
+          <picture data-era={era} class="absolute inset-0">
+            <source media="(width >= 48rem)" srcset={world.pc} sizes="100vw" />
+            <img
+              src={world.phone}
+              alt=""
+              class="h-full w-full object-cover"
+              fetchpriority={era === defaultEra ? "high" : "low"}
+            />
+          </picture>
+        ))}
 
-      The panels are not daisyUI's `.tab-content`. Those have to be the next
-      sibling of the tab that shows them, which would force the bar and the
-      panels into a single box and bring the full-width track back. Keying them
-      off the radios instead, in components.css, is what lets the bar hug and
-      the panels keep the measure.
+        <!--
+          The era's figure, standing in the world.
 
-      There are no tab roles here on purpose. A tablist whose children are
-      radios rather than tabs is a promise the markup cannot keep, so the
-      semantics are left to the native radio group and only the shape is
-      borrowed.
+          The box is the full container width and she is anchored to its left,
+          because the artwork is drawn that way: she sits in the left third of
+          the frame and the right two thirds are empty space that the card is
+          meant to occupy. Contained in a half-width column instead, the box
+          caps her scale and she comes out at about a third of the size the
+          drawing can carry.
 
-      Both eras run the same rows through the same map, so only the values that
-      actually differ change, and the two panels cannot drift apart.
+          On a phone the card sits below rather than beside, so there she is
+          centred on the band.
+        -->
+        <div class="site-container relative h-full md:py-16">
+          <div class="relative h-full">
+            {layers.map(({ era, figure }) => (
+              <picture data-era={era} class="absolute inset-0">
+                <source
+                  media="(width >= 48rem)"
+                  srcset={figure.pc}
+                  sizes="(width >= 48rem) 70vw, 100vw"
+                />
+                <img
+                  src={figure.phone}
+                  alt=""
+                  class="h-full w-full object-contain object-bottom md:object-left-bottom"
+                  fetchpriority="low"
+                />
+              </picture>
+            ))}
+          </div>
+        </div>
+      </div>
 
-      The spec sheet is a real table because the data is: rows hold one
+      <div class="site-container relative pt-(--stage-art) pb-12 md:pt-16 md:pb-16">
+        <div class="md:grid md:min-h-[62svh] md:items-end md:grid-cols-2 md:gap-12">
+          <!--
+            The card holds the toggle, so the control sits on an opaque surface
+            rather than on the artwork: the light pills have no contrast against
+            a high-key illustration. The left column is left empty on purpose,
+            because that is where the figure is.
+          -->
+          <div class="card bg-base-100 md:col-start-2">
+            <div class="card-body">
+              <div class="tabs tabs-box w-fit">
+                {eraKeys.map((era) => (
+                  <label class="tab min-h-11">
+                    <input
+                      type="radio"
+                      name="era"
+                      value={era}
+                      checked={era === defaultEra}
+                    />
+                    {eras[era].label}
+                  </label>
+                ))}
+              </div>
+
+              <p class="label mt-2">{profile.romanised}</p>
+              <h2 class="display-title mt-3">{profile.name}</h2>
+              <p class="data mt-3">CV. {profile.voice}</p>
+
+              <p class="page-lead mt-6">{profile.quote}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!--
+      The spec sheet. It is a real table because the data is: rows hold one
       name/value pair or two, and that pairing is preserved rather than
       flattened into a form. A one-pair row spans its value across the remaining
       columns, so that value stays flush with the right edge either way.
 
-      The rules between rows come from `table` itself. It draws them on the
-      cells rather than on the row, because it sets `border-collapse: separate`,
-      so a border of our own on the <tr> would only fight it.
+      The rules between rows come from `table` itself. It draws them on the cells
+      rather than on the row, because it sets `border-collapse: separate`, so a
+      border of our own on the <tr> would only fight it.
 
-      The type sits on spans rather than on the cells. `label` is a daisyUI
-      class and it is `inline-flex`, which on a <th> stops it being a table cell
-      and lets the columns collapse to their content.
+      The type sits on spans rather than on the cells. `label` is a daisyUI class
+      and it is `inline-flex`, which on a <th> stops it being a table cell and
+      lets the columns collapse to their content.
 
-      The columns are pinned to even quarters so that a pair always owns half
-      the row. Left to itself the browser sizes them by content and no two pairs
-      line up, which is the whole point of the layout.
+      The columns are pinned to even quarters so that a pair always owns half the
+      row. Left to itself the browser sizes them by content and no two pairs line
+      up, which is the whole point of the layout.
     -->
-    <div class="era">
-      <div class="tabs tabs-box w-fit">
-        {eraKeys.map((era) => (
-          <label class="tab min-h-11">
-            <input
-              type="radio"
-              name="era"
-              value={era}
-              checked={era === defaultEra}
-            />
-            {eras[era].label}
-          </label>
-        ))}
-      </div>
+    {eraKeys.map((era) => (
+      <div data-era={era} class="site-container pt-14 sm:pt-16">
+        <h2 class="section-title">PROFILE</h2>
 
-      {eraKeys.map((era) => (
-        <div data-era={era}>
-          <h2 class="section-title mt-10">PROFILE</h2>
-
-          <table class="table mt-6">
-            <colgroup>
-              {Array.from({ length: columns }).map(() => (
-                <col class="w-1/4" />
-              ))}
-            </colgroup>
-            <tbody>
-              {rows.map((row) => (
-                <tr>
-                  {row.map((cell) => (
-                    <>
-                      <th scope="row">
-                        <span class="label">{cell.label}</span>
-                      </th>
-                      <td
-                        class="text-right"
-                        colspan={row.length === 1 ? columns - 1 : undefined}
-                      >
-                        <span class="data">
-                          {typeof cell.value === "string"
-                            ? cell.value
-                            : cell.value[era]}
-                        </span>
-                      </td>
-                    </>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <h2 class="section-title mt-14">紹介</h2>
-
-          <div class="prose mt-6 max-w-[65ch]">
-            {eras[era].description.map((paragraph) => (
-              <p>{paragraph}</p>
+        <table class="table mt-6">
+          <colgroup>
+            {Array.from({ length: columns }).map(() => (
+              <col class="w-1/4" />
             ))}
-          </div>
+          </colgroup>
+          <tbody>
+            {rows.map((row) => (
+              <tr>
+                {row.map((cell) => (
+                  <>
+                    <th scope="row">
+                      <span class="label">{cell.label}</span>
+                    </th>
+                    <td
+                      class="text-right"
+                      colspan={row.length === 1 ? columns - 1 : undefined}
+                    >
+                      <span class="data">
+                        {typeof cell.value === "string"
+                          ? cell.value
+                          : cell.value[era]}
+                      </span>
+                    </td>
+                  </>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <h2 class="section-title mt-14">紹介</h2>
+
+        <!--
+            Running text keeps the site's prose styles, which carry the Japanese
+            leading the rest of the site is set with.
+          -->
+        <div class="prose mt-6 max-w-[65ch]">
+          {eras[era].description.map((paragraph) => (
+            <p>{paragraph}</p>
+          ))}
         </div>
-      ))}
-    </div>
+      </div>
+    ))}
   </div>
 
   <!--
@@ -227,7 +305,7 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
     pressed play on from costing a full download, and the poster means the
     player reads as a frame from the film rather than as a black hole.
   -->
-  <section class="site-container pb-14 sm:pb-16">
+  <section class="site-container py-14 sm:py-16">
     <h2 class="section-title">{video.title}</h2>
 
     <figure class="border-base-300 mt-6 border" data-media>

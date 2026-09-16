@@ -292,6 +292,24 @@
   }
 
   /*
+   * The band's art is drawn light and stays light in both themes, so in the dark
+   * theme it needs holding back or it reads as a hole punched in the page. It is
+   * a wash rather than a filter: a token mixed over the layers costs one layer
+   * to composite, where a filter on artwork this size would have to be
+   * rasterised again as it moves.
+   */
+  :root[data-theme="night"] .stage-art::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: color-mix(
+      in oklab,
+      var(--color-base-100) 62%,
+      transparent
+    );
+  }
+
+  /*
    * The article page. Reading order is breadcrumb, metadata, body, index — so
    * that is the DOM order, and the grid moves the metadata out into the margin
    * only once the viewport can spare the column for it.
