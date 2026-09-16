@@ -9,6 +9,7 @@ import { mdastKatexPlugin } from "./src/mdast/mdast-katex";
 import { mdastQuestionHtmlPlugin } from "./src/mdast/mdast-question-html";
 import { mdastReadingTimePlugin } from "./src/mdast/mdast-reading-time";
 import { hastExternalLinks } from "./src/hast/hast-external-links";
+import { hastEagerImages } from "./src/hast/hast-eager-images";
 import { markdownFeatures } from "./src/markdown";
 
 // https://astro.build/config
@@ -51,7 +52,7 @@ export default defineConfig({
         mdastQuestionHtmlPlugin,
         mdastKatexPlugin,
       ],
-      hastPlugins: [hastExternalLinks],
+      hastPlugins: [hastExternalLinks, hastEagerImages],
     }),
   },
   fonts: [
