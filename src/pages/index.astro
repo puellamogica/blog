@@ -6,7 +6,7 @@ import PostEntry from "../components/PostEntry.astro";
 import WeatherWidget from "../components/WeatherWidget.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
-import { byPinnedThenDate, getArticles } from "../utils/posts";
+import { byPinnedThenDate, getArticles, getVaultEntries } from "../utils/posts";
 /*
  * The masthead art is two pictures, not one: a portrait frame for phones and a
  * landscape frame for wide screens, the way the site this borrows from art
@@ -16,13 +16,21 @@ import { byPinnedThenDate, getArticles } from "../utils/posts";
 import HeroPhone from "../assets/index/hero.webp";
 import HeroPc from "../assets/index/hero-pc.webp";
 
-const posts = (await getArticles()).sort(byPinnedThenDate);
-const [lead, ...rest] = posts;
+const articles = (await getArticles()).sort(byPinnedThenDate);
+const [lead, ...rest] = articles;
 const index = rest.slice(0, 5);
+
+/*
+ * The count and the year describe the whole archive rather than the articles
+ * this page happens to list: the vault entries are posts too, and they reach
+ * further back than any article, so a figure taken from the articles alone
+ * would understate both.
+ */
+const archive = [...articles, ...(await getVaultEntries())];
 const since =
-  posts.length === 0
+  archive.length === 0
     ? undefined
-    : Math.min(...posts.map((post) => post.data.pubDate.getFullYear()));
+    : Math.min(...archive.map((post) => post.data.pubDate.getFullYear()));
 
 /*
  * The `md` breakpoint. The portrait frame is drawn for a phone, so past this
@@ -81,7 +89,7 @@ const heroPcSrcset = (
     <div class="site-container pt-10 pb-10">
       <h1 class="display-title max-w-3xl text-balance">{SITE_DESCRIPTION}</h1>
       <p class="data mt-8">
-        {posts.length} 件{since !== undefined && <>（{since}年以降）</>}
+        {archive.length} 件{since !== undefined && <>（{since}年以降）</>}
       </p>
     </div>
   </section>
