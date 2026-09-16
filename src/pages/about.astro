@@ -1,88 +1,267 @@
 ---
+import { Image, getImage } from "astro:assets";
 import MizukiGallery from "@components/MizukiGallery.astro";
+import BaseLayout from "@layouts/BaseLayout.astro";
 import PortraitImage from "../assets/mizuki-gallery/003.webp";
-import { facts, profile } from "../data/profile";
-import Layout from "../layouts/BlogPost.astro";
+import PosterImage from "../assets/mizuki-gallery/013.webp";
+import { SITE_TITLE } from "../consts";
+import {
+  defaultEra,
+  eras,
+  eraKeys,
+  profile,
+  rows,
+  video,
+} from "../data/profile";
+
+// Cropped to the player's own ratio, so the placeholder poster fills the frame
+// instead of sitting in it with bars down both sides.
+const poster = await getImage({
+  src: PosterImage,
+  width: 1280,
+  height: 720,
+  fit: "cover",
+  format: "webp",
+});
+
+// Two columns per pair, so the widest row decides the grid and the data can
+// grow a pair without the markup following it.
+const columns = Math.max(...rows.map((row) => row.length)) * 2;
 ---
 
-<Layout
-  slug="about"
-  category="notes"
-  title="プロフィール"
-  description="『25時、ナイトコードで。』の動画担当。"
-  pubDate={new Date("August 08 2021")}
-  heroImage={PortraitImage}
-  pinned={false}
-  draft={false}
-  headings={[]}
+<BaseLayout
+  title={`プロフィール · ${SITE_TITLE}`}
+  description={`${profile.unit}の${profile.role}。`}
+  image={PortraitImage}
 >
-  <!--
-    The quotation marks come from the stylesheet, so they are not typed here.
-    The attribution stays inside the blockquote and muted, which is the pattern
-    the prose styles already carry for it.
-  -->
-  <blockquote>
-    <p>{profile.quote}</p>
-    <!--
-      <cite> is for the title of a work, which is exactly what the unit name is.
-      The site has one typeface and no true italic, so the browser's synthetic
-      oblique is turned off rather than left to shear the letterforms.
-    -->
-    <footer class="data">
-      <cite class="not-italic">{profile.unit}</cite> より
-    </footer>
-  </blockquote>
+  <header class="site-container pt-14 pb-8 sm:pt-20">
+    <h1 class="page-title">プロフィール</h1>
+    <p class="data mt-4">
+      {profile.unit} ／ {profile.role}
+    </p>
+  </header>
 
   <!--
-    The character sheet. daisyUI's `card` is the honest component here: this is
-    a genuinely self-contained block, and the spec list is `list` + `list-row`,
-    which draws the hairline between rows for us.
+    The character band, and the only place on this page that carries a
+    background. Two things are layered here, the way the reference page layers
+    them: a graded wash across the whole band, then two panels clipped into
+    slanted shapes over it. Both are built from theme tokens rather than fixed
+    pastels, so the pair survives the dark theme instead of leaving a bright
+    pastel panel under light text.
 
-    `not-prose` is the typography plugin's own escape hatch and it is doing real
-    work: without it the plugin's paragraph and definition margins land inside
-    the card and push a 16px spec row out to 63px. The name and the spec values
-    keep the site's own type classes, so the sheet stays in the same voice.
-
-    The panel behind the card is where the reference page's gradient background
-    ends up, scoped to the one block it decorates and built from theme tokens
-    rather than fixed pastels, so it survives the dark theme.
+    The wash stops at the band. Everything below reads on plain paper, which is
+    the one thing a long Japanese paragraph really needs.
   -->
-  <div class="from-primary/12 via-base-200 to-secondary/12 rounded-box not-prose mt-10 bg-linear-to-br p-4 sm:p-6">
-    <div class="card bg-base-100">
-      <div class="card-body">
-        <p class="label">{profile.romanised}</p>
-        <h2 class="display-title mt-3">{profile.name}</h2>
-        <p class="data mt-3">
-          CV. {profile.voice} ／ {profile.role}
-        </p>
+  <section class="from-primary/12 via-base-200 to-secondary/12 relative overflow-hidden bg-linear-to-br">
+    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+      <div class="from-base-100/30 to-base-100 absolute inset-y-0 left-0 w-3/4 bg-linear-to-r [clip-path:polygon(0_0,100%_0,25%_100%,0_100%)]"></div>
+      <div class="from-base-100/30 to-base-100 absolute inset-y-0 right-0 w-3/4 bg-linear-to-l [clip-path:polygon(75%_0,100%_0,100%_100%,0_100%)]"></div>
+    </div>
 
-        <div class="divider"></div>
+    <div class="site-container relative py-10 sm:py-14">
+      <div class="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+        <figure class="overflow-hidden">
+          <Image
+            src={PortraitImage}
+            alt=""
+            widths={[560, 840, 1120]}
+            sizes="(width >= 64rem) 36rem, 100vw"
+            class="aspect-[3/2] h-auto w-full object-cover"
+          />
+        </figure>
 
-        <h3 class="section-title">PROFILE</h3>
+        <div class="card bg-base-100/90 backdrop-blur-sm">
+          <div class="card-body">
+            <p class="label">{profile.romanised}</p>
+            <h2 class="display-title mt-3">{profile.name}</h2>
+            <p class="data mt-3">CV. {profile.voice}</p>
 
-        <dl class="list mt-1">
-          {facts.map((fact) => (
-            <div class="list-row">
-              <dt class="label">{fact.label}</dt>
-              <dd class="data">{fact.value}</dd>
-            </div>
-          ))}
-        </dl>
+            <p class="page-lead mt-6">{profile.quote}</p>
+          </div>
+        </div>
       </div>
+    </div>
+  </section>
+
+  <!--
+    The era toggle.
+
+    daisyUI's `tabs` with radio inputs is the whole mechanism: the component
+    hides every `.tab-content` and shows the one that follows a checked input,
+    so the toggle costs no JavaScript at all and works with scripting off.
+
+    The type is markup inside a <label> around the input, not an `aria-label`.
+    daisyUI styles the label and drops the input over it, so the control keeps a
+    real accessible name and a real hit area.
+
+    There are no tab roles here on purpose. A tablist whose children are radios
+    rather than tabs is a promise the markup cannot keep, so the semantics are
+    left to the native radio group and only the shape is borrowed.
+
+    Both eras run the same rows through the same map, so only the values that
+    actually differ change, and the two panels cannot drift apart.
+
+    The spec sheet is a real table because the data is: rows hold one name/value
+    pair or two, and that pairing is preserved rather than flattened into a
+    form. A one-pair row spans its value across the remaining columns, which
+    keeps that value flush with the right edge either way.
+
+    The rules between rows come from `table` itself. It draws them on the cells
+    rather than on the row, because it sets `border-collapse: separate`, so a
+    border of our own on the <tr> would only fight it.
+
+    The type sits on spans rather than on the cells. `label` is a daisyUI class
+    and it is `inline-flex`, which on a <th> stops it being a table cell and
+    lets the columns collapse to their content.
+
+    The columns are pinned to even quarters so that a pair always owns half the
+    row. Left to itself the browser sizes them by content and no two pairs line
+    up, which is the whole point of the layout.
+  -->
+  <div class="site-container py-14 sm:py-16">
+    <!--
+      The era toggle, and the two views it switches between.
+
+      The bar is daisyUI's `tabs` with radio inputs inside labels: the component
+      styles the label, drops the input over it, and fills the one that is
+      checked, so the toggle costs no JavaScript at all and works with scripting
+      off. `w-fit` keeps the box around the two labels rather than letting it
+      stretch the full measure and leave a grey bar with two words at one end.
+
+      The panels are not daisyUI's `.tab-content`. Those have to be the next
+      sibling of the tab that shows them, which would force the bar and the
+      panels into a single box and bring the full-width track back. Keying them
+      off the radios instead, in components.css, is what lets the bar hug and
+      the panels keep the measure.
+
+      There are no tab roles here on purpose. A tablist whose children are
+      radios rather than tabs is a promise the markup cannot keep, so the
+      semantics are left to the native radio group and only the shape is
+      borrowed.
+
+      Both eras run the same rows through the same map, so only the values that
+      actually differ change, and the two panels cannot drift apart.
+
+      The spec sheet is a real table because the data is: rows hold one
+      name/value pair or two, and that pairing is preserved rather than
+      flattened into a form. A one-pair row spans its value across the remaining
+      columns, so that value stays flush with the right edge either way.
+
+      The rules between rows come from `table` itself. It draws them on the
+      cells rather than on the row, because it sets `border-collapse: separate`,
+      so a border of our own on the <tr> would only fight it.
+
+      The type sits on spans rather than on the cells. `label` is a daisyUI
+      class and it is `inline-flex`, which on a <th> stops it being a table cell
+      and lets the columns collapse to their content.
+
+      The columns are pinned to even quarters so that a pair always owns half
+      the row. Left to itself the browser sizes them by content and no two pairs
+      line up, which is the whole point of the layout.
+    -->
+    <div class="era">
+      <div class="tabs tabs-box w-fit">
+        {eraKeys.map((era) => (
+          <label class="tab min-h-11">
+            <input
+              type="radio"
+              name="era"
+              value={era}
+              checked={era === defaultEra}
+            />
+            {eras[era].label}
+          </label>
+        ))}
+      </div>
+
+      {eraKeys.map((era) => (
+        <div data-era={era}>
+          <h2 class="section-title mt-10">PROFILE</h2>
+
+          <table class="table mt-6">
+            <colgroup>
+              {Array.from({ length: columns }).map(() => (
+                <col class="w-1/4" />
+              ))}
+            </colgroup>
+            <tbody>
+              {rows.map((row) => (
+                <tr>
+                  {row.map((cell) => (
+                    <>
+                      <th scope="row">
+                        <span class="label">{cell.label}</span>
+                      </th>
+                      <td
+                        class="text-right"
+                        colspan={row.length === 1 ? columns - 1 : undefined}
+                      >
+                        <span class="data">
+                          {typeof cell.value === "string"
+                            ? cell.value
+                            : cell.value[era]}
+                        </span>
+                      </td>
+                    </>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <h2 class="section-title mt-14">紹介</h2>
+
+          <div class="prose mt-6 max-w-[65ch]">
+            {eras[era].description.map((paragraph) => (
+              <p>{paragraph}</p>
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
   </div>
 
-  <p>
-    これはレイアウトを確認するためのダミーテキストです。文字の大きさ、行間、余白のバランスが意図どおりに見えるかを確かめるために置いています。実際の文章に差し替えるまでの仮の内容なので、ここに書かれていることに意味はありません。
-  </p>
+  <!--
+    The source is a placeholder until the real file lands, and it is set in one
+    place, in src/data/profile.ts. `preload="metadata"` keeps a video nobody has
+    pressed play on from costing a full download, and the poster means the
+    player reads as a frame from the film rather than as a black hole.
+  -->
+  <section class="site-container pb-14 sm:pb-16">
+    <h2 class="section-title">{video.title}</h2>
 
-  <p>
-    日本語の文章は、一文字あたりの情報量が多く、行頭と行末の位置が揃いやすいという特徴があります。そのぶん行間を十分に取らないと圧迫感が出るため、本文の行送りは英語よりも広めに設定しています。この段落も、そうした組みの確認を目的とした仮の文章です。
-  </p>
+    <figure class="border-base-300 mt-6 border" data-media>
+      <video
+        class="aspect-video h-auto w-full"
+        controls
+        preload="metadata"
+        poster={poster.src}
+      >
+        <source src={video.src} />
+      </video>
+    </figure>
+  </section>
 
-  <p>
-    見出しと本文の強弱、引用やコードブロックの余白、画像を挟んだときの流れなど、記事ページで起きることはひととおりこのページで試せます。実際の記事を書く前に、これらの要素が同じリズムで並ぶかどうかを確かめておくと、あとから崩れる心配がありません。
-  </p>
+  <section class="site-container pb-20">
+    <MizukiGallery />
+  </section>
+</BaseLayout>
 
-  <MizukiGallery />
-</Layout>
+<script>
+  /*
+   * The same media pattern the article layout uses: the markup is a plain
+   * <video controls>, so it plays with scripting off, and Plyr is fetched only
+   * on a page that actually has one. The icons are served from this site rather
+   * than Plyr's default CDN.
+   */
+  const media =
+    document.querySelectorAll<HTMLMediaElement>("[data-media] video");
+
+  if (media.length > 0) {
+    void import("plyr").then(({ default: Plyr }) => {
+      for (const element of media) {
+        new Plyr(element, { iconUrl: "/plyr.svg" });
+      }
+    });
+  }
+</script>
