@@ -1,8 +1,8 @@
 // Place any global data in this file.
 // You can import this data from anywhere in your site by using the `import` keyword.
 
-export const SITE_TITLE = "20190716.xyz";
-export const SITE_DESCRIPTION = "ウェブでつくることについての個人ブログです。";
+export const SITE_TITLE = "Puella Mogica";
+export const SITE_DESCRIPTION = "An astro framework blog theme";
 
 /*
  * The wordmark sets the name and the top-level domain apart, so both halves are

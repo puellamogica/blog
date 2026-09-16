@@ -44,7 +44,7 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
   <article class="site-container py-10 sm:py-14">
     <div class="article-grid">
       <nav class="article-crumbs" aria-label="Breadcrumb">
-        <ol class="mono-data flex flex-wrap items-center gap-x-2 gap-y-1">
+        <ol class="data flex flex-wrap items-center gap-x-2 gap-y-1">
           {crumbs.map((crumb, position) => (
             <li class="flex min-w-0 items-center gap-2">
               {position > 0 && (

@@ -20,7 +20,7 @@ const since =
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
   <section class="site-container pt-14 pb-12 sm:pt-20 sm:pb-16">
     <h1 class="display-title max-w-3xl text-balance">{SITE_DESCRIPTION}</h1>
-    <p class="mono-data mt-8">
+    <p class="data mt-8">
       {posts.length} 件{since !== undefined && <>（{since}年以降）</>}
     </p>
   </section>
@@ -28,13 +28,13 @@ const since =
   {lead && (
     <section class="site-container pb-16 sm:pb-20">
       <div class="rule-ink"></div>
-      <p class="mono-label mt-4">最新</p>
+      <p class="label mt-4">最新</p>
 
       <article class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:items-start lg:gap-12">
         <div>
           <div class="flex flex-wrap items-baseline gap-x-4 gap-y-2">
             <CategoryBadge category={lead.data.category} />
-            <span class="mono-data">
+            <span class="data">
               <FormattedDate date={lead.data.pubDate} />
             </span>
           </div>
