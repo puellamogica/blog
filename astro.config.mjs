@@ -75,9 +75,14 @@ export default defineConfig({
       name: "Material Symbols Outlined",
       cssVariable: "--font-symbol",
       weights: ["100 700"],
+      /*
+       * The icon font is subset to exactly the ligatures the site renders, so it
+       * stays a couple of kilobytes instead of the ~3MB the full family weighs.
+       * Add a name here when `Icon.astro` gains one.
+       */
       options: {
         experimental: {
-          glyphs: ["menu"],
+          glyphs: ["menu", "close", "light_mode", "dark_mode", "arrow_forward"],
         },
       },
       display: "block",

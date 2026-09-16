@@ -1,19 +1,55 @@
 /*
- * Labels and metadata share one voice: monospaced, small, tracked out, and held
- * back from full contrast. They read as printed specimen data, and they keep
- * numbers aligned without any extra work.
+ * Two voices, one family.
+ *
+ * The site is set in M PLUS 1. Its companion M PLUS 1 Code is a code face: its
+ * kana and kanji are drawn to a mechanical, uniform width, so Japanese set in it
+ * reads as a terminal rather than as a page. The split below is therefore by
+ * content, not by size. Language takes M PLUS 1; only numbers and Latin data
+ * take the code face, where tabular figures and a specimen feel earn their keep.
+ *
+ * Both voices share the same restraint: small, tracked out, and held back from
+ * full contrast, so metadata never competes with the writing.
  *
  * These two are utilities rather than component classes because they are used
  * both in markup and inside the component classes below.
  */
-@utility mono-label {
-  @apply text-base-content/55 font-mono text-xs font-medium tracking-[0.16em] uppercase;
+@utility label {
+  @apply text-base-content/55 text-xs font-medium tracking-[0.12em];
 }
 
-@utility mono-data {
-  @apply text-base-content/60 font-mono text-xs tracking-[0.02em];
+@utility data {
+  @apply text-base-content/60 text-xs tracking-[0.02em];
 
   font-variant-numeric: tabular-nums;
+}
+
+/*
+ * One icon system. The glyphs are drawn from the Material Symbols font the font
+ * pipeline already subsets at build time, so there are no inline SVG paths to
+ * keep in sync, and an icon inherits `currentColor` and the text size for free.
+ *
+ * Material Symbols paints the icon into a 24px em box centred on the baseline,
+ * so the size is the font size rather than width and height. Call sites set it
+ * with a font-size utility; nothing here fixes a size, and the boxes are kept
+ * tight so an icon lines up with the text beside it.
+ */
+@utility icon {
+  @apply inline-block shrink-0 leading-none select-none;
+
+  font-family: var(--font-icon);
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  direction: ltr;
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
+  font-feature-settings: "liga";
 }
 
 /*
@@ -138,6 +174,26 @@
   }
 
   /*
+   * The full reading is a large-screen affordance. On a phone the plate is the
+   * first thing under the writing and thirteen rows of pressure and visibility
+   * push the index off the screen, so the plate keeps only what a glance needs:
+   * the icon, the temperature, the sky, and when it was observed.
+   *
+   * The rule hides the report below the break rather than showing it above, so
+   * it never fights the `hidden` attribute the script sets when a snapshot
+   * carries no readings to list.
+   */
+  .weather-report {
+    display: none;
+  }
+
+  @media (width >= 64rem) {
+    .weather-report {
+      @apply block;
+    }
+  }
+
+  /*
    * The table of contents is set as a margin index: each entry draws its own
    * segment of a hairline spine, so the nesting indents without ever breaking
    * the line, and the current entry is marked by its segment filling in.
@@ -176,7 +232,7 @@
    * the state survives grayscale.
    */
   .filter-chip {
-    @apply mono-label border-base-300 text-base-content/55 hover:border-base-content/40 hover:text-base-content inline-flex min-h-11 cursor-pointer items-center border px-3 transition-colors;
+    @apply label border-base-300 text-base-content/55 hover:border-base-content/40 hover:text-base-content inline-flex min-h-11 cursor-pointer items-center border px-3 transition-colors;
   }
 
   .filter-chip span::before {
@@ -216,6 +272,19 @@
    */
   .article-grid {
     @apply grid gap-8;
+
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /*
+   * Every child needs an explicit `min-width: 0`. A grid item defaults to
+   * `min-width: auto`, which floors its track at the content's min-content
+   * width, and a single long line inside a code block was enough to push this
+   * column to 634px on a 320px screen and drag the whole page sideways. With the
+   * floor removed the wide content scrolls inside its own box instead.
+   */
+  .article-grid > * {
+    min-width: 0;
   }
 
   .article-crumbs {
@@ -231,11 +300,11 @@
   }
 
   .article-meta dt {
-    @apply mono-label;
+    @apply label;
   }
 
   .article-meta dd {
-    @apply mono-data;
+    @apply data;
   }
 
   .article-toc {

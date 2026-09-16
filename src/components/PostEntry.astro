@@ -2,6 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 import CategoryBadge from "./CategoryBadge.astro";
 import FormattedDate from "./FormattedDate.astro";
+import Icon from "./Icon.astro";
 
 interface Props {
   post: CollectionEntry<"article"> | CollectionEntry<"vault">;
@@ -21,12 +22,10 @@ const href = `/${post.collection}/${post.data.slug}`;
 >
   <h2 class="post-row-title">{title}</h2>
   <p class="post-row-meta flex flex-wrap items-baseline gap-x-3 gap-y-1">
-    <span class="mono-data post-row-date">
+    <span class="data post-row-date">
       <FormattedDate date={pubDate} />
     </span>
     <CategoryBadge category={category} />
   </p>
-  <span class="post-row-mark font-mono text-sm" aria-hidden="true">
-    →
-  </span>
+  <Icon name="arrow" class="post-row-mark text-[1.125rem]" />
 </a>

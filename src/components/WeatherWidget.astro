@@ -19,10 +19,10 @@ const { location = "根室市" } = Astro.props;
 -->
 <section class="plate" data-weather aria-labelledby="weather-heading">
   <div class="plate-head">
-    <h2 id="weather-heading" class="mono-label">
+    <h2 id="weather-heading" class="label">
       天気
     </h2>
-    <span class="mono-data">{location}</span>
+    <span class="data">{location}</span>
   </div>
 
   <div class="plate-body">
@@ -35,7 +35,7 @@ const { location = "根室市" } = Astro.props;
         </div>
       </div>
 
-      <p class="mono-data" data-weather-error hidden></p>
+      <p class="data" data-weather-error hidden></p>
 
       <div data-weather-content hidden>
         <div class="flex items-start gap-4">
@@ -53,11 +53,11 @@ const { location = "根室市" } = Astro.props;
             >
               {WEATHER_PLACEHOLDER}
             </p>
-            <p class="mono-data mt-2" data-weather-feels-like hidden></p>
+            <p class="data mt-2" data-weather-feels-like hidden></p>
           </div>
         </div>
 
-        <p class="mono-data mt-5" hidden data-weather-updated>
+        <p class="data mt-5" hidden data-weather-updated>
           更新 <time data-weather-observed></time>
         </p>
       </div>
@@ -66,9 +66,11 @@ const { location = "根室市" } = Astro.props;
     </div>
   </div>
 
-  <div class="border-base-300 border-t px-5 py-4" data-weather-report hidden>
-    <h3 class="mono-label mb-3">詳細</h3>
-    <dl class="space-y-2" data-weather-details></dl>
+  <div class="weather-report">
+    <div class="border-base-300 border-t px-5 py-4" data-weather-report hidden>
+      <h3 class="label mb-3">詳細</h3>
+      <dl class="space-y-2" data-weather-details></dl>
+    </div>
   </div>
 
   <template data-weather-detail-template>
@@ -84,7 +86,7 @@ const { location = "根室市" } = Astro.props;
   <template data-weather-alert-template>
     <div class="border-warning/50 bg-warning/10 border p-3" role="status">
       <p class="text-sm font-semibold" data-alert-event></p>
-      <p class="mono-data mt-1" data-alert-time></p>
+      <p class="data mt-1" data-alert-time></p>
       <p
         class="text-base-content/70 mt-1 text-sm text-pretty whitespace-pre-line"
         data-alert-description
