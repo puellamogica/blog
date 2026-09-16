@@ -11,13 +11,9 @@ const items = buildToc(headings);
 ---
 
 {items.length > 0 && (
-  <aside class="hidden lg:block lg:w-56 lg:shrink-0">
-    <nav
-      class="toc lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)] lg:overflow-y-auto"
-      aria-labelledby="toc-heading"
-      data-toc
-    >
-      <h2 id="toc-heading" class="toc-title">
+  <aside class="article-toc">
+    <nav class="toc" aria-labelledby="toc-heading" data-toc>
+      <h2 id="toc-heading" class="mono-label mb-3">
         On this page
       </h2>
       <ul>

@@ -7,9 +7,11 @@ export default defineEcConfig({
   themes: ["catppuccin-macchiato", "catppuccin-latte"],
   useDarkModeMediaQuery: false,
   themeCssSelector: (theme) =>
-    `[data-theme="${theme.type === "dark" ? "aqua" : "acid"}"]`,
+    `[data-theme="${theme.type === "dark" ? "sumi" : "washi"}"]`,
   styleOverrides: {
     codeFontFamily: "var(--font-mplus-code), var(--font-emoji), monospace",
     uiFontFamily: "var(--font-mplus), var(--font-emoji), sans-serif",
+    // The code frame is square like everything else on the page.
+    borderRadius: "0px",
   },
 });

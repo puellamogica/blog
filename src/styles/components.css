@@ -1,48 +1,347 @@
 /*
+ * Labels and metadata share one voice: monospaced, small, tracked out, and held
+ * back from full contrast. They read as printed specimen data, and they keep
+ * numbers aligned without any extra work.
+ *
+ * These two are utilities rather than component classes because they are used
+ * both in markup and inside the component classes below.
+ */
+@utility mono-label {
+  @apply text-base-content/55 font-mono text-xs font-medium tracking-[0.16em] uppercase;
+}
+
+@utility mono-data {
+  @apply text-base-content/60 font-mono text-xs tracking-[0.02em];
+
+  font-variant-numeric: tabular-nums;
+}
+
+/*
  * Reusable class combinations that would otherwise be repeated across templates.
+ *
+ * The page is built from three primitives: a container, a hairline rule, and a
+ * monospaced label. Nothing here casts a shadow or rounds a corner; separation
+ * comes from space first and from a line only where space is too expensive.
  */
 @layer components {
   .site-container {
     @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
   }
 
+  .rule-ink {
+    @apply border-base-content/75 border-t;
+  }
+
+  /*
+   * Headings are set in Mincho. The scale is deliberately wider than the old
+   * one: the jump between a display title and a section title has to be felt,
+   * because size is doing less of the work than the change of typeface.
+   */
+  .display-title {
+    @apply font-serif text-3xl leading-tight font-bold tracking-tight text-balance sm:text-4xl lg:text-[2.75rem];
+  }
+
   .page-title {
-    @apply text-3xl font-bold tracking-tight text-balance sm:text-4xl;
+    @apply font-serif text-3xl leading-tight font-bold tracking-tight text-balance sm:text-4xl;
+  }
+
+  .section-title {
+    @apply font-serif text-xl font-bold tracking-tight sm:text-2xl;
   }
 
   .page-lead {
     @apply text-base-content/70 max-w-prose text-base text-pretty sm:text-lg;
   }
 
-  .section-title {
-    @apply text-2xl font-bold tracking-tight;
+  /*
+   * The index row. Every listing on the site is this one shape: the metadata
+   * takes a fixed column so dates line up down the page, the title takes the
+   * rest of the line, and a marker sits in the margin. No thumbnail, no box,
+   * no shadow — an index is scanned, not browsed.
+   *
+   * Below the first break the metadata drops under the title, so the title
+   * keeps the full measure instead of competing with it.
+   */
+  .post-row {
+    @apply border-base-300 grid items-baseline gap-x-6 gap-y-1 border-b py-5 transition-colors;
+
+    grid-template-columns: minmax(0, 1fr) 1.25rem;
+    grid-template-areas:
+      "title mark"
+      "meta  mark";
   }
 
-  .post-card {
-    @apply bg-base-200 transition-transform duration-200 ease-out hover:-translate-y-1 hover:shadow-md;
+  .post-row-meta {
+    grid-area: meta;
   }
 
-  .icon-button {
-    @apply btn btn-ghost btn-square;
+  .post-row-title {
+    @apply font-serif text-lg leading-snug font-bold tracking-tight text-balance transition-colors sm:text-xl;
+
+    grid-area: title;
   }
 
+  .post-row-mark {
+    @apply text-base-content/35 self-start transition-transform duration-200 ease-out;
+
+    grid-area: mark;
+  }
+
+  .post-row:hover {
+    @apply bg-base-200/70;
+  }
+
+  .post-row:hover .post-row-title,
+  .post-row:hover .post-row-mark {
+    @apply text-primary;
+  }
+
+  .post-row:hover .post-row-mark {
+    transform: translateX(3px);
+  }
+
+  @media (width >= 40rem) {
+    .post-row {
+      grid-template-columns: 15rem minmax(0, 1fr) 1.25rem;
+      grid-template-areas: "meta title mark";
+    }
+  }
+
+  /*
+   * A plate is the only bordered container left. It is used where content
+   * genuinely needs containment: a question to answer, a reading of the
+   * weather. Never nested inside another plate.
+   */
+  .plate {
+    @apply border-base-300 border;
+  }
+
+  .plate-head {
+    @apply border-base-300 flex items-baseline justify-between gap-4 border-b px-5 py-3;
+  }
+
+  .plate-body {
+    @apply px-5 py-5;
+  }
+
+  /*
+   * The table of contents is set as a margin index: each entry draws its own
+   * segment of a hairline spine, so the nesting indents without ever breaking
+   * the line, and the current entry is marked by its segment filling in.
+   */
   .toc {
     @apply text-sm;
   }
 
-  .toc-title {
-    @apply text-base-content/70 mb-2 pl-3 text-xs font-semibold tracking-wide uppercase;
-  }
-
   .toc-link {
-    @apply text-base-content/70 hover:border-base-content/40 hover:text-base-content border-base-300 block border-l py-1 pl-3 leading-snug transition-colors;
+    @apply text-base-content/60 hover:text-base-content border-base-content/40 -ms-px block border-s border-transparent py-1.5 ps-3 leading-snug transition-colors;
   }
 
   .toc-link-nested {
-    @apply pl-6;
+    @apply ps-6 text-[0.8125rem];
   }
 
   .toc-link[aria-current="location"] {
     @apply border-primary text-primary font-medium;
   }
+
+  /*
+   * A text control as the page's inline affordance: tracked monospace, an
+   * underline that is always present, and the accent arriving on hover.
+   */
+  .link-quiet {
+    @apply text-base-content/70 hover:text-primary decoration-base-300 hover:decoration-primary underline decoration-1 underline-offset-4 transition-colors;
+  }
+
+  /*
+   * A filter chip is a real radio inside its own label. The visible box is the
+   * label, so the whole chip is the hit area and it clears the touch minimum
+   * without a pointer-specific rule.
+   *
+   * Selection is carried by three things at once: the surface inverts to ink, a
+   * marker fills in, and the border strengthens. Hue does none of the work, so
+   * the state survives grayscale.
+   */
+  .filter-chip {
+    @apply mono-label border-base-300 text-base-content/55 hover:border-base-content/40 hover:text-base-content inline-flex min-h-11 cursor-pointer items-center border px-3 transition-colors;
+  }
+
+  .filter-chip span::before {
+    @apply me-2 inline-block align-middle content-[''];
+
+    width: 0.4rem;
+    height: 0.4rem;
+    border: 1px solid currentcolor;
+  }
+
+  .filter-chip:has(input:checked) {
+    @apply border-base-content bg-base-content text-base-100;
+  }
+
+  .filter-chip:has(input:checked) span::before {
+    background-color: currentcolor;
+  }
+
+  .filter-chip:has(input:focus-visible) {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  /*
+   * The article page. Reading order is breadcrumb, metadata, body, index — so
+   * that is the DOM order, and the grid moves the metadata out into the margin
+   * only once the viewport can spare the column for it.
+   *
+   *   narrow   crumb · metadata · body
+   *   lg       crumb                          | index
+   *            metadata · body
+   *   xl       crumb                          | index
+   *            metadata | body
+   *
+   * The breadcrumb lives inside the grid so it shares a left edge with the
+   * metadata column, rather than with the container the grid is centred in.
+   */
+  .article-grid {
+    @apply grid gap-8;
+  }
+
+  .article-crumbs {
+    grid-column: 1 / -1;
+  }
+
+  .article-meta {
+    @apply flex flex-wrap items-baseline gap-x-5 gap-y-2;
+  }
+
+  .article-meta > div {
+    @apply flex items-baseline gap-2;
+  }
+
+  .article-meta dt {
+    @apply mono-label;
+  }
+
+  .article-meta dd {
+    @apply mono-data;
+  }
+
+  .article-toc {
+    @apply hidden lg:block;
+  }
+
+  @media (width >= 64rem) {
+    .article-grid {
+      grid-template-columns: minmax(0, 65ch) 11rem;
+      column-gap: 3rem;
+      justify-content: center;
+      align-items: start;
+    }
+
+    .article-crumbs {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .article-meta {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .article-body {
+      grid-column: 1;
+      grid-row: 3;
+    }
+
+    .article-toc {
+      position: sticky;
+      top: 6rem;
+      grid-column: 2;
+      grid-row: 1 / span 3;
+      max-height: calc(100dvh - 7rem);
+      overflow-y: auto;
+    }
+  }
+
+  /* With room for a real margin, the metadata leaves the flow and hangs in it. */
+  @media (width >= 80rem) {
+    .article-grid {
+      grid-template-columns: 8rem minmax(0, 65ch) 11rem;
+      column-gap: 2.5rem;
+    }
+
+    .article-crumbs {
+      grid-column: 1 / -1;
+      grid-row: 1;
+    }
+
+    .article-meta {
+      position: sticky;
+      top: 6rem;
+      grid-column: 1;
+      grid-row: 2 / span 2;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.25rem;
+    }
+
+    .article-meta > div {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .article-body {
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    .article-toc {
+      grid-column: 3;
+      grid-row: 2 / span 2;
+    }
+  }
+
+  .nav-list {
+    @apply flex items-center gap-6;
+  }
+
+  .nav-link {
+    @apply text-base-content/60 hover:text-base-content relative py-1 transition-colors;
+  }
+
+  .nav-link[aria-current="page"] {
+    @apply text-base-content;
+  }
+
+  .nav-link[aria-current="page"]::after {
+    @apply bg-primary absolute start-0 -bottom-0.5 h-px w-full content-[''];
+  }
+
+  /*
+   * The wordmark. The date is set as a Mincho numeral and the domain suffix
+   * hangs off it in mono, like an imprint on a colophon.
+   */
+  .wordmark {
+    @apply font-serif text-lg font-bold tracking-tight;
+  }
+
+  .wordmark-suffix {
+    @apply text-base-content/45 font-mono text-[0.6875rem] font-normal tracking-[0.08em];
+  }
+}
+
+/*
+ * A disabled control still has to be legible. daisyUI drops the label to 20% of
+ * the text colour, which on paper composites to roughly 1.1:1 — and on the
+ * unlock form that is the state every visitor arrives to. The label is held at
+ * 70% instead, so the control reads as unavailable without becoming unreadable.
+ *
+ * Intentionally unlayered, the same way prose.css overrides the typography
+ * plugin: daisyUI emits its button rules into the `components` layer, and
+ * unlayered rules always win whatever order the two are applied in.
+ */
+.btn:disabled,
+.btn[disabled] {
+  background-color: var(--color-base-200);
+  border-color: var(--color-base-300);
+  color: color-mix(in oklab, var(--color-base-content) 70%, transparent);
 }

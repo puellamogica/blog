@@ -6,7 +6,7 @@ import Header from "../components/Header.astro";
 import HeaderLink from "../components/HeaderLink.astro";
 import Icon from "../components/Icon.astro";
 import SocialLinks from "../components/SocialLinks.astro";
-import { NAV_ITEMS, SITE_TITLE } from "../consts";
+import { NAV_ITEMS, SITE_WORDMARK } from "../consts";
 
 interface Props {
   title: string;
@@ -54,14 +54,14 @@ const drawerId = "site-drawer";
         ></label>
         <div
           id="drawer-panel"
-          class="flex min-h-full w-80 flex-col gap-4 bg-base-200 p-4"
+          class="bg-base-100 border-base-300 flex min-h-full w-72 max-w-[80vw] flex-col gap-2 border-e p-5"
         >
           <div class="flex items-center justify-between gap-2">
-            <a
-              href="/"
-              class="btn btn-ghost px-2 text-lg font-bold tracking-tight"
-            >
-              {SITE_TITLE}
+            <a href="/" class="wordmark">
+              {SITE_WORDMARK.name}
+              {SITE_WORDMARK.suffix && (
+                <span class="wordmark-suffix">.{SITE_WORDMARK.suffix}</span>
+              )}
             </a>
             <button
               id="drawer-close"
@@ -72,19 +72,21 @@ const drawerId = "site-drawer";
               <Icon name="close" class="size-5" />
             </button>
           </div>
-          <ul class="menu w-full grow gap-1 text-base">
+          <ul class="mt-6 grow">
             {NAV_ITEMS.map((item) => (
               <li>
-                <HeaderLink href={item.href} match={item.match}>
+                <HeaderLink
+                  href={item.href}
+                  match={item.match}
+                  class="block py-3 text-lg"
+                >
                   {item.label}
                 </HeaderLink>
               </li>
             ))}
           </ul>
-          <div class="border-t border-base-300 pt-4">
-            <p class="mb-2 px-1 text-xs font-semibold tracking-wide text-base-content/70 uppercase">
-              Elsewhere
-            </p>
+          <div class="border-base-300 border-t pt-4">
+            <p class="mono-label mb-3">Elsewhere</p>
             <SocialLinks />
           </div>
         </div>

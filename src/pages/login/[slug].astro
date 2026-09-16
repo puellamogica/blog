@@ -34,19 +34,22 @@ const siteKey = env.TURNSTILE_SITEKEY;
   description={post.data.description}
   noindex
 >
-  <section class="site-container py-12 sm:py-16">
-    <div class="mx-auto flex max-w-xl flex-col gap-6">
-      <header class="flex flex-col gap-2">
-        <h1 class="page-title">Locked post</h1>
-        <p class="page-lead">
-          Answer the question to read{" "}
-          <span class="font-medium">{post.data.title}</span>.
-        </p>
-      </header>
+  <section class="site-container py-14 sm:py-20">
+    <div class="mx-auto flex max-w-md flex-col">
+      <p class="mono-label">Locked post</p>
+      <h1 class="page-title mt-4">{post.data.title}</h1>
+      <p class="page-lead mt-4">Answer the question to read this post.</p>
 
       {questionHtml && (
-        <div class="prose card bg-base-200 p-6">
-          <Fragment set:html={questionHtml} />
+        <div class="plate mt-10">
+          <div class="plate-head">
+            <span class="mono-label">Question</span>
+          </div>
+          <div class="plate-body">
+            <div class="prose">
+              <Fragment set:html={questionHtml} />
+            </div>
+          </div>
         </div>
       )}
 
@@ -54,16 +57,16 @@ const siteKey = env.TURNSTILE_SITEKEY;
         id="unlock-form"
         method="POST"
         action="/api/auth"
-        class="flex flex-col gap-4"
+        class="mt-8 flex flex-col gap-5"
       >
         <input type="hidden" name="slug" value={slug} />
 
-        <label class="form-control w-full">
-          <span class="label-text mb-1">Password</span>
+        <label class="flex flex-col gap-2">
+          <span class="mono-label">Password</span>
           <input
             type="password"
             name="password"
-            class="input input-bordered w-full"
+            class="input input-bordered w-full text-base"
             autocomplete="current-password"
             minlength={PASSWORD_MIN_LENGTH}
             maxlength={PASSWORD_MAX_LENGTH}

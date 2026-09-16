@@ -1,0 +1,32 @@
+---
+import type { CollectionEntry } from "astro:content";
+import CategoryBadge from "./CategoryBadge.astro";
+import FormattedDate from "./FormattedDate.astro";
+
+interface Props {
+  post: CollectionEntry<"article"> | CollectionEntry<"vault">;
+}
+
+const { post } = Astro.props;
+const { title, pubDate, category } = post.data;
+const href = `/${post.collection}/${post.data.slug}`;
+---
+
+<a
+  href={href}
+  class="post-row"
+  data-post
+  data-category={category}
+  data-year={pubDate.getFullYear()}
+>
+  <h2 class="post-row-title">{title}</h2>
+  <p class="post-row-meta flex flex-wrap items-baseline gap-x-3 gap-y-1">
+    <span class="mono-data">
+      <FormattedDate date={pubDate} />
+    </span>
+    <CategoryBadge category={category} />
+  </p>
+  <span class="post-row-mark font-mono text-sm" aria-hidden="true">
+    →
+  </span>
+</a>

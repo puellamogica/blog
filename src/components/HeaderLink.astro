@@ -20,7 +20,7 @@ const isActive = (match ?? [href]).some((prefix) =>
 
 <a
   href={href}
-  class:list={[className, { "menu-active": isActive }]}
+  class:list={[className, "nav-link"]}
   aria-current={isActive ? "page" : undefined}
   {...props}
 >

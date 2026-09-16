@@ -1,6 +1,8 @@
 @theme inline {
   --font-sans:
     var(--font-mplus), var(--font-emoji), ui-sans-serif, system-ui, sans-serif;
+  --font-serif:
+    var(--font-shippori), var(--font-emoji), ui-serif, georgia, serif;
   --font-mono:
     var(--font-mplus-code), var(--font-emoji), ui-monospace, monospace;
   --font-icon: var(--font-symbol);
@@ -9,10 +11,23 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    text-size-adjust: 100%;
   }
 
   body {
     @apply font-sans antialiased;
+  }
+
+  /*
+   * The page speaks in two voices. Headings are set in a Mincho face, the
+   * voice of a printed page; body copy stays in the humanist sans, which is
+   * easier to read at length on screen. The contrast between the two is the
+   * hierarchy — size and weight do less work here than the change of voice.
+   */
+  :where(h1, h2, h3, h4) {
+    @apply font-serif;
+
+    letter-spacing: 0.01em;
   }
 
   code,
@@ -22,9 +37,32 @@
     @apply font-mono;
   }
 
+  ::selection {
+    background-color: var(--color-primary);
+    color: var(--color-primary-content);
+  }
+
+  /*
+   * Every control gets the same visible ring. It is drawn with the accent so
+   * it survives both themes, and offset so it never touches the control's own
+   * hairline border.
+   */
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
     }
   }
 }

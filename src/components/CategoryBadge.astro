@@ -3,10 +3,14 @@ import { categories, type CategoryKey } from "../data/categories";
 
 interface Props {
   category: CategoryKey;
+  class?: string;
 }
 
-const { category } = Astro.props;
-const { name, gradient } = categories[category];
+const { category, class: className } = Astro.props;
+const { name, dot } = categories[category];
 ---
 
-<span class={`badge border-0 text-white ${gradient}`}>{name}</span>
+<span class:list={["inline-flex items-center gap-2", className]}>
+  <span class:list={["size-1.5 shrink-0", dot]} aria-hidden="true"></span>
+  <span class="mono-label">{name}</span>
+</span>

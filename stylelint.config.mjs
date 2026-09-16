@@ -6,7 +6,7 @@ export default {
     "at-rule-no-unknown": [
       true,
       {
-        ignoreAtRules: ["theme", "plugin"],
+        ignoreAtRules: ["theme", "plugin", "utility"],
       },
     ],
     "at-rule-prelude-no-invalid": [true, { ignoreAtRules: ["apply"] }],

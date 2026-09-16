@@ -16,7 +16,92 @@
 @plugin "@tailwindcss/typography";
 
 @plugin "daisyui" {
-  themes:
-    acid --default,
-    aqua --prefersdark;
+  themes: false;
+}
+
+/*
+ * 和紙 — the light theme. Paper stock, sumi ink, and one vermilion seal.
+ *
+ * Chroma stays low on the neutrals and carries a trace of warm hue so the
+ * surfaces read as paper rather than as empty gray. The accent is 朱, the
+ * colour of a carved seal, and it is the only saturated thing on the page.
+ */
+@plugin "daisyui/theme" {
+  name: "washi";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+
+  --color-base-100: oklch(97.3% 0.006 85deg);
+  --color-base-200: oklch(95.1% 0.008 85deg);
+  --color-base-300: oklch(91.1% 0.01 84deg);
+  --color-base-content: oklch(23.5% 0.012 65deg);
+  --color-primary: oklch(46.8% 0.15 36deg);
+  --color-primary-content: oklch(97.5% 0.008 85deg);
+  --color-secondary: oklch(44% 0.055 245deg);
+  --color-secondary-content: oklch(97% 0.008 85deg);
+  --color-accent: oklch(63% 0.1 76deg);
+  --color-accent-content: oklch(21% 0.022 70deg);
+  --color-neutral: oklch(30% 0.014 70deg);
+  --color-neutral-content: oklch(96% 0.008 85deg);
+  --color-info: oklch(44% 0.09 245deg);
+  --color-info-content: oklch(97% 0.008 245deg);
+  --color-success: oklch(44% 0.085 155deg);
+  --color-success-content: oklch(97% 0.008 155deg);
+  --color-warning: oklch(64% 0.115 76deg);
+  --color-warning-content: oklch(21% 0.022 70deg);
+  --color-error: oklch(41% 0.15 14deg);
+  --color-error-content: oklch(97.5% 0.008 14deg);
+  --radius-selector: 0rem;
+  --radius-field: 0rem;
+  --radius-box: 0rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+/*
+ * 墨 — the dark theme. Ink ground, paper lettering, the same seal.
+ *
+ * This is its own composition, not the light theme inverted: the accent loses
+ * chroma and gains lightness so it reads as printed on ink rather than glowing
+ * out of it, and content colours flip to ink because the accent is now the
+ * lighter surface.
+ */
+@plugin "daisyui/theme" {
+  name: "sumi";
+  default: false;
+  prefersdark: true;
+  color-scheme: dark;
+
+  --color-base-100: oklch(18.5% 0.006 70deg);
+  --color-base-200: oklch(22.8% 0.008 70deg);
+  --color-base-300: oklch(30.5% 0.01 70deg);
+  --color-base-content: oklch(92.5% 0.008 85deg);
+  --color-primary: oklch(68% 0.14 40deg);
+  --color-primary-content: oklch(20% 0.022 40deg);
+  --color-secondary: oklch(63% 0.08 245deg);
+  --color-secondary-content: oklch(19% 0.02 245deg);
+  --color-accent: oklch(73% 0.095 78deg);
+  --color-accent-content: oklch(20% 0.022 78deg);
+  --color-neutral: oklch(32% 0.01 70deg);
+  --color-neutral-content: oklch(92.5% 0.008 85deg);
+  --color-info: oklch(70% 0.095 245deg);
+  --color-info-content: oklch(19% 0.02 245deg);
+  --color-success: oklch(70% 0.095 155deg);
+  --color-success-content: oklch(19% 0.02 155deg);
+  --color-warning: oklch(78% 0.105 80deg);
+  --color-warning-content: oklch(20% 0.022 80deg);
+  --color-error: oklch(66% 0.155 18deg);
+  --color-error-content: oklch(19% 0.024 18deg);
+  --radius-selector: 0rem;
+  --radius-field: 0rem;
+  --radius-box: 0rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
 }

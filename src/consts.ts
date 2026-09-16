@@ -1,8 +1,16 @@
 // Place any global data in this file.
 // You can import this data from anywhere in your site by using the `import` keyword.
 
-export const SITE_TITLE = "Astro Blog";
-export const SITE_DESCRIPTION = "Welcome to my website!";
+export const SITE_TITLE = "20190716.xyz";
+export const SITE_DESCRIPTION =
+  "A personal blog about building things on the web.";
+
+/*
+ * The wordmark sets the name and the top-level domain in different faces, so
+ * both halves are derived from the one source rather than repeated here.
+ */
+const [siteName = SITE_TITLE, ...siteTld] = SITE_TITLE.split(".");
+export const SITE_WORDMARK = { name: siteName, suffix: siteTld.join(".") };
 
 export const DEFAULT_VAULT_QUESTION = "What is the password?";
 

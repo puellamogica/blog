@@ -1,54 +1,86 @@
 ---
-import PostCard from "../components/PostCard.astro";
+import { Image } from "astro:assets";
+import CategoryBadge from "../components/CategoryBadge.astro";
+import FormattedDate from "../components/FormattedDate.astro";
+import PostEntry from "../components/PostEntry.astro";
 import WeatherWidget from "../components/WeatherWidget.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 import { byPinnedThenDate, getArticles } from "../utils/posts";
 
-const posts = (await getArticles()).sort(byPinnedThenDate).slice(0, 3);
+const posts = (await getArticles()).sort(byPinnedThenDate);
+const [lead, ...rest] = posts;
+const index = rest.slice(0, 5);
+const since =
+  posts.length === 0
+    ? undefined
+    : Math.min(...posts.map((post) => post.data.pubDate.getFullYear()));
 ---
 
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
-  <section class="hero bg-base-200 min-h-[70vh]">
-    <div class="hero-content text-center">
-      <div class="max-w-2xl">
-        <p class="badge badge-primary mb-4">Astro · Tailwind CSS · daisyUI</p>
-        <h1 class="text-4xl font-extrabold tracking-tight text-balance sm:text-6xl">
-          🧑🚀 Hello, Astronaut!
-        </h1>
-        <p class="py-6 text-base text-pretty text-base-content/70 sm:text-lg">
-          {SITE_DESCRIPTION}
-        </p>
-        <div class="flex flex-wrap justify-center gap-2">
-          <a href="/posts" class="btn btn-primary">
-            Read the posts
-          </a>
-          <a href="/about" class="btn btn-ghost">
-            About me
-          </a>
-        </div>
-      </div>
-    </div>
+  <section class="site-container pt-14 pb-12 sm:pt-20 sm:pb-16">
+    <h1 class="display-title max-w-3xl text-balance">{SITE_DESCRIPTION}</h1>
+    <p class="mono-data mt-8">
+      {posts.length} posts{since !== undefined && <> since {since}</>}
+    </p>
   </section>
 
-  <WeatherWidget />
+  {lead && (
+    <section class="site-container pb-16 sm:pb-20">
+      <div class="rule-ink"></div>
+      <p class="mono-label mt-4">Latest</p>
 
-  <section class="site-container py-16">
-    <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+      <article class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:items-start lg:gap-12">
+        <div>
+          <div class="flex flex-wrap items-baseline gap-x-4 gap-y-2">
+            <CategoryBadge category={lead.data.category} />
+            <span class="mono-data">
+              <FormattedDate date={lead.data.pubDate} />
+            </span>
+          </div>
+          <h2 class="display-title mt-5">
+            <a
+              href={`/${lead.collection}/${lead.data.slug}`}
+              class="hover:text-primary transition-colors"
+            >
+              {lead.data.title}
+            </a>
+          </h2>
+          <p class="page-lead mt-5">{lead.data.description}</p>
+        </div>
+
+        {lead.data.heroImage && (
+          <figure class="border-base-300 border">
+            <Image
+              width={720}
+              height={480}
+              src={lead.data.heroImage}
+              alt=""
+              class="h-full w-full object-cover"
+            />
+          </figure>
+        )}
+      </article>
+    </section>
+  )}
+
+  <section class="site-container pb-20">
+    <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-16">
       <div>
-        <h2 class="section-title">Latest posts</h2>
-        <p class="text-sm text-base-content/70">
-          The three most recent articles.
-        </p>
+        <div class="flex items-baseline justify-between gap-4">
+          <h2 class="section-title">Index</h2>
+          <a href="/posts" class="link-quiet text-sm">
+            All posts →
+          </a>
+        </div>
+        <div class="border-base-300 mt-6 border-t">
+          {index.map((post) => (
+            <PostEntry post={post} />
+          ))}
+        </div>
       </div>
-      <a href="/posts" class="link text-sm">
-        All posts →
-      </a>
-    </div>
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {posts.map((post) => (
-        <PostCard post={post} />
-      ))}
+
+      <WeatherWidget />
     </div>
   </section>
 </BaseLayout>
