@@ -11,6 +11,13 @@ export const SITE_DESCRIPTION = "An astro framework blog theme";
 const [siteName = SITE_TITLE, ...siteTld] = SITE_TITLE.split(".");
 export const SITE_WORDMARK = { name: siteName, suffix: siteTld.join(".") };
 
+/*
+ * The loader animation, served from the same object storage as the weather
+ * snapshot so the site keeps one origin for its runtime assets.
+ */
+export const LOADING_ANIMATION_URL =
+  "https://object.amia.work/assets/loading.json";
+
 export const DEFAULT_VAULT_QUESTION = "パスワードは何ですか？";
 
 export const VAULT_ARGON2_OPTIONS = {
@@ -20,7 +27,7 @@ export const VAULT_ARGON2_OPTIONS = {
 } as const;
 
 export const NAV_ITEMS = [
-  { href: "/", label: "ホーム", match: ["/"] },
-  { href: "/posts", label: "記事", match: ["/posts", "/article"] },
-  { href: "/about", label: "プロフィール", match: ["/about"] },
+  { href: "/", label: "Home", match: ["/"] },
+  { href: "/posts", label: "Posts", match: ["/posts", "/article"] },
+  { href: "/about", label: "About", match: ["/about"] },
 ] as const;
