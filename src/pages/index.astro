@@ -7,6 +7,11 @@ import WeatherWidget from "../components/WeatherWidget.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 import { byPinnedThenDate, getArticles } from "../utils/posts";
+/*
+ * The masthead image. Swap this one import for the site's own main visual; it is
+ * rendered through the image pipeline, so any wide source works.
+ */
+import MastheadImage from "../assets/mizuki-gallery/003.webp";
 
 const posts = (await getArticles()).sort(byPinnedThenDate);
 const [lead, ...rest] = posts;
@@ -18,11 +23,48 @@ const since =
 ---
 
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
-  <section class="site-container pt-14 pb-12 sm:pt-20 sm:pb-16">
-    <h1 class="display-title max-w-3xl text-balance">{SITE_DESCRIPTION}</h1>
-    <p class="data mt-8">
-      {posts.length} 件{since !== undefined && <>（{since}年以降）</>}
-    </p>
+  <!--
+    The masthead.
+
+    Below `lg` this is a plain figure: the image, then the description under it.
+    From `lg` the three children stack into one daisyUI hero cell and the
+    description moves onto the image itself.
+
+    The scrim is deliberately not a theme token. The picture does not change when
+    the theme does, so a token that flips from paper to ink would leave dark text
+    on a dark picture in one of the two themes. A fixed dark scrim under fixed
+    light text is the only version that reads in both.
+
+    It is weighted towards the bottom, where the text sits, so the top of the
+    artwork stays clean, and it carries the same bottom mask as the image so the
+    two fade into the page together.
+  -->
+  <section class="lg:hero bg-base-100">
+    <Image
+      src={MastheadImage}
+      alt=""
+      widths={[640, 960, 1280, 1920]}
+      sizes="100vw"
+      class="aspect-[16/10] w-full object-cover lg:aspect-auto lg:h-[clamp(20rem,42vw,30rem)] lg:mask-b-from-92%"
+    />
+    <div class="lg:hero-overlay bg-linear-to-t from-black/92 via-black/72 to-transparent lg:mask-b-from-92%"></div>
+    <div class="lg:hero-content lg:max-w-none lg:items-end lg:justify-self-stretch lg:self-stretch lg:p-0">
+      <!--
+        daisyUI's hero centres its items, so the content box has to be stretched
+        back out; and the container's own `mx-auto` has to come off, because as a
+        flex item its auto margins absorb the free space first. Between them the
+        text would otherwise shrink-wrap and sit centred instead of holding the
+        page's left edge the way every other section does.
+      -->
+      <div class="site-container flex-1 pt-10 pb-10 lg:mx-0 lg:pt-0 lg:pb-12">
+        <h1 class="display-title max-w-3xl text-balance lg:text-white">
+          {SITE_DESCRIPTION}
+        </h1>
+        <p class="data mt-8 lg:text-white/80">
+          {posts.length} 件{since !== undefined && <>（{since}年以降）</>}
+        </p>
+      </div>
+    </div>
   </section>
 
   {lead && (
