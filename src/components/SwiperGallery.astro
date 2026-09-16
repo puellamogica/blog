@@ -10,14 +10,21 @@ interface Props {
 const { images, label = "Image gallery" } = Astro.props;
 ---
 
-<!-- Plain images in a container; the carousel is built by `src/scripts/swiper-gallery.ts`. -->
+<!--
+  Plain images in a container; the carousel is built by
+  `src/scripts/swiper-gallery.ts`.
+
+  It shows one slide at a time and spans the viewport, so the candidate widths
+  are screen widths rather than a column's. The drawings are all wider than
+  1920, so nothing here is ever upscaled.
+-->
 <div class="swiper-gallery" aria-label={label}>
   {images.map((image) => (
     <Image
       src={image.src}
       alt={image.alt}
-      widths={[480, 768, 960]}
-      sizes="(min-width: 768px) 65ch, 100vw"
+      widths={[480, 768, 1280, 1920]}
+      sizes="100vw"
       loading="lazy"
       decoding="async"
     />

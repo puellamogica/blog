@@ -326,15 +326,12 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
     </section>
 
     <!--
-      The character cards, in the card's column so the page keeps one spine
-      below the artwork.
+      The character cards, at the full width of the art above them rather than
+      on the card's measure. Outside the container, so a card runs edge to edge
+      the way the band behind it does.
     -->
-    <section class="site-container pb-20">
-      <div class="md:grid md:grid-cols-2 md:gap-12">
-        <div class="md:col-start-2">
-          <MizukiGallery />
-        </div>
-      </div>
+    <section class="pb-20">
+      <MizukiGallery />
     </section>
   </div>
 </BaseLayout>
