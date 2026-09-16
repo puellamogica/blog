@@ -11,7 +11,8 @@ import PastWorldPc from "../assets/about/past-background-pc.webp";
 import PastWorldPhone from "../assets/about/past-background.webp";
 import PastFigurePc from "../assets/about/past-foreground-pc.webp";
 import PastFigurePhone from "../assets/about/past-foreground.webp";
-import PosterImage from "../assets/mizuki-gallery/013.webp";
+import NowPoster from "../assets/mizuki-gallery/013.webp";
+import PastPoster from "../assets/mizuki-gallery/003.webp";
 import { SITE_TITLE } from "../consts";
 import {
   defaultEra,
@@ -19,7 +20,7 @@ import {
   eraKeys,
   profile,
   rows,
-  video,
+  videoTitle,
   type Era,
 } from "../data/profile";
 
@@ -29,9 +30,10 @@ import {
  * frame and once as a wide one, which is why the band swaps its art direction
  * at `md` the same way the home masthead does.
  *
- * The figure files are byte-identical for now, so the world is the only thing
- * that visibly changes between eras. They are wired per era anyway, because
- * that is what the file names promise and it is one edit to make them differ.
+ * Each layer answers to its own era. The two figure files are byte-identical
+ * today, so the world is the only layer that visibly changes; the wiring is
+ * per era all the same, so dropping a different drawing into
+ * `past-foreground.webp` is the whole of the work.
  */
 type Layer = { phone: ImageMetadata; pc: ImageMetadata };
 
@@ -85,15 +87,30 @@ const layers = await Promise.all(
   })),
 );
 
-// Cropped to the player's own ratio, so the placeholder poster fills the frame
-// instead of sitting in it with bars down both sides.
-const poster = await getImage({
-  src: PosterImage,
-  width: 1280,
-  height: 720,
-  fit: "cover",
-  format: "webp",
-});
+/*
+ * A poster per era, cropped to the player's own ratio so the frame fills it
+ * rather than sitting in it with bars down both sides.
+ *
+ * These are stand-ins standing in for stand-ins: the films themselves are
+ * placeholders too, and a film that 404s shows nothing but its poster, so a
+ * shared poster would make the toggle look like it had not done anything. Each
+ * era gets a frame of its own until the real stills arrive.
+ */
+const poster = async (src: ImageMetadata) =>
+  (
+    await getImage({
+      src,
+      width: 1280,
+      height: 720,
+      fit: "cover",
+      format: "webp",
+    })
+  ).src;
+
+const posters = {
+  past: await poster(PastPoster),
+  now: await poster(NowPoster),
+} satisfies Record<Era, string>;
 
 // Two columns per pair, so the widest row decides the grid and the data can
 // grow a pair without the markup following it.
@@ -105,13 +122,6 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
   description={`${profile.unit}の${profile.role}。`}
   image={stage[defaultEra].world.phone}
 >
-  <header class="site-container pt-14 pb-6 sm:pt-20">
-    <h1 class="page-title">プロフィール</h1>
-    <p class="data mt-4">
-      {profile.unit} ／ {profile.role}
-    </p>
-  </header>
-
   <!--
     The era toggle, and the two views it switches between.
 
@@ -126,17 +136,21 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
     The panels are not daisyUI's `.tab-content`. Those have to be the next
     sibling of the tab that shows them, which would force the bar and everything
     it controls into one box. Keying the panels off the radios instead, in
-    components.css, is what lets the toggle sit in the character band and still
-    drive the world behind it and the sheet below it.
+    components.css, is what lets the toggle sit in the character band and drive
+    the world behind it, the sheet, the prose and the film all at once.
 
     Both eras run the same rows through the same map, so only the values that
     actually differ change, and the two views cannot drift apart.
   -->
   <div class="era">
     <!--
-      The character band. Four layers, three of which only exist to be swapped:
-      the era's world behind, the era's figure in front of it, both authored
-      once for the phone and once for the wide screen.
+      The character band, and the top of the page: the reference page opens on
+      the character rather than on a heading, so there is no title block above
+      this and the art starts at the very top.
+
+      Four layers, three of which only exist to be swapped: the era's world
+      behind, the era's figure in front of it, both authored once for the phone
+      and once for the wide screen.
 
       The art is absolute inside the band and the reading content sits over it,
       which is the reference page's arrangement. `--stage-art` is the height the
@@ -203,6 +217,13 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
             rather than on the artwork: the light pills have no contrast against
             a high-key illustration. The left column is left empty on purpose,
             because that is where the figure is.
+
+            The name is the page's heading. With no title block above the band,
+            this is the only thing here that names the page, and it is also what
+            the page is about.
+
+            The quote carries the era too, so it is rendered once per era and
+            the same rule that swaps the art swaps it.
           -->
           <div class="card bg-base-100 md:col-start-2">
             <div class="card-body">
@@ -221,10 +242,17 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
               </div>
 
               <p class="label mt-2">{profile.romanised}</p>
-              <h2 class="display-title mt-3">{profile.name}</h2>
-              <p class="data mt-3">CV. {profile.voice}</p>
+              <h1 class="display-title mt-3">{profile.name}</h1>
+              <p class="data mt-3">
+                {profile.unit} ／ {profile.role}
+              </p>
+              <p class="data mt-1">CV. {profile.voice}</p>
 
-              <p class="page-lead mt-6">{profile.quote}</p>
+              {eraKeys.map((era) => (
+                <p data-era={era} class="page-lead mt-6">
+                  {eras[era].quote}
+                </p>
+              ))}
             </div>
           </div>
         </div>
@@ -248,80 +276,97 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
       The columns are pinned to even quarters so that a pair always owns half the
       row. Left to itself the browser sizes them by content and no two pairs line
       up, which is the whole point of the layout.
+
+      Everything below the band sits on the reading measure, the same 65ch the
+      article layout sets its text column to, so the sheet, the prose and the
+      film line up with each other and with the rest of the site.
     -->
     {eraKeys.map((era) => (
-      <div data-era={era} class="site-container pt-14 sm:pt-16">
-        <h2 class="section-title">PROFILE</h2>
+      <div data-era={era}>
+        <section class="site-container pt-14 sm:pt-16">
+          <div class="reading-measure">
+            <h2 class="section-title">PROFILE</h2>
 
-        <table class="table mt-6">
-          <colgroup>
-            {Array.from({ length: columns }).map(() => (
-              <col class="w-1/4" />
-            ))}
-          </colgroup>
-          <tbody>
-            {rows.map((row) => (
-              <tr>
-                {row.map((cell) => (
-                  <>
-                    <th scope="row">
-                      <span class="label">{cell.label}</span>
-                    </th>
-                    <td
-                      class="text-right"
-                      colspan={row.length === 1 ? columns - 1 : undefined}
-                    >
-                      <span class="data">
-                        {typeof cell.value === "string"
-                          ? cell.value
-                          : cell.value[era]}
-                      </span>
-                    </td>
-                  </>
+            <table class="table mt-6">
+              <colgroup>
+                {Array.from({ length: columns }).map(() => (
+                  <col class="w-1/4" />
                 ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+              </colgroup>
+              <tbody>
+                {rows.map((row) => (
+                  <tr>
+                    {row.map((cell) => (
+                      <>
+                        <th scope="row">
+                          <span class="label">{cell.label}</span>
+                        </th>
+                        <td
+                          class="text-right"
+                          colspan={row.length === 1 ? columns - 1 : undefined}
+                        >
+                          <span class="data">
+                            {typeof cell.value === "string"
+                              ? cell.value
+                              : cell.value[era]}
+                          </span>
+                        </td>
+                      </>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
-        <h2 class="section-title mt-14">紹介</h2>
+            <h2 class="section-title mt-14">紹介</h2>
+
+            <!--
+              Running text keeps the site's prose styles, which carry the
+              Japanese leading the rest of the site is set with. It no longer
+              sets its own width: the measure above is the one it reads at.
+            -->
+            <div class="prose mt-6">
+              {eras[era].description.map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+            </div>
+          </div>
+        </section>
 
         <!--
-            Running text keeps the site's prose styles, which carry the Japanese
-            leading the rest of the site is set with.
-          -->
-        <div class="prose mt-6 max-w-[65ch]">
-          {eras[era].description.map((paragraph) => (
-            <p>{paragraph}</p>
-          ))}
-        </div>
+          The film, per era: the source and the poster both move with the
+          toggle. `preload="metadata"` keeps a video nobody has pressed play on
+          from costing a full download, and the poster means the player reads as
+          a frame from the film rather than as a black hole.
+        -->
+        <section class="site-container pt-14 sm:pt-16">
+          <div class="reading-measure">
+            <h2 class="section-title">{videoTitle}</h2>
+
+            <figure class="border-base-300 mt-6 border" data-media>
+              <video
+                class="aspect-video h-auto w-full"
+                controls
+                preload="metadata"
+                poster={posters[era]}
+              >
+                <source src={eras[era].video.src} />
+              </video>
+            </figure>
+          </div>
+        </section>
       </div>
     ))}
   </div>
 
   <!--
-    The source is a placeholder until the real file lands, and it is set in one
-    place, in src/data/profile.ts. `preload="metadata"` keeps a video nobody has
-    pressed play on from costing a full download, and the poster means the
-    player reads as a frame from the film rather than as a black hole.
+    The character cards, on the same measure as everything above it. Its slides
+    are fluid, so they follow the column rather than fixing their own width.
   -->
   <section class="site-container py-14 sm:py-16">
-    <h2 class="section-title">{video.title}</h2>
-
-    <figure class="border-base-300 mt-6 border" data-media>
-      <video
-        class="aspect-video h-auto w-full"
-        controls
-        preload="metadata"
-        poster={poster.src}
-      >
-        <source src={video.src} />
-      </video>
-    </figure>
-  </section>
-
-  <section class="site-container pb-20">
-    <MizukiGallery />
+    <div class="reading-measure">
+      <MizukiGallery />
+    </div>
   </section>
 </BaseLayout>
 
@@ -330,7 +375,7 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
    * The same media pattern the article layout uses: the markup is a plain
    * <video controls>, so it plays with scripting off, and Plyr is fetched only
    * on a page that actually has one. The icons are served from this site rather
-   * than Plyr's default CDN.
+   * than from Plyr's default CDN.
    */
   const media =
     document.querySelectorAll<HTMLMediaElement>("[data-media] video");
