@@ -26,7 +26,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.3.2",
     "astro-expressive-code": "^0.44.2",
-    "daisyui": "^5.7.37",
+    "daisyui": "^5.7.38",
     "katex": "^0.18.7",
     "lottie-web": "^5.13.0",
     "photoswipe": "^5.4.4",
