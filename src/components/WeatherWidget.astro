@@ -10,116 +10,87 @@ const { location = "根室市" } = Astro.props;
 ---
 
 <!--
-  The snapshot is crawled every ten minutes and served from object storage, so
-  it is filled in by `enhanceWeatherWidget` rather than at build time. The
-  readings that fit on a phone are always visible; the rest of the snapshot is
-  revealed once the card is wide enough for a grid.
+  A reading, not a dashboard. It sits in the margin of the index as a bordered
+  plate, so it is only ever as wide as its column and never competes with the
+  writing. The essentials come first; the full set of readings follows the hairline
+  for the reader who wants them. The snapshot is crawled every ten minutes and
+  served from object storage, so it is filled in by `enhanceWeatherWidget`
+  rather than at build time.
 -->
-<section class="site-container pt-16" aria-labelledby="weather-heading">
-  <div class="card bg-base-200 border-base-300 border" data-weather>
-    <div class="card-body gap-6">
-      <div>
-        <h2 id="weather-heading" class="section-title">
-          Weather
-        </h2>
-        <p class="text-sm text-base-content/70">
-          Current conditions in {location}.
-        </p>
+<section class="plate" data-weather aria-labelledby="weather-heading">
+  <div class="plate-head">
+    <h2 id="weather-heading" class="mono-label">
+      天気
+    </h2>
+    <span class="mono-data">{location}</span>
+  </div>
+
+  <div class="plate-body">
+    <div aria-live="polite">
+      <div class="flex items-center gap-4" data-weather-loading>
+        <div class="skeleton size-10 shrink-0"></div>
+        <div class="w-full space-y-2">
+          <div class="skeleton h-7 w-24"></div>
+          <div class="skeleton h-3 w-32"></div>
+        </div>
       </div>
 
-      <div aria-live="polite">
-        <div class="flex items-center gap-6" data-weather-loading>
-          <div class="skeleton size-16 shrink-0 rounded-full sm:size-24"></div>
-          <div class="w-full space-y-3">
-            <div class="skeleton h-10 w-32 rounded-field"></div>
-            <div class="skeleton h-4 w-48 rounded-field"></div>
-          </div>
-        </div>
+      <p class="mono-data" data-weather-error hidden></p>
 
-        <p class="text-sm text-base-content/70" data-weather-error hidden></p>
-
-        <div
-          class="flex flex-wrap items-center gap-6"
-          data-weather-content
-          hidden
-        >
+      <div data-weather-content hidden>
+        <div class="flex items-start gap-4">
           <div
-            class="flex size-16 shrink-0 items-center justify-center sm:size-24"
+            class="flex size-10 shrink-0 items-center justify-center"
             data-weather-icon
           ></div>
-          <div class="me-auto">
-            <p class="text-4xl font-bold tracking-tight sm:text-5xl">
+          <div class="min-w-0">
+            <p class="text-3xl leading-none font-bold tracking-tight">
               <span data-weather-temp>{WEATHER_PLACEHOLDER}</span>
             </p>
             <p
-              class="text-base text-pretty text-base-content/70"
+              class="text-base-content/70 mt-2 text-sm text-pretty"
               data-weather-description
             >
               {WEATHER_PLACEHOLDER}
             </p>
-            <p
-              class="text-sm text-base-content/70"
-              data-weather-feels-like
-              hidden
-            ></p>
-          </div>
-          <!--
-            A `div` rather than a `p`: daisyUI gives every paragraph in a
-            `card-body` `flex-grow: 1`, which would swallow the space the
-            `me-auto` above uses to push this reading to the far edge.
-          -->
-          <div
-            class="self-start text-xs text-base-content/70"
-            hidden
-            data-weather-updated
-          >
-            Updated <time data-weather-observed></time>
+            <p class="mono-data mt-2" data-weather-feels-like hidden></p>
           </div>
         </div>
 
-        <div class="mt-6 space-y-2" data-weather-alerts hidden></div>
+        <p class="mono-data mt-5" hidden data-weather-updated>
+          更新 <time data-weather-observed></time>
+        </p>
       </div>
 
-      <!--
-        The `hidden` class gates the section on width and the `hidden`
-        attribute on the snapshot having readings to show; the script drops the
-        attribute once there are rows.
-      -->
-      <div
-        class="border-base-300 hidden border-t pt-6 lg:block"
-        data-weather-report
-        hidden
-      >
-        <h3 class="mb-3 text-xs font-semibold tracking-wide text-base-content/70 uppercase">
-          Full report
-        </h3>
-        <dl
-          class="grid gap-x-8 gap-y-3 lg:grid-cols-3"
-          data-weather-details
-        ></dl>
-      </div>
-
-      <template data-weather-detail-template>
-        <div class="flex items-baseline justify-between gap-3 text-sm">
-          <dt class="text-base-content/70"></dt>
-          <dd class="text-right font-medium"></dd>
-        </div>
-      </template>
-
-      <template data-weather-alert-template>
-        <div class="alert alert-warning items-start" role="status">
-          <div>
-            <p class="font-semibold" data-alert-event></p>
-            <p class="text-xs" data-alert-time></p>
-            <p
-              class="text-sm text-pretty whitespace-pre-line"
-              data-alert-description
-            ></p>
-          </div>
-        </div>
-      </template>
+      <div class="mt-5 space-y-3" data-weather-alerts hidden></div>
     </div>
   </div>
+
+  <div class="border-base-300 border-t px-5 py-4" data-weather-report hidden>
+    <h3 class="mono-label mb-3">詳細</h3>
+    <dl class="space-y-2" data-weather-details></dl>
+  </div>
+
+  <template data-weather-detail-template>
+    <div class="flex items-baseline justify-between gap-4 text-sm">
+      <dt class="text-base-content/60"></dt>
+      <dd
+        class="text-right font-medium"
+        style="font-variant-numeric: tabular-nums"
+      ></dd>
+    </div>
+  </template>
+
+  <template data-weather-alert-template>
+    <div class="border-warning/50 bg-warning/10 border p-3" role="status">
+      <p class="text-sm font-semibold" data-alert-event></p>
+      <p class="mono-data mt-1" data-alert-time></p>
+      <p
+        class="text-base-content/70 mt-1 text-sm text-pretty whitespace-pre-line"
+        data-alert-description
+      ></p>
+    </div>
+  </template>
 </section>
 
 <script>

@@ -8,9 +8,10 @@ export const mdastReadingTimePlugin = defineMdastPlugin({
     const readingTime = getReadingTime(textOnPage);
 
     if (context.data.astro !== undefined) {
-      // readingTime.text will give us minutes read as a friendly string,
-      // i.e. "3 min read"
-      context.data.astro.frontmatter.minutesRead = readingTime.text;
+      // `readingTime.text` would give the English string, "3 min read". The
+      // article metadata is rendered in Japanese, so the count is formatted
+      // here instead and the reader sees 読了 / 3分.
+      context.data.astro.frontmatter.minutesRead = `${Math.round(readingTime.minutes)}分`;
     }
   },
 });

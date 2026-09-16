@@ -11,33 +11,31 @@ const message =
 ---
 
 <BaseLayout
-  title="Server error"
-  description="Something went wrong on the server."
+  title="サーバーエラー"
+  description="サーバー側で問題が発生しました。"
 >
-  <section class="hero min-h-[70vh]">
-    <div class="hero-content flex-col gap-8 text-center lg:flex-row lg:gap-12 lg:text-left">
-      <figure>
+  <section class="site-container py-16 sm:py-24">
+    <div class="grid gap-10 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] sm:items-center sm:gap-16">
+      <figure class="border-base-300 border">
         <img
-          src="/http-cat-500.jpg"
-          alt="A cat sprawled inside an open computer case"
+          src="/500.jpg"
+          alt="開いたパソコンの筐体の中で寝ている猫"
           width="750"
           height="600"
-          class="rounded-box w-64 sm:w-80"
+          class="h-auto w-full object-cover"
         />
       </figure>
-      <div class="max-w-md">
-        <h1 class="text-2xl font-bold tracking-tight">Something went wrong</h1>
-        <p class="py-6 text-pretty text-base-content/70">
-          The server couldn’t finish that request. It’s most likely temporary,
-          so try again in a moment.
+      <div>
+        <p class="mono-label">500</p>
+        <h1 class="page-title mt-4">サーバーエラー</h1>
+        <p class="page-lead mt-5">
+          サーバーがリクエストを処理できませんでした。一時的なものと思われるので、少し時間をおいてもう一度お試しください。
         </p>
         {message && (
-          <p class="rounded-box bg-base-200 mb-6 p-4 text-left text-sm break-words">
-            {message}
-          </p>
+          <p class="plate mono-data mt-6 px-4 py-3 break-words">{message}</p>
         )}
-        <a href="/" class="btn btn-primary">
-          Back home
+        <a href="/" class="btn btn-primary mt-8">
+          ホームへ戻る
         </a>
       </div>
     </div>

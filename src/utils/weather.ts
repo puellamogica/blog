@@ -175,11 +175,11 @@ export const formatVisibility = (metres?: number): string | undefined =>
   metres === undefined ? undefined : `${round(metres / 1000, 1)} km`;
 
 const describeUvIndex = (index: number): string => {
-  if (index >= 11) return "extreme";
-  if (index >= 8) return "very high";
-  if (index >= 6) return "high";
-  if (index >= 3) return "moderate";
-  return "low";
+  if (index >= 11) return "極端に強い";
+  if (index >= 8) return "非常に強い";
+  if (index >= 6) return "強い";
+  if (index >= 3) return "中程度";
+  return "弱い";
 };
 
 export const formatUvIndex = (index?: number): string | undefined =>
@@ -262,19 +262,19 @@ export const buildDetails = (weather: Weather): WeatherDetail[] => {
     if (value !== undefined) details.push({ label, value });
   };
 
-  add("Feels like", formatTemperature(weather.feelsLike));
-  add("Humidity", formatPercent(weather.humidity));
-  add("Dew point", formatTemperature(weather.dewPoint));
-  add("Pressure", formatPressure(weather.pressure));
-  add("Clouds", formatPercent(weather.clouds));
-  add("Visibility", formatVisibility(weather.visibility));
-  add("UV index", formatUvIndex(weather.uvi));
-  add("Wind", formatWind(weather.windSpeed, weather.windDeg));
-  add("Wind gust", formatSpeed(weather.windGust));
-  add("Sunrise", formatTime(weather.sunrise));
-  add("Sunset", formatTime(weather.sunset));
-  add("Rain (1h)", formatMillimetres(weather.rain));
-  add("Snow (1h)", formatMillimetres(weather.snow));
+  add("体感温度", formatTemperature(weather.feelsLike));
+  add("湿度", formatPercent(weather.humidity));
+  add("露点", formatTemperature(weather.dewPoint));
+  add("気圧", formatPressure(weather.pressure));
+  add("雲量", formatPercent(weather.clouds));
+  add("視程", formatVisibility(weather.visibility));
+  add("UV指数", formatUvIndex(weather.uvi));
+  add("風", formatWind(weather.windSpeed, weather.windDeg));
+  add("突風", formatSpeed(weather.windGust));
+  add("日の出", formatTime(weather.sunrise));
+  add("日の入り", formatTime(weather.sunset));
+  add("降水量 (1h)", formatMillimetres(weather.rain));
+  add("降雪量 (1h)", formatMillimetres(weather.snow));
 
   return details;
 };

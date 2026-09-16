@@ -1,5 +1,5 @@
 ---
-import PostCard from "@components/PostCard.astro";
+import PostEntry from "@components/PostEntry.astro";
 import PostFilter from "@components/PostFilter.astro";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
@@ -12,20 +12,23 @@ const posts = (await Promise.all([getArticles(), getVaultEntries()]))
 const years = getPostYears(posts.map(toFilterablePost));
 ---
 
-<BaseLayout title={`Posts · ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
-  <section class="site-container py-12 sm:py-16">
-    <header class="mb-10 max-w-2xl">
-      <h1 class="page-title">Posts</h1>
-      <p class="page-lead mt-3">{posts.length} posts and counting.</p>
-    </header>
+<BaseLayout title={`記事 · ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
+  <header class="site-container pt-14 pb-8 sm:pt-20">
+    <h1 class="page-title">記事</h1>
+    <p class="mono-data mt-4">全 {posts.length} 件</p>
+  </header>
+
+  <section class="site-container pb-20">
     <PostFilter years={years} />
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-post-grid>
+
+    <div class="border-base-300 mt-10 border-t" data-post-grid>
       {posts.map((post) => (
-        <PostCard post={post} />
+        <PostEntry post={post} />
       ))}
     </div>
-    <p class="mt-8 text-center text-base-content/70" data-post-empty hidden>
-      No posts match this filter.
+
+    <p class="mono-data mt-8 hidden" data-post-empty>
+      条件に一致する記事がありません。
     </p>
   </section>
 </BaseLayout>

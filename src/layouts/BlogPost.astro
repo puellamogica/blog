@@ -2,10 +2,10 @@
 import type { MarkdownHeading } from "astro";
 import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
-import CategoryBadge from "../components/CategoryBadge.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import TableOfContents from "../components/TableOfContents.astro";
 import BaseLayout from "./BaseLayout.astro";
+import { categories } from "../data/categories";
 
 type Props = CollectionEntry<"article">["data"] & {
   headings: MarkdownHeading[];
@@ -28,11 +28,11 @@ const {
 
 const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
   ? [
-      { href: "/", label: "Home" },
-      { href: "/posts", label: "Posts" },
+      { href: "/", label: "ホーム" },
+      { href: "/posts", label: "記事" },
       { label: title },
     ]
-  : [{ href: "/", label: "Home" }, { label: title }];
+  : [{ href: "/", label: "ホーム" }, { label: title }];
 ---
 
 <BaseLayout
@@ -41,55 +41,80 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
   image={heroImage}
   noindex={noindex}
 >
-  <article class="site-container py-8 sm:py-12">
-    <div class="lg:flex lg:justify-center lg:gap-10">
-      <div class="mx-auto w-full max-w-3xl">
-        <nav class="breadcrumbs mb-4 text-sm" aria-label="Breadcrumb">
-          <ul>
-            {crumbs.map((crumb) => (
-              <li class="max-w-64 truncate">
-                {crumb.href ? (
-                  <a href={crumb.href}>{crumb.label}</a>
-                ) : (
-                  crumb.label
-                )}
-              </li>
-            ))}
-          </ul>
-        </nav>
+  <article class="site-container py-10 sm:py-14">
+    <div class="article-grid">
+      <nav class="article-crumbs" aria-label="Breadcrumb">
+        <ol class="mono-data flex flex-wrap items-center gap-x-2 gap-y-1">
+          {crumbs.map((crumb, position) => (
+            <li class="flex min-w-0 items-center gap-2">
+              {position > 0 && (
+                <span class="text-base-content/30" aria-hidden="true">
+                  /
+                </span>
+              )}
+              {crumb.href ? (
+                <a href={crumb.href} class="link-quiet">
+                  {crumb.label}
+                </a>
+              ) : (
+                <span
+                  class="text-base-content/60 max-w-[18rem] truncate"
+                  aria-current="page"
+                >
+                  {crumb.label}
+                </span>
+              )}
+            </li>
+          ))}
+        </ol>
+      </nav>
 
-        <header class="mb-8 flex flex-col gap-3">
-          <div class="flex flex-wrap items-center gap-2">
-            <CategoryBadge category={category} />
-            <span class="badge badge-neutral">
-              <FormattedDate date={pubDate} />
-            </span>
-            {updatedDate && (
-              <span class="badge badge-ghost">
-                Updated <FormattedDate date={updatedDate} />
-              </span>
-            )}
-            {minutesRead && (
-              <span class="badge badge-outline">{minutesRead}</span>
-            )}
+      <dl class="article-meta">
+        <div>
+          <dt>カテゴリー</dt>
+          <dd>{categories[category].name}</dd>
+        </div>
+        <div>
+          <dt>公開</dt>
+          <dd>
+            <FormattedDate date={pubDate} />
+          </dd>
+        </div>
+        {updatedDate && (
+          <div>
+            <dt>更新</dt>
+            <dd>
+              <FormattedDate date={updatedDate} />
+            </dd>
           </div>
-          <h1 class="page-title">{title}</h1>
-          <p class="page-lead">{description}</p>
+        )}
+        {minutesRead && (
+          <div>
+            <dt>読了</dt>
+            <dd>{minutesRead}</dd>
+          </div>
+        )}
+      </dl>
+
+      <div class="article-body">
+        <header>
+          <h1 class="display-title">{title}</h1>
+          <p class="page-lead mt-5">{description}</p>
         </header>
 
         {heroImage && (
-          <figure class="rounded-box mb-10 overflow-hidden">
+          <figure class="border-base-300 mt-10 border">
             <Image
               width={1020}
-              height={510}
+              height={680}
               src={heroImage}
               alt=""
-              class="h-auto w-full object-cover"
+              class="aspect-[3/2] h-auto w-full object-cover"
             />
           </figure>
         )}
 
-        <div class="prose max-w-none lg:prose-lg">
+        <div class="prose mt-10">
           <slot />
         </div>
       </div>

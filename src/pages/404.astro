@@ -3,28 +3,29 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout
-  title="Page not found"
-  description="The page you requested does not exist."
+  title="ページが見つかりません"
+  description="お探しのページは存在しません。"
 >
-  <section class="hero min-h-[70vh]">
-    <div class="hero-content flex-col gap-8 text-center lg:flex-row lg:gap-12 lg:text-left">
-      <figure>
+  <section class="site-container py-16 sm:py-24">
+    <div class="grid gap-10 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] sm:items-center sm:gap-16">
+      <figure class="border-base-300 border">
         <img
-          src="/http-cat-404.jpg"
-          alt="A cat hiding under a pile of printed pages"
+          src="/404.jpg"
+          alt="印刷物の山に隠れている猫"
           width="750"
           height="600"
-          class="rounded-box w-64 sm:w-80"
+          class="h-auto w-full object-cover"
         />
       </figure>
-      <div class="max-w-md">
-        <h1 class="text-2xl font-bold tracking-tight">Page not found</h1>
-        <p class="py-6 text-pretty text-base-content/70">
-          That URL doesn’t lead anywhere. It may have moved, or it never existed
-          — and the cat isn’t saying.
+      <div>
+        <p class="mono-label">404</p>
+        <h1 class="page-title mt-4">ページが見つかりません</h1>
+        <p class="page-lead mt-5">
+          この URL
+          にページはありません。移動したか、そもそも存在しなかったようです。猫も何も言いません。
         </p>
-        <a href="/" class="btn btn-primary">
-          Back home
+        <a href="/" class="btn btn-primary mt-8">
+          ホームへ戻る
         </a>
       </div>
     </div>

@@ -1,41 +1,22 @@
 ---
-import { NAV_ITEMS, SITE_TITLE, SOCIAL_LINKS } from "../consts";
+import { NAV_ITEMS, SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 
 const today = new Date();
 ---
 
-<footer class="mt-auto border-t border-base-300 bg-base-200">
-  <div class="footer sm:footer-horizontal site-container gap-8 py-10">
-    <aside class="max-w-xs">
-      <p class="text-sm font-semibold">{SITE_TITLE}</p>
-      <p class="text-sm text-base-content/70">
-        A personal blog about building things on the web.
-      </p>
-      <p class="text-xs text-base-content/70">
-        &copy; {today.getFullYear()} Your name here. All rights reserved.
-      </p>
-    </aside>
-    <nav aria-label="Site">
-      <h2 class="footer-title">Site</h2>
-      {NAV_ITEMS.map((item) => (
-        <a class="link link-hover" href={item.href}>
-          {item.label}
-        </a>
-      ))}
-    </nav>
-    <nav aria-label="Social">
-      <h2 class="footer-title">Elsewhere</h2>
-      {SOCIAL_LINKS.map(({ href, name, label }) => (
-        <a
-          class="link link-hover"
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={label}
-        >
-          {name}
-        </a>
-      ))}
-    </nav>
-  </div>
+<footer class="footer footer-horizontal footer-center bg-base-200 text-base-content mt-auto p-10">
+  <nav class="grid grid-flow-col gap-4" aria-label="サイト内リンク">
+    {NAV_ITEMS.map((item) => (
+      <a class="link link-hover" href={item.href}>
+        {item.label}
+      </a>
+    ))}
+  </nav>
+
+  <aside>
+    <p class="text-base-content/70">{SITE_DESCRIPTION}</p>
+    <p class="text-base-content/60">
+      &copy; {today.getFullYear()} {SITE_TITLE}
+    </p>
+  </aside>
 </footer>

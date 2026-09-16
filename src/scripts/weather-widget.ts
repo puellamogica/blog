@@ -141,7 +141,7 @@ export const enhanceWeatherWidget = () => {
     const feelsLike = query<HTMLElement>(root, "[data-weather-feels-like]");
     const feelsLikeLabel = formatTemperature(weather.feelsLike);
     if (feelsLike && feelsLikeLabel) {
-      feelsLike.textContent = `Feels like ${feelsLikeLabel}`;
+      feelsLike.textContent = `体感 ${feelsLikeLabel}`;
       feelsLike.hidden = false;
     }
 
@@ -176,13 +176,13 @@ export const enhanceWeatherWidget = () => {
 
       const weather = parseWeather(await response.json());
       if (!weather || !hasWeather(weather)) {
-        fail("The latest weather snapshot is empty.");
+        fail("天気データがまだありません。");
         return;
       }
 
       render(weather);
     } catch {
-      fail("Could not load the current weather.");
+      fail("天気を読み込めませんでした。");
     }
   };
 

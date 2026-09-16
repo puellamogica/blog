@@ -9,10 +9,23 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    text-size-adjust: 100%;
   }
 
   body {
     @apply font-sans antialiased;
+  }
+
+  /*
+   * The page speaks in one typeface, so hierarchy has to come from weight and
+   * size alone. M PLUS 1 carries the full 100-900 range and headings take the
+   * heavy end of it: Japanese glyphs gain little from letterform contrast, but
+   * they read very clearly when set noticeably heavier than the body around
+   * them.
+   */
+  :where(h1, h2, h3, h4) {
+    font-weight: 700;
+    letter-spacing: 0.01em;
   }
 
   code,
@@ -22,9 +35,32 @@
     @apply font-mono;
   }
 
+  ::selection {
+    background-color: var(--color-primary);
+    color: var(--color-primary-content);
+  }
+
+  /*
+   * Every control gets the same visible ring. It is drawn with the accent so
+   * it survives both themes, and offset so it never touches the control's own
+   * hairline border.
+   */
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
     }
   }
 }

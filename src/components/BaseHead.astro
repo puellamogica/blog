@@ -33,10 +33,10 @@ const {
     } catch {
       theme = null;
     }
-    if (theme !== "acid" && theme !== "aqua") {
+    if (theme !== "nord" && theme !== "night") {
       theme = window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "aqua"
-        : "acid";
+        ? "night"
+        : "nord";
     }
     document.documentElement.dataset.theme = theme;
   })();
