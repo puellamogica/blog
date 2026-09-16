@@ -2,7 +2,7 @@
 // You can import this data from anywhere in your site by using the `import` keyword.
 
 export const SITE_TITLE = "Puella Mogica";
-export const SITE_DESCRIPTION = "An astro framework blog theme";
+export const SITE_DESCRIPTION = "一緒に歌おう！";
 
 /*
  * The wordmark sets the name and the top-level domain apart, so both halves are

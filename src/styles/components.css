@@ -257,6 +257,59 @@
   }
 
   /*
+   * The era toggle on the character page.
+   *
+   * daisyUI's tab panels have to be the next sibling of the tab that shows
+   * them, which would force the bar and the panels into one box: two small
+   * labels at the left end of a full-width grey track. Because the bar has to
+   * hug its labels while the panels keep the full measure, the panels key off
+   * the radios instead, the same way the chips above do.
+   *
+   * The past panel is off in the base rule rather than by exception, so a
+   * browser without `:has()` shows the current era and nothing else, which is
+   * the same state the page opens on.
+   */
+  [data-era="past"] {
+    display: none;
+  }
+
+  .era:has(input[value="past"]:checked) [data-era="past"] {
+    display: block;
+  }
+
+  .era:has(input[value="past"]:checked) [data-era="now"] {
+    display: none;
+  }
+
+  /*
+   * daisyUI draws the focus ring on the tab that is already selected, so tabbing
+   * to the other one shows nothing at all. This is the same ring the filter
+   * chips use, and it goes on the label because the input is invisible.
+   */
+  .era .tab:has(input:focus-visible) {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  /*
+   * The band's art is drawn light and stays light in both themes, so in the dark
+   * theme it needs holding back or it reads as a hole punched in the page. It is
+   * a wash rather than a filter: a token mixed over the layers costs one layer
+   * to composite, where a filter on artwork this size would have to be
+   * rasterised again as it moves.
+   */
+  :root[data-theme="night"] .stage-art::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: color-mix(
+      in oklab,
+      var(--color-base-100) 62%,
+      transparent
+    );
+  }
+
+  /*
    * The article page. Reading order is breadcrumb, metadata, body, index — so
    * that is the DOM order, and the grid moves the metadata out into the margin
    * only once the viewport can spare the column for it.

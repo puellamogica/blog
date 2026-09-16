@@ -68,8 +68,11 @@ export const enhancePageLoader = () => {
 
   if (!loader || !fill || !readout) return;
 
+  /*
+   * Guard rather than feature: the head script always sets the attribute, but if
+   * it ever failed to, the veil must not be left sitting over the page.
+   */
   if (document.documentElement.dataset.loader !== "on") {
-    /* Not the first page of this session: take the veil out of the document. */
     loader.remove();
     return;
   }

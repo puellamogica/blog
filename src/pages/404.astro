@@ -1,5 +1,7 @@
 ---
+import { Image } from "astro:assets";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import NotFoundImage from "../assets/404.jpg";
 ---
 
 <BaseLayout
@@ -9,11 +11,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   <section class="site-container py-16 sm:py-24">
     <div class="grid gap-10 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] sm:items-center sm:gap-16">
       <figure class="border-base-300 border">
-        <img
-          src="/404.jpg"
+        <Image
+          src={NotFoundImage}
           alt="印刷物の山に隠れている猫"
-          width="750"
-          height="600"
+          widths={[375, 750]}
+          sizes="(width >= 40rem) 30rem, 100vw"
           class="h-auto w-full object-cover"
         />
       </figure>

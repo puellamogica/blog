@@ -15,14 +15,16 @@
 /*
  * The typography plugin gives prose images a margin, which inside a slide would
  * pad the carousel and push the controls off the photo, so it is reset here.
- * `prose.css` still supplies the rounded corners.
+ *
+ * No corner radius either: a slide runs the full width of the page, the way the
+ * art above it does, and a radius on an edge-to-edge block only cuts notches
+ * out of the corners.
  */
 .swiper-gallery img {
   display: block;
   width: 100%;
   height: auto;
   margin: 0;
-  border-radius: var(--radius-box);
 }
 
 /*
