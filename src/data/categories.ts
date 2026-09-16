@@ -9,15 +9,15 @@
  */
 export const categories = {
   tech: {
-    name: "Tech",
+    name: "技術",
     dot: "bg-[oklch(0.55_0.09_250)]",
   },
   life: {
-    name: "Life",
+    name: "生活",
     dot: "bg-[oklch(0.57_0.13_20)]",
   },
   notes: {
-    name: "Notes",
+    name: "雑記",
     dot: "bg-[oklch(0.63_0.1_76)]",
   },
 } as const;

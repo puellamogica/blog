@@ -28,11 +28,11 @@ const {
 
 const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
   ? [
-      { href: "/", label: "Home" },
-      { href: "/posts", label: "Posts" },
+      { href: "/", label: "ホーム" },
+      { href: "/posts", label: "記事" },
       { label: title },
     ]
-  : [{ href: "/", label: "Home" }, { label: title }];
+  : [{ href: "/", label: "ホーム" }, { label: title }];
 ---
 
 <BaseLayout
@@ -71,18 +71,18 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
 
       <dl class="article-meta">
         <div>
-          <dt>Category</dt>
+          <dt>カテゴリー</dt>
           <dd>{categories[category].name}</dd>
         </div>
         <div>
-          <dt>Published</dt>
+          <dt>公開</dt>
           <dd>
             <FormattedDate date={pubDate} />
           </dd>
         </div>
         {updatedDate && (
           <div>
-            <dt>Updated</dt>
+            <dt>更新</dt>
             <dd>
               <FormattedDate date={updatedDate} />
             </dd>
@@ -90,7 +90,7 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
         )}
         {minutesRead && (
           <div>
-            <dt>Reading</dt>
+            <dt>読了</dt>
             <dd>{minutesRead}</dd>
           </div>
         )}

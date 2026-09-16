@@ -64,13 +64,6 @@ export default defineConfig({
     },
     {
       provider: fontProviders.google(),
-      name: "Shippori Mincho",
-      cssVariable: "--font-shippori",
-      weights: ["400", "700"],
-      subsets: ["latin", "latin-ext", "japanese"],
-    },
-    {
-      provider: fontProviders.google(),
       name: "M PLUS 1 Code",
       cssVariable: "--font-mplus-code",
       fallbacks: ["monospace"],

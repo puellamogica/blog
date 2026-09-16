@@ -5,7 +5,6 @@ import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import HeaderLink from "../components/HeaderLink.astro";
 import Icon from "../components/Icon.astro";
-import SocialLinks from "../components/SocialLinks.astro";
 import { NAV_ITEMS, SITE_WORDMARK } from "../consts";
 
 interface Props {
@@ -85,10 +84,6 @@ const drawerId = "site-drawer";
               </li>
             ))}
           </ul>
-          <div class="border-base-300 border-t pt-4">
-            <p class="mono-label mb-3">Elsewhere</p>
-            <SocialLinks />
-          </div>
         </div>
       </nav>
     </div>

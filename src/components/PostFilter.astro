@@ -26,7 +26,7 @@ const { years } = Astro.props;
   <div class="flex flex-wrap items-center gap-x-8 gap-y-4">
     <div class="flex flex-wrap items-center gap-3">
       <span id="post-filter-category-label" class="mono-label">
-        Category
+        カテゴリー
       </span>
       <div
         class="flex flex-wrap gap-1.5"
@@ -42,7 +42,7 @@ const { years } = Astro.props;
             data-filter-group="category"
             checked
           />
-          <span>All</span>
+          <span>すべて</span>
         </label>
         {categoryKeys.map((key) => (
           <label class="filter-chip">
@@ -62,7 +62,7 @@ const { years } = Astro.props;
     {years.length > 1 && (
       <div class="flex flex-wrap items-center gap-3">
         <span id="post-filter-year-label" class="mono-label">
-          Year
+          年
         </span>
         <div
           class="flex flex-wrap gap-1.5"
@@ -78,7 +78,7 @@ const { years } = Astro.props;
               data-filter-group="year"
               checked
             />
-            <span>All</span>
+            <span>すべて</span>
           </label>
           {years.map((year) => (
             <label class="filter-chip">

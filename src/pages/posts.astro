@@ -12,10 +12,10 @@ const posts = (await Promise.all([getArticles(), getVaultEntries()]))
 const years = getPostYears(posts.map(toFilterablePost));
 ---
 
-<BaseLayout title={`Posts · ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
+<BaseLayout title={`記事 · ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
   <header class="site-container pt-14 pb-8 sm:pt-20">
-    <h1 class="page-title">Posts</h1>
-    <p class="mono-data mt-4">{posts.length} posts and counting.</p>
+    <h1 class="page-title">記事</h1>
+    <p class="mono-data mt-4">全 {posts.length} 件</p>
   </header>
 
   <section class="site-container pb-20">
@@ -28,7 +28,7 @@ const years = getPostYears(posts.map(toFilterablePost));
     </div>
 
     <p class="mono-data mt-8 hidden" data-post-empty>
-      No posts match this filter.
+      条件に一致する記事がありません。
     </p>
   </section>
 </BaseLayout>

@@ -33,10 +33,10 @@ const {
     } catch {
       theme = null;
     }
-    if (theme !== "washi" && theme !== "sumi") {
+    if (theme !== "nord" && theme !== "night") {
       theme = window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "sumi"
-        : "washi";
+        ? "night"
+        : "nord";
     }
     document.documentElement.dataset.theme = theme;
   })();
@@ -56,7 +56,6 @@ const {
 <meta name="generator" content={Astro.generator} />
 
 <Font cssVariable="--font-mplus" />
-<Font cssVariable="--font-shippori" />
 <Font cssVariable="--font-mplus-code" />
 <Font cssVariable="--font-symbol" />
 <Font cssVariable="--font-emoji" />

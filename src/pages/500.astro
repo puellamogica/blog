@@ -11,32 +11,31 @@ const message =
 ---
 
 <BaseLayout
-  title="Server error"
-  description="Something went wrong on the server."
+  title="サーバーエラー"
+  description="サーバー側で問題が発生しました。"
 >
   <section class="site-container py-16 sm:py-24">
     <div class="grid gap-10 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] sm:items-center sm:gap-16">
       <figure class="border-base-300 border">
         <img
           src="/500.jpg"
-          alt="A cat sprawled inside an open computer case"
+          alt="開いたパソコンの筐体の中で寝ている猫"
           width="750"
           height="600"
           class="h-auto w-full object-cover"
         />
       </figure>
       <div>
-        <p class="mono-label">Error 500</p>
-        <h1 class="page-title mt-4">Something went wrong</h1>
+        <p class="mono-label">500</p>
+        <h1 class="page-title mt-4">サーバーエラー</h1>
         <p class="page-lead mt-5">
-          The server couldn’t finish that request. It’s most likely temporary,
-          so try again in a moment.
+          サーバーがリクエストを処理できませんでした。一時的なものと思われるので、少し時間をおいてもう一度お試しください。
         </p>
         {message && (
           <p class="plate mono-data mt-6 px-4 py-3 break-words">{message}</p>
         )}
         <a href="/" class="btn btn-primary mt-8">
-          Back home
+          ホームへ戻る
         </a>
       </div>
     </div>

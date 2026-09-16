@@ -3,7 +3,7 @@
  *
  * Plyr exposes its appearance through `--plyr-*` custom properties. They are
  * remapped here onto daisyUI color tokens, the same way prose.css remaps the
- * typography plugin, so both the washi/sumi themes and every future theme follow
+ * typography plugin, so both the nord/dim themes and every future theme follow
  * without a `dark:` variant. Scoped to `.prose` so only post content changes.
  */
 

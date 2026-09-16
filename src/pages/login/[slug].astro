@@ -30,20 +30,20 @@ const siteKey = env.TURNSTILE_SITEKEY;
 ---
 
 <BaseLayout
-  title={`Unlock · ${post.data.title}`}
+  title={`ロック解除 · ${post.data.title}`}
   description={post.data.description}
   noindex
 >
   <section class="site-container py-14 sm:py-20">
     <div class="mx-auto flex max-w-md flex-col">
-      <p class="mono-label">Locked post</p>
+      <p class="mono-label">限定公開</p>
       <h1 class="page-title mt-4">{post.data.title}</h1>
-      <p class="page-lead mt-4">Answer the question to read this post.</p>
+      <p class="page-lead mt-4">質問に答えると本文を読めます。</p>
 
       {questionHtml && (
         <div class="plate mt-10">
           <div class="plate-head">
-            <span class="mono-label">Question</span>
+            <span class="mono-label">質問</span>
           </div>
           <div class="plate-body">
             <div class="prose">
@@ -62,7 +62,7 @@ const siteKey = env.TURNSTILE_SITEKEY;
         <input type="hidden" name="slug" value={slug} />
 
         <label class="flex flex-col gap-2">
-          <span class="mono-label">Password</span>
+          <span class="mono-label">パスワード</span>
           <input
             type="password"
             name="password"
@@ -71,7 +71,7 @@ const siteKey = env.TURNSTILE_SITEKEY;
             minlength={PASSWORD_MIN_LENGTH}
             maxlength={PASSWORD_MAX_LENGTH}
             pattern={PASSWORD_PATTERN.source}
-            title={`${PASSWORD_MIN_LENGTH}-${PASSWORD_MAX_LENGTH} characters: letters, digits, and ! @ # $ % ^ & *`}
+            title={`${PASSWORD_MIN_LENGTH}〜${PASSWORD_MAX_LENGTH}文字。半角英数字と ! @ # $ % ^ & * が使えます`}
             required
           />
         </label>
@@ -88,7 +88,7 @@ const siteKey = env.TURNSTILE_SITEKEY;
           class="btn btn-primary"
           disabled
         >
-          Unlock
+          解除
         </button>
       </form>
     </div>
@@ -102,11 +102,10 @@ const siteKey = env.TURNSTILE_SITEKEY;
     "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 
   const ERROR_MESSAGES: Record<string, string> = {
-    invalid: "Incorrect password.",
-    blocked:
-      "Verification failed. Please complete the challenge and try again.",
-    rate_limited: "Too many attempts. Please try again later.",
-    server: "Something went wrong. Please try again.",
+    invalid: "パスワードが違います。",
+    blocked: "認証に失敗しました。もう一度お試しください。",
+    rate_limited: "試行回数が多すぎます。しばらくしてからお試しください。",
+    server: "エラーが発生しました。もう一度お試しください。",
   };
 
   type TurnstileApi = {
@@ -129,7 +128,7 @@ const siteKey = env.TURNSTILE_SITEKEY;
     !(submit instanceof HTMLButtonElement) ||
     !(container instanceof HTMLElement)
   ) {
-    throw new Error("Unlock form is missing required elements.");
+    throw new Error("解除フォームの必須要素が見つかりません。");
   }
 
   let widgetId: string | undefined;
@@ -139,7 +138,7 @@ const siteKey = env.TURNSTILE_SITEKEY;
 
   const syncSubmit = () => {
     submit.disabled = submitting || !challengeSolved;
-    submit.textContent = submitting ? "Checking…" : "Unlock";
+    submit.textContent = submitting ? "確認中…" : "解除";
   };
 
   const showToast = (message: string) => {

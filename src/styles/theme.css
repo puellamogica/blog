@@ -1,8 +1,6 @@
 @theme inline {
   --font-sans:
     var(--font-mplus), var(--font-emoji), ui-sans-serif, system-ui, sans-serif;
-  --font-serif:
-    var(--font-shippori), var(--font-emoji), ui-serif, georgia, serif;
   --font-mono:
     var(--font-mplus-code), var(--font-emoji), ui-monospace, monospace;
   --font-icon: var(--font-symbol);
@@ -19,14 +17,14 @@
   }
 
   /*
-   * The page speaks in two voices. Headings are set in a Mincho face, the
-   * voice of a printed page; body copy stays in the humanist sans, which is
-   * easier to read at length on screen. The contrast between the two is the
-   * hierarchy — size and weight do less work here than the change of voice.
+   * The page speaks in one typeface, so hierarchy has to come from weight and
+   * size alone. M PLUS 1 carries the full 100-900 range and headings take the
+   * heavy end of it: Japanese glyphs gain little from letterform contrast, but
+   * they read very clearly when set noticeably heavier than the body around
+   * them.
    */
   :where(h1, h2, h3, h4) {
-    @apply font-serif;
-
+    font-weight: 700;
     letter-spacing: 0.01em;
   }
 

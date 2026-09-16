@@ -33,20 +33,20 @@
   }
 
   /*
-   * Headings are set in Mincho. The scale is deliberately wider than the old
-   * one: the jump between a display title and a section title has to be felt,
-   * because size is doing less of the work than the change of typeface.
+   * One typeface, so the scale and the weight both have to carry the hierarchy.
+   * A display title steps up to 800 and the section title stays at 700, which is
+   * the only structural contrast left now that the family contrast is gone.
    */
   .display-title {
-    @apply font-serif text-3xl leading-tight font-bold tracking-tight text-balance sm:text-4xl lg:text-[2.75rem];
+    @apply text-3xl leading-tight font-extrabold tracking-tight text-balance sm:text-4xl lg:text-[2.75rem];
   }
 
   .page-title {
-    @apply font-serif text-3xl leading-tight font-bold tracking-tight text-balance sm:text-4xl;
+    @apply text-3xl leading-tight font-bold tracking-tight text-balance sm:text-4xl;
   }
 
   .section-title {
-    @apply font-serif text-xl font-bold tracking-tight sm:text-2xl;
+    @apply text-xl font-bold tracking-tight sm:text-2xl;
   }
 
   .page-lead {
@@ -75,8 +75,21 @@
     grid-area: meta;
   }
 
+  /*
+   * The date holds a fixed column width, which is what keeps the category marks
+   * in a straight line down the index. Japanese era dates are not a fixed
+   * length: 令和4年7月7日 is a character shorter than 令和4年7月21日, and a bare
+   * flex row lets the category mark follow the date inward on those rows. The
+   * width is sized for a two-digit era year and day together, so it survives the
+   * roll into 令和10年 in 2028 without being re-tuned.
+   */
+  .post-row-date {
+    width: 7.5rem;
+    flex: none;
+  }
+
   .post-row-title {
-    @apply font-serif text-lg leading-snug font-bold tracking-tight text-balance transition-colors sm:text-xl;
+    @apply text-lg leading-snug font-bold tracking-tight text-balance transition-colors sm:text-xl;
 
     grid-area: title;
   }
@@ -321,7 +334,7 @@
    * hangs off it in mono, like an imprint on a colophon.
    */
   .wordmark {
-    @apply font-serif text-lg font-bold tracking-tight;
+    @apply text-lg font-bold tracking-tight;
   }
 
   .wordmark-suffix {

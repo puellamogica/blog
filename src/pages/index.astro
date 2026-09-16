@@ -21,14 +21,14 @@ const since =
   <section class="site-container pt-14 pb-12 sm:pt-20 sm:pb-16">
     <h1 class="display-title max-w-3xl text-balance">{SITE_DESCRIPTION}</h1>
     <p class="mono-data mt-8">
-      {posts.length} posts{since !== undefined && <> since {since}</>}
+      {posts.length} 件{since !== undefined && <>（{since}年以降）</>}
     </p>
   </section>
 
   {lead && (
     <section class="site-container pb-16 sm:pb-20">
       <div class="rule-ink"></div>
-      <p class="mono-label mt-4">Latest</p>
+      <p class="mono-label mt-4">最新</p>
 
       <article class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:items-start lg:gap-12">
         <div>
@@ -68,9 +68,9 @@ const since =
     <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-16">
       <div>
         <div class="flex items-baseline justify-between gap-4">
-          <h2 class="section-title">Index</h2>
+          <h2 class="section-title">一覧</h2>
           <a href="/posts" class="link-quiet text-sm">
-            All posts →
+            すべての記事 →
           </a>
         </div>
         <div class="border-base-300 mt-6 border-t">

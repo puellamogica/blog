@@ -182,11 +182,11 @@ describe("readings", () => {
   });
 
   it("labels the UV index", () => {
-    expect(formatUvIndex(0)).toBe("0 (low)");
-    expect(formatUvIndex(3)).toBe("3 (moderate)");
-    expect(formatUvIndex(6)).toBe("6 (high)");
-    expect(formatUvIndex(8)).toBe("8 (very high)");
-    expect(formatUvIndex(12)).toBe("12 (extreme)");
+    expect(formatUvIndex(0)).toBe("0 (弱い)");
+    expect(formatUvIndex(3)).toBe("3 (中程度)");
+    expect(formatUvIndex(6)).toBe("6 (強い)");
+    expect(formatUvIndex(8)).toBe("8 (非常に強い)");
+    expect(formatUvIndex(12)).toBe("12 (極端に強い)");
   });
 
   it("names the wind direction on a sixteen point compass", () => {
@@ -247,17 +247,17 @@ describe("buildDetails", () => {
     const details = buildDetails(parseWeather(snapshot) as Weather);
 
     expect(details).toEqual([
-      { label: "Feels like", value: "15.3°C" },
-      { label: "Humidity", value: "78%" },
-      { label: "Dew point", value: "11.9°C" },
-      { label: "Pressure", value: "1016 hPa" },
-      { label: "Clouds", value: "100%" },
-      { label: "Visibility", value: "10 km" },
-      { label: "UV index", value: "0 (low)" },
-      { label: "Wind", value: "6.4 m/s E (91°)" },
-      { label: "Wind gust", value: "9.1 m/s" },
-      { label: "Sunrise", value: "04:56" },
-      { label: "Sunset", value: "17:29" },
+      { label: "体感温度", value: "15.3°C" },
+      { label: "湿度", value: "78%" },
+      { label: "露点", value: "11.9°C" },
+      { label: "気圧", value: "1016 hPa" },
+      { label: "雲量", value: "100%" },
+      { label: "視程", value: "10 km" },
+      { label: "UV指数", value: "0 (弱い)" },
+      { label: "風", value: "6.4 m/s E (91°)" },
+      { label: "突風", value: "9.1 m/s" },
+      { label: "日の出", value: "04:56" },
+      { label: "日の入り", value: "17:29" },
     ]);
   });
 
@@ -273,8 +273,8 @@ describe("buildDetails", () => {
     );
 
     expect(details).toEqual([
-      { label: "Rain (1h)", value: "0.8 mm" },
-      { label: "Snow (1h)", value: "2.4 mm" },
+      { label: "降水量 (1h)", value: "0.8 mm" },
+      { label: "降雪量 (1h)", value: "2.4 mm" },
     ]);
   });
 });

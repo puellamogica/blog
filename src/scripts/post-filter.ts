@@ -68,8 +68,8 @@ export const enhancePostFilter = () => {
     if (count) {
       count.textContent =
         visible === cards.length
-          ? `${cards.length} posts`
-          : `${visible} of ${cards.length} posts`;
+          ? `${cards.length} 件`
+          : `${cards.length} 件中 ${visible} 件`;
     }
 
     if (empty) empty.hidden = visible > 0;

@@ -3,7 +3,7 @@
  *
  * @tailwindcss/typography is configured with its defaults in global.css. Here the
  * plugin's theme variables are remapped onto daisyUI color tokens, so article
- * content follows the active washi/sumi theme without needing any `dark:` variant.
+ * content follows the active nord/dim theme without needing any `dark:` variant.
  *
  * These rules are intentionally unlayered: the plugin emits its own `.prose`
  * declarations inside the `components` layer, and unlayered rules always win.
@@ -17,7 +17,18 @@
   );
   --tw-prose-headings: var(--color-base-content);
   --tw-prose-lead: var(--color-base-content);
-  --tw-prose-links: var(--color-primary);
+
+  /*
+   * Links mix the accent toward the body ink. The accent alone is only 3.5:1
+   * against this page, which is fine for a border but not for text; the 55/45
+   * mix measures 5.8:1 light and 8.5:1 dark, and keeps enough of the hue to read
+   * as a link alongside the underline.
+   */
+  --tw-prose-links: color-mix(
+    in oklab,
+    var(--color-primary) 55%,
+    var(--color-base-content)
+  );
   --tw-prose-bold: var(--color-base-content);
   --tw-prose-counters: color-mix(
     in oklab,
@@ -85,7 +96,7 @@
   outline-offset: -1px;
 }
 
-:root[data-theme="sumi"] .prose :where(img, video) {
+:root[data-theme="night"] .prose :where(img, video) {
   outline-color: oklch(100% 0 0deg / 12%);
 }
 
@@ -151,23 +162,16 @@
 }
 
 /*
- * Inline code shares the fenced blocks' surface so the two read as one system.
- * Expressive Code publishes its theme variables on :root for the base (dark)
- * theme, but scopes the alternate (light) theme to `.expressive-code`, so the
- * light pair is mirrored here. Keep in step with `themes` in ec.config.mjs.
- *
- * The `:root` in the selector is load-bearing: it outweighs Expressive Code's
- * own `:root` declaration no matter which stylesheet the browser applies last.
+ * Inline code sits on the same panel surface as a fenced block, read straight
+ * from the page theme rather than from Expressive Code's own background. The
+ * code surface is a theme token in ec.config.mjs (`codeBackground`), so both
+ * forms follow nord and dim together and cannot drift apart.
  */
-:root[data-theme="washi"] {
-  --ec-codeBg: #eff1f5;
-  --ec-codeFg: #4c4f69;
-}
-
 .prose :where(code):not(:where(pre *)) {
-  padding: 0.125em 0.4em;
-  background-color: var(--ec-codeBg);
-  color: var(--ec-codeFg);
+  padding: 0.15em 0.35em;
+  border-radius: var(--radius-field);
+  background-color: var(--color-base-200);
+  color: var(--color-base-content);
   font-weight: 500;
 }
 

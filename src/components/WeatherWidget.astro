@@ -20,7 +20,7 @@ const { location = "根室市" } = Astro.props;
 <section class="plate" data-weather aria-labelledby="weather-heading">
   <div class="plate-head">
     <h2 id="weather-heading" class="mono-label">
-      Weather
+      天気
     </h2>
     <span class="mono-data">{location}</span>
   </div>
@@ -44,7 +44,7 @@ const { location = "根室市" } = Astro.props;
             data-weather-icon
           ></div>
           <div class="min-w-0">
-            <p class="font-serif text-3xl leading-none font-bold tracking-tight">
+            <p class="text-3xl leading-none font-bold tracking-tight">
               <span data-weather-temp>{WEATHER_PLACEHOLDER}</span>
             </p>
             <p
@@ -58,7 +58,7 @@ const { location = "根室市" } = Astro.props;
         </div>
 
         <p class="mono-data mt-5" hidden data-weather-updated>
-          Updated <time data-weather-observed></time>
+          更新 <time data-weather-observed></time>
         </p>
       </div>
 
@@ -67,7 +67,7 @@ const { location = "根室市" } = Astro.props;
   </div>
 
   <div class="border-base-300 border-t px-5 py-4" data-weather-report hidden>
-    <h3 class="mono-label mb-3">Full report</h3>
+    <h3 class="mono-label mb-3">詳細</h3>
     <dl class="space-y-2" data-weather-details></dl>
   </div>
 

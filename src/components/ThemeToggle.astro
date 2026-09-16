@@ -6,9 +6,9 @@ import Icon from "./Icon.astro";
   <input
     type="checkbox"
     class="theme-controller"
-    value="sumi"
+    value="night"
     data-theme-toggle
-    aria-label="Use dark theme"
+    aria-label="ダークテーマに切り替える"
   />
   <Icon name="sun" class="swap-off size-4" />
   <Icon name="moon" class="swap-on size-4" />
@@ -29,10 +29,10 @@ import Icon from "./Icon.astro";
     const prefersDark = window.matchMedia(
       "(prefers-color-scheme: dark)",
     ).matches;
-    toggle.checked = (stored ?? (prefersDark ? "sumi" : "washi")) === "sumi";
+    toggle.checked = (stored ?? (prefersDark ? "night" : "nord")) === "night";
 
     toggle.addEventListener("change", () => {
-      const theme = toggle.checked ? "sumi" : "washi";
+      const theme = toggle.checked ? "night" : "nord";
       try {
         localStorage.setItem("theme", theme);
       } catch {
