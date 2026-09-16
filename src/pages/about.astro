@@ -11,8 +11,6 @@ import PastWorldPc from "../assets/about/past-background-pc.webp";
 import PastWorldPhone from "../assets/about/past-background.webp";
 import PastFigurePc from "../assets/about/past-foreground-pc.webp";
 import PastFigurePhone from "../assets/about/past-foreground.webp";
-import NowPoster from "../assets/mizuki-gallery/013.webp";
-import PastPoster from "../assets/mizuki-gallery/003.webp";
 import { SITE_TITLE } from "../consts";
 import {
   defaultEra,
@@ -106,11 +104,6 @@ const poster = async (src: ImageMetadata) =>
       format: "webp",
     })
   ).src;
-
-const posters = {
-  past: await poster(PastPoster),
-  now: await poster(NowPoster),
-} satisfies Record<Era, string>;
 
 // Two columns per pair, so the widest row decides the grid and the data can
 // grow a pair without the markup following it.
@@ -348,7 +341,6 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
                 class="aspect-video h-auto w-full"
                 controls
                 preload="metadata"
-                poster={posters[era]}
               >
                 <source src={eras[era].video.src} />
               </video>
