@@ -1,20 +1,77 @@
 ---
-import AboutHeroImage from "../assets/blog-placeholder-about.jpg";
-import Layout from "../layouts/BlogPost.astro";
 import MizukiGallery from "@components/MizukiGallery.astro";
+import PortraitImage from "../assets/mizuki-gallery/003.webp";
+import { facts, profile } from "../data/profile";
+import Layout from "../layouts/BlogPost.astro";
 ---
 
 <Layout
   slug="about"
   category="notes"
   title="プロフィール"
-  description="このサイトについての仮の文章です。"
+  description="『25時、ナイトコードで。』の動画担当。"
   pubDate={new Date("August 08 2021")}
-  heroImage={AboutHeroImage}
+  heroImage={PortraitImage}
   pinned={false}
   draft={false}
   headings={[]}
 >
+  <!--
+    The quotation marks come from the stylesheet, so they are not typed here.
+    The attribution stays inside the blockquote and muted, which is the pattern
+    the prose styles already carry for it.
+  -->
+  <blockquote>
+    <p>{profile.quote}</p>
+    <!--
+      <cite> is for the title of a work, which is exactly what the unit name is.
+      The site has one typeface and no true italic, so the browser's synthetic
+      oblique is turned off rather than left to shear the letterforms.
+    -->
+    <footer class="data">
+      <cite class="not-italic">{profile.unit}</cite> より
+    </footer>
+  </blockquote>
+
+  <!--
+    The character sheet. daisyUI's `card` is the honest component here: this is
+    a genuinely self-contained block, and the spec list is `list` + `list-row`,
+    which draws the hairline between rows for us.
+
+    `not-prose` is the typography plugin's own escape hatch and it is doing real
+    work: without it the plugin's paragraph and definition margins land inside
+    the card and push a 16px spec row out to 63px. The name and the spec values
+    keep the site's own type classes, so the sheet stays in the same voice.
+
+    The panel behind the card is where the reference page's gradient background
+    ends up, scoped to the one block it decorates and built from theme tokens
+    rather than fixed pastels, so it survives the dark theme.
+  -->
+  <div class="from-primary/12 via-base-200 to-secondary/12 rounded-box not-prose mt-10 bg-linear-to-br p-4 sm:p-6">
+    <div class="card bg-base-100">
+      <div class="card-body">
+        <p class="label">{profile.romanised}</p>
+        <h2 class="display-title mt-3">{profile.name}</h2>
+        <p class="data mt-3">
+          CV. {profile.voice} ／ {profile.role}
+        </p>
+
+        <div class="divider"></div>
+
+        <h3 class="section-title">PROFILE</h3>
+
+        <dl class="list mt-1">
+          {facts.map((fact) => (
+            <div class="list-row">
+              <dt class="label">{fact.label}</dt>
+              <dd class="data">{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+  </div>
+
   <p>
     これはレイアウトを確認するためのダミーテキストです。文字の大きさ、行間、余白のバランスが意図どおりに見えるかを確かめるために置いています。実際の文章に差し替えるまでの仮の内容なので、ここに書かれていることに意味はありません。
   </p>
@@ -25,14 +82,6 @@ import MizukiGallery from "@components/MizukiGallery.astro";
 
   <p>
     見出しと本文の強弱、引用やコードブロックの余白、画像を挟んだときの流れなど、記事ページで起きることはひととおりこのページで試せます。実際の記事を書く前に、これらの要素が同じリズムで並ぶかどうかを確かめておくと、あとから崩れる心配がありません。
-  </p>
-
-  <p>
-    段落の長さは揃えすぎないほうが自然に見えます。短い段落と長い段落が交互に並ぶと、紙面に緩急が生まれ、読み手の目が休まる場所を作れます。ここではその緩急も含めて、仮の文章として置いています。
-  </p>
-
-  <p>
-    差し替えの際は、この段落ごと削除してかまいません。レイアウトに必要なのは文字の量であって、内容ではないからです。
   </p>
 
   <MizukiGallery />

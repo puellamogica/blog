@@ -103,15 +103,22 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
         </header>
 
         {heroImage && (
-          <figure class="border-base-300 mt-10 border">
-            <Image
-              width={1020}
-              height={680}
-              src={heroImage}
-              alt=""
-              class="aspect-[3/2] h-auto w-full object-cover"
-            />
-          </figure>
+          <>
+            {/* The lead and the banner are different kinds of thing: a sentence
+                of prose and a picture. daisyUI's divider separates them without
+                inventing a heading or a box for either. */}
+            <div class="divider"></div>
+
+            <figure class="border-base-300 border">
+              <Image
+                width={1020}
+                height={680}
+                src={heroImage}
+                alt=""
+                class="aspect-[3/2] h-auto w-full object-cover"
+              />
+            </figure>
+          </>
         )}
 
         <div class="prose mt-10">
