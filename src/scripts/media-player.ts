@@ -43,9 +43,24 @@ const GLYPHS: Record<string, string> = {
   download: "download",
 };
 
-const ligatureOf = (icon: SVGElement) => {
-  const reference = icon.querySelector("use")?.getAttribute("href") ?? "";
-  return reference.split("#").pop()?.slice("plyr-".length) ?? "";
+/*
+ * Plyr names each icon after the sprite symbol it points at, so the name is read
+ * back out of the reference Plyr built.
+ *
+ * Plyr sets that reference twice — as the SVG2 `href` and as `xlink:href` — and
+ * both land in the xlink namespace, so the element ends up carrying a single
+ * `xlink:href` attribute. Chromium answers `getAttribute("href")` for it,
+ * Firefox does not, and a reference that reads as null here leaves the button
+ * with no icon at all. The attribute is therefore matched by its local name
+ * rather than by whichever prefix an engine happens to accept.
+ */
+const spriteNameOf = (icon: SVGElement) => {
+  const attributes = icon.querySelector("use")?.attributes ?? [];
+  const reference =
+    [...attributes].find((attribute) => attribute.localName === "href")
+      ?.value ?? "";
+
+  return reference.split("#").pop()?.replace("plyr-", "") ?? "";
 };
 
 const useIconFont = (container: HTMLElement | null) => {
@@ -53,7 +68,7 @@ const useIconFont = (container: HTMLElement | null) => {
   if (!icons) return;
 
   for (const icon of icons) {
-    const glyph = GLYPHS[ligatureOf(icon)];
+    const glyph = GLYPHS[spriteNameOf(icon)];
     if (!glyph) continue;
 
     const symbol = document.createElement("span");
