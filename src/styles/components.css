@@ -375,31 +375,70 @@
    * browser without `:has()` shows the current era and nothing else, which is
    * the same state the page opens on.
    *
-   * The art and the card change by different means, because they sit in
-   * different kinds of space.
+   * The art is two layers per era: the world she stands in, and the figure
+   * standing in it. Both are absolutely placed in their own box, so the later
+   * era is painted over the earlier one.
    *
-   * The world and the figure are both absolutely placed in the same box, so a
-   * `display` swap would cut between them: one frame she is there, the next she
-   * is someone else standing in the same place. They stay painted instead, the
-   * later one over the earlier, and only that later one moves. Fading it out
-   * leaves the other already standing there, and fading it back in covers it
-   * again.
+   * The two layers change by different means, because they are not the same
+   * kind of picture. A world is opaque — measured, every pixel of both files
+   * is — so one can dissolve into the other with nothing behind it showing
+   * through, and only the later one has to move: fading it out leaves the
+   * other already there, and fading it back in covers it again. Holding one of
+   * them also keeps the band from going pale, which is what happens when two
+   * layers fade against each other and neither is fully present.
    *
-   * The reason only one of the two animates is that the one underneath is
-   * always opaque. Two layers fading against each other would leave a moment
-   * where neither is fully present and the band would go pale over the page
-   * before coming back; with one of them holding, what the reader sees is one
-   * era dissolving into the other and the art never loses its body.
+   * A figure is cut out of its background: 92% of both files is transparent, so
+   * they can never be on screen together. Stacked, the lower one reads through
+   * the upper one and the reader sees the other outfit standing inside this
+   * one, which is what happens at rest when a world's rule is applied to a
+   * figure. So the figures take turns instead.
    */
-  .era .stage-art picture[data-era] {
+  .era .stage-art picture[data-layer="world"] {
     transition: opacity var(--motion-swap) var(--ease-out-expo);
   }
 
-  .era .stage-art picture[data-era="past"] {
+  .era .stage-art picture[data-layer="world"][data-era="past"] {
     opacity: 1;
   }
 
-  .era:has(input[value="past"]:checked) .stage-art picture[data-era="now"] {
+  .era:has(input[value="past"]:checked)
+    .stage-art
+    picture[data-layer="world"][data-era="now"] {
+    opacity: 0;
+  }
+
+  /*
+   * The handover. The figure leaving goes first and the one arriving follows it
+   * in, so only ever one of them is painted and the reader never sees the two
+   * superimposed.
+   *
+   * The shape is the world's, with the delay moved onto the half that arrives:
+   * whichever era is checked is the one that waits its turn, and the other is
+   * the one already leaving by the time it does. The world behind them is
+   * dissolving throughout, so the band is never empty and the character is
+   * never simply switched off.
+   */
+  .era .stage-art picture[data-layer="figure"] {
+    transition: opacity var(--motion-state) var(--ease-out-expo);
+  }
+
+  .era .stage-art picture[data-layer="figure"][data-era="past"] {
+    opacity: 0;
+  }
+
+  .era:has(input[value="now"]:checked)
+    .stage-art
+    picture[data-layer="figure"][data-era="now"],
+  .era:has(input[value="past"]:checked)
+    .stage-art
+    picture[data-layer="figure"][data-era="past"] {
+    opacity: 1;
+    transition-delay: var(--motion-state);
+  }
+
+  .era:has(input[value="past"]:checked)
+    .stage-art
+    picture[data-layer="figure"][data-era="now"] {
     opacity: 0;
   }
 

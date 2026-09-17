@@ -149,9 +149,14 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
         class="stage-art relative isolate h-(--stage-art) w-full md:absolute md:inset-0 md:h-full"
         aria-hidden="true"
       >
-        <!-- The era's world, edge to edge behind everything. -->
+        <!--
+          The era's world, edge to edge behind everything. `data-layer` says
+          which of the two kinds of picture this is: the stylesheet lets a world
+          dissolve into the other era's, because every pixel of it is opaque, and
+          makes a figure take turns instead, because that one is a cut-out.
+        -->
         {layers.map(({ era, world }) => (
-          <picture data-era={era} class="absolute inset-0">
+          <picture data-era={era} data-layer="world" class="absolute inset-0">
             <source media="(width >= 48rem)" srcset={world.pc} sizes="100vw" />
             <img
               src={world.phone}
@@ -178,7 +183,11 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
           <div class="grid h-full md:grid-cols-2 md:gap-12">
             <div class="relative h-full">
               {layers.map(({ era, figure }) => (
-                <picture data-era={era} class="absolute inset-0">
+                <picture
+                  data-era={era}
+                  data-layer="figure"
+                  class="absolute inset-0"
+                >
                   <source
                     media="(width >= 48rem)"
                     srcset={figure.pc}
