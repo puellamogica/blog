@@ -1,36 +1,13 @@
 ---
-import { Image } from "astro:assets";
-import BaseLayout from "../layouts/BaseLayout.astro";
+import ErrorPage from "../components/ErrorPage.astro";
 import NotFoundImage from "../assets/404.jpg";
 ---
 
-<BaseLayout
+<ErrorPage
+  code="404"
   title="ページが見つかりません"
-  description="お探しのページは存在しません。"
->
-  <section class="site-container py-16 sm:py-24">
-    <div class="grid gap-10 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] sm:items-center sm:gap-16">
-      <figure class="border-base-300 border">
-        <Image
-          src={NotFoundImage}
-          alt="印刷物の山に隠れている猫"
-          widths={[375, 750]}
-          sizes="(width >= 40rem) 30rem, 100vw"
-          loading="eager"
-          class="h-auto w-full object-cover"
-        />
-      </figure>
-      <div>
-        <p class="label font-mono">404</p>
-        <h1 class="page-title mt-4">ページが見つかりません</h1>
-        <p class="page-lead mt-5">
-          この URL
-          にページはありません。移動したか、そもそも存在しなかったようです。猫も何も言いません。
-        </p>
-        <a href="/" class="btn btn-primary mt-8">
-          ホームへ戻る
-        </a>
-      </div>
-    </div>
-  </section>
-</BaseLayout>
+  metaDescription="お探しのページは存在しません。"
+  lead="この URL にページはありません。移動したか、そもそも存在しなかったようです。猫も何も言いません。"
+  image={NotFoundImage}
+  alt="印刷物の山に隠れている猫"
+/>

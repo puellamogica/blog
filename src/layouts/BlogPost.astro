@@ -109,7 +109,7 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
                 inventing a heading or a box for either. */}
             <div class="divider"></div>
 
-            <figure class="border-base-300 border">
+            <figure class="media-frame">
               <Image
                 width={1020}
                 height={680}
@@ -201,20 +201,11 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
 </script>
 
 <script>
-  // Markdown emits raw <audio>/<video> elements, so Plyr is wired up here in
-  // the browser. It is only fetched on pages that actually contain media, and
-  // the icons are served from this site rather than Plyr's default CDN.
-  const media = document.querySelectorAll<HTMLMediaElement>(
-    ".prose audio, .prose video",
-  );
+  import { enhanceMediaPlayers } from "../scripts/media-player";
 
-  if (media.length > 0) {
-    void import("plyr").then(({ default: Plyr }) => {
-      for (const element of media) {
-        new Plyr(element, { iconUrl: "/plyr.svg" });
-      }
-    });
-  }
+  // Markdown emits raw <audio>/<video> elements, so Plyr is wired up in the
+  // browser, only on pages that actually contain media.
+  enhanceMediaPlayers(".prose audio, .prose video");
 </script>
 
 <script>

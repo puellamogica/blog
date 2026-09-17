@@ -157,9 +157,23 @@
   }
 
   /*
-   * A plate is the only bordered container left. It is used where content
-   * genuinely needs containment: a question to answer, a reading of the
-   * weather. Never nested inside another plate.
+   * A media frame is a hairline box around a single media element: the home
+   * lead image, a post hero, the character film, an error-page illustration. It
+   * has no padding and no head, which is the whole of what separates it from the
+   * plate below.
+   *
+   * The name is qualified because `frame` alone is Expressive Code's: every code
+   * block is a `<figure class="frame">`, so a bare `.frame` here would reach
+   * into the code blocks as well.
+   */
+  .media-frame {
+    @apply border-base-300 border;
+  }
+
+  /*
+   * A plate holds content that genuinely needs containment: a question to
+   * answer, a reading of the weather. It is never nested inside another plate;
+   * a bordered box around media is a `.media-frame` instead.
    */
   .plate {
     @apply border-base-300 border;
