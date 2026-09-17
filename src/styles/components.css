@@ -8,18 +8,23 @@
  * take the code face, where tabular figures and a specimen feel earn their keep.
  *
  * Both voices share the same restraint: small, tracked out, and held back from
- * full contrast, so metadata never competes with the writing.
+ * full contrast, so metadata never competes with the writing. The colour comes
+ * from the two ink tokens in theme.css, which is where the floor those values
+ * have to clear is measured and argued.
  *
  * These two are utilities rather than component classes because they are used
  * both in markup and inside the component classes below.
  */
 @utility label {
-  @apply text-base-content/55 text-xs font-medium tracking-[0.12em];
+  @apply text-xs font-medium tracking-[0.12em];
+
+  color: var(--ink-muted);
 }
 
 @utility data {
-  @apply text-base-content/60 text-xs tracking-[0.02em];
+  @apply text-xs tracking-[0.02em];
 
+  color: var(--ink-muted);
   font-variant-numeric: tabular-nums;
 }
 
@@ -118,7 +123,9 @@
   }
 
   .page-lead {
-    @apply text-base-content/70 max-w-prose text-base text-pretty sm:text-lg;
+    @apply max-w-prose text-base text-pretty sm:text-lg;
+
+    color: var(--ink-muted);
   }
 
   /*
@@ -163,8 +170,9 @@
   }
 
   .post-row-mark {
-    @apply text-base-content/35 self-start transition-transform duration-200 ease-[var(--ease-out-quint)];
+    @apply self-start transition-transform duration-200 ease-[var(--ease-out-quint)];
 
+    color: var(--ink-mark);
     grid-area: mark;
   }
 
@@ -182,7 +190,7 @@
   .post-row:hover .post-row-mark,
   .post-row:focus-visible .post-row-title,
   .post-row:focus-visible .post-row-mark {
-    @apply text-primary;
+    color: var(--ink-accent);
   }
 
   .post-row:hover .post-row-mark,
@@ -294,7 +302,9 @@
   }
 
   .toc-link {
-    @apply text-base-content/60 hover:text-base-content focus-visible:text-base-content border-base-content/40 -ms-px block border-s border-transparent py-1.5 ps-3 leading-snug transition-colors;
+    @apply hover:text-base-content focus-visible:text-base-content border-base-content/40 -ms-px block border-s border-transparent py-1.5 ps-3 leading-snug transition-colors;
+
+    color: var(--ink-muted);
   }
 
   .toc-link-nested {
@@ -302,7 +312,9 @@
   }
 
   .toc-link[aria-current="location"] {
-    @apply border-primary text-primary font-medium;
+    @apply border-primary font-medium;
+
+    color: var(--ink-accent);
   }
 
   /*
@@ -310,7 +322,9 @@
    * underline that is always present, and the accent arriving on hover.
    */
   .link-quiet {
-    @apply text-base-content/70 hover:text-primary focus-visible:text-primary decoration-base-300 hover:decoration-primary focus-visible:decoration-primary underline decoration-1 underline-offset-4 transition-colors;
+    @apply decoration-base-300 hover:decoration-primary focus-visible:decoration-primary underline decoration-1 underline-offset-4 transition-colors hover:text-[color:var(--ink-accent)] focus-visible:text-[color:var(--ink-accent)];
+
+    color: var(--ink-muted);
   }
 
   /*
@@ -329,7 +343,7 @@
    * finger before the list underneath it changes.
    */
   .filter-chip {
-    @apply label border-base-300 text-base-content/55 hover:border-base-content/40 hover:text-base-content inline-flex min-h-11 cursor-pointer items-center border px-3;
+    @apply label border-base-300 hover:border-base-content/40 hover:text-base-content inline-flex min-h-11 cursor-pointer items-center border px-3;
 
     transition-property: color, background-color, border-color, scale;
     transition-duration: var(--motion-exit);
@@ -625,7 +639,9 @@
   }
 
   .nav-link {
-    @apply text-base-content/60 hover:text-base-content focus-visible:text-base-content relative py-1 transition-colors;
+    @apply hover:text-base-content focus-visible:text-base-content relative py-1 transition-colors;
+
+    color: var(--ink-muted);
   }
 
   .nav-link[aria-current="page"] {
@@ -645,7 +661,9 @@
   }
 
   .wordmark-suffix {
-    @apply text-base-content/45 font-mono text-[0.6875rem] font-normal tracking-[0.08em];
+    @apply font-mono text-[0.6875rem] font-normal tracking-[0.08em];
+
+    color: var(--ink-muted);
   }
 
   /*

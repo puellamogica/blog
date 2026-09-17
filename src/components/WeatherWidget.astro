@@ -48,7 +48,7 @@ const { location = "根室市" } = Astro.props;
               <span data-weather-temp>{WEATHER_PLACEHOLDER}</span>
             </p>
             <p
-              class="text-base-content/70 mt-2 text-sm text-pretty"
+              class="text-[color:var(--ink-muted)] mt-2 text-sm text-pretty"
               data-weather-description
             >
               {WEATHER_PLACEHOLDER}
@@ -75,7 +75,7 @@ const { location = "根室市" } = Astro.props;
 
   <template data-weather-detail-template>
     <div class="flex items-baseline justify-between gap-4 text-sm">
-      <dt class="text-base-content/60"></dt>
+      <dt class="text-[color:var(--ink-muted)]"></dt>
       <dd
         class="text-right font-medium"
         style="font-variant-numeric: tabular-nums"
@@ -88,7 +88,7 @@ const { location = "根室市" } = Astro.props;
       <p class="text-sm font-semibold" data-alert-event></p>
       <p class="data mt-1" data-alert-time></p>
       <p
-        class="text-base-content/70 mt-1 text-sm text-pretty whitespace-pre-line"
+        class="text-[color:var(--ink-muted)] mt-1 text-sm text-pretty whitespace-pre-line"
         data-alert-description
       ></p>
     </div>
