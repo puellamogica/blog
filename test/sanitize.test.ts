@@ -191,5 +191,25 @@ describe("sanitizeHtml", () => {
         ),
       ).toBe('<svg><path d="M0,0"></svg>');
     });
+
+    /*
+     * The MathML half is what a screen reader reads, because the HTML layout
+     * layer is `aria-hidden`. Without these the accessible tree describes less
+     * than the formula says.
+     */
+    it("keeps the MathML presentation attributes", () => {
+      const math =
+        '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow>' +
+        '<mo stretchy="false" fence="true">(</mo>' +
+        '<menclose notation="updiagonalstrike"><mi>x</mi></menclose>' +
+        '<mi mathvariant="double-struck">R</mi>' +
+        "</mrow></math>";
+
+      const out = sanitizeHtml(math);
+      expect(out).toContain('stretchy="false"');
+      expect(out).toContain('fence="true"');
+      expect(out).toContain('notation="updiagonalstrike"');
+      expect(out).toContain('mathvariant="double-struck"');
+    });
   });
 });
