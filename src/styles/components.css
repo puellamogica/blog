@@ -69,6 +69,38 @@
   }
 
   /*
+   * The skip link. It is the first thing in the tab order and the only way past
+   * the chrome: every page carries the wordmark, three nav links and the theme
+   * toggle before its content, and a phone carries the drawer button as well.
+   *
+   * It is held above the top edge rather than hidden, so it stays in the tab
+   * order and in the accessibility tree; a `display: none` skip link is one no
+   * keyboard user can reach. Its stacking order is above the loader's, so a
+   * reader who tabs during the veil still lands on something real.
+   */
+  .skip-link {
+    @apply bg-base-100 border-base-300 fixed start-4 top-4 z-[200] -translate-y-[calc(100%+1rem)] border px-4 py-3 text-sm font-medium transition-transform duration-150 ease-out;
+  }
+
+  .skip-link:focus-visible {
+    @apply translate-y-0;
+  }
+
+  /*
+   * The skip link's destination. `main` is not a control, so focusing it is a
+   * position rather than an action: a ring here would draw a border around the
+   * whole page, and the content the reader has just arrived at is the feedback.
+   * The scroll offset keeps its first line clear of the running head.
+   */
+  #main {
+    scroll-margin-top: 4rem;
+  }
+
+  #main:focus-visible {
+    outline: none;
+  }
+
+  /*
    * One typeface, so the scale and the weight both have to carry the hierarchy.
    * A display title steps up to 800 and the section title stays at 700, which is
    * the only structural contrast left now that the family contrast is gone.
@@ -136,16 +168,25 @@
     grid-area: mark;
   }
 
-  .post-row:hover {
+  /*
+   * The row answers a keyboard the way it answers a pointer: the surface tints,
+   * the title and the marker take the accent, and the marker steps in. A focus
+   * ring on its own says where the reader is without saying what the row does.
+   */
+  .post-row:hover,
+  .post-row:focus-visible {
     @apply bg-base-200/70;
   }
 
   .post-row:hover .post-row-title,
-  .post-row:hover .post-row-mark {
+  .post-row:hover .post-row-mark,
+  .post-row:focus-visible .post-row-title,
+  .post-row:focus-visible .post-row-mark {
     @apply text-primary;
   }
 
-  .post-row:hover .post-row-mark {
+  .post-row:hover .post-row-mark,
+  .post-row:focus-visible .post-row-mark {
     transform: translateX(3px);
   }
 
@@ -217,7 +258,7 @@
   }
 
   .toc-link {
-    @apply text-base-content/60 hover:text-base-content border-base-content/40 -ms-px block border-s border-transparent py-1.5 ps-3 leading-snug transition-colors;
+    @apply text-base-content/60 hover:text-base-content focus-visible:text-base-content border-base-content/40 -ms-px block border-s border-transparent py-1.5 ps-3 leading-snug transition-colors;
   }
 
   .toc-link-nested {
@@ -233,7 +274,7 @@
    * underline that is always present, and the accent arriving on hover.
    */
   .link-quiet {
-    @apply text-base-content/70 hover:text-primary decoration-base-300 hover:decoration-primary underline decoration-1 underline-offset-4 transition-colors;
+    @apply text-base-content/70 hover:text-primary focus-visible:text-primary decoration-base-300 hover:decoration-primary focus-visible:decoration-primary underline decoration-1 underline-offset-4 transition-colors;
   }
 
   /*
@@ -454,7 +495,7 @@
   }
 
   .nav-link {
-    @apply text-base-content/60 hover:text-base-content relative py-1 transition-colors;
+    @apply text-base-content/60 hover:text-base-content focus-visible:text-base-content relative py-1 transition-colors;
   }
 
   .nav-link[aria-current="page"] {
@@ -604,4 +645,52 @@
   .footer nav a {
     padding-block: 0.75rem;
   }
+}
+
+/*
+ * The touch floor for the controls that were sized for a cursor: a 40px theme
+ * toggle, a 32px nav link, a 31px index entry, a 16px breadcrumb link.
+ *
+ * Padding is what grows, never the box and never the text, so nothing moves on
+ * screen and only the touch case changes. The breadcrumb grows on the vertical
+ * axis alone: its links sit 8px apart in a row, so widening them would either
+ * collide with the neighbour or push the crumb off the left edge the article
+ * grid aligns it to.
+ *
+ * Unlayered for the same reason as the rules above: these elements carry `py-*`
+ * and `size-*` utilities, which live in the `utilities` layer and would beat a
+ * layered rule here whatever its specificity.
+ */
+@media (pointer: coarse) {
+  .theme-toggle {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
+  .nav-link {
+    padding-block: 0.625rem;
+  }
+
+  .toc-link {
+    padding-block: 0.7813rem;
+  }
+
+  .article-crumbs a {
+    padding-block: 0.875rem;
+  }
+}
+
+/*
+ * The theme toggle's focus surface. The toggle is a label wrapping a checkbox,
+ * so the ring lands on the input inside it and the label's own hover treatment
+ * would otherwise have no focus counterpart, the way the nav link's and the
+ * index row's do.
+ *
+ * Unlayered because the label carries `border-base-300` as a utility: a layered
+ * rule here loses to it, which is how this arrived with the surface changing
+ * and the border standing still.
+ */
+.theme-toggle:has(input:focus-visible) {
+  border-color: color-mix(in oklab, var(--color-base-content) 40%, transparent);
+  background-color: var(--color-base-200);
 }

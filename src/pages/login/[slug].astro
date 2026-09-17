@@ -143,6 +143,22 @@ const siteKey = env.TURNSTILE_SITEKEY;
   let submitting = false;
   let toastTimer: number | undefined;
 
+  const password = form.querySelector<HTMLInputElement>("input[name=password]");
+
+  /*
+   * The toast is where the brief puts the error, but the field records its own
+   * state as well: a reader who comes back to it once the toast has gone should
+   * still be told that what they typed was rejected, rather than only that the
+   * form did not go through.
+   */
+  const markInvalid = (invalid: boolean) => {
+    if (!password) return;
+    if (invalid) password.setAttribute("aria-invalid", "true");
+    else password.removeAttribute("aria-invalid");
+  };
+
+  password?.addEventListener("input", () => markInvalid(false));
+
   const syncSubmit = () => {
     submit.disabled = submitting || !challengeSolved;
     submit.textContent = submitting ? "確認中…" : "解除";
@@ -275,9 +291,9 @@ const siteKey = env.TURNSTILE_SITEKEY;
         return;
       }
 
-      showToast(
-        ERROR_MESSAGES[data.error ?? "server"] ?? ERROR_MESSAGES.server,
-      );
+      const error = data.error ?? "server";
+      markInvalid(error === "invalid");
+      showToast(ERROR_MESSAGES[error] ?? ERROR_MESSAGES.server);
     } catch {
       showToast(ERROR_MESSAGES.server);
     } finally {

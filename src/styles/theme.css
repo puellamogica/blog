@@ -77,6 +77,16 @@
     outline-offset: 2px;
   }
 
+  /*
+   * A tap on a control should not have to wait out the double-tap-zoom delay
+   * before it acts. Pinch-to-zoom is untouched, and so is the page around them:
+   * this is on the elements that are meant to be tapped, not on the text beside
+   * them.
+   */
+  :where(a, button, label, summary, input, select, textarea) {
+    touch-action: manipulation;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;

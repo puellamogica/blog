@@ -16,6 +16,14 @@ import { LOADING_ANIMATION_URL } from "../consts";
 /** Floor for how long the veil stays up, however fast the page is. */
 const MIN_VISIBLE = 1200;
 
+/*
+ * Ceiling for how long it may stay up. The veil lifts on the `load` event, which
+ * waits on every image, and an image that never answers would otherwise hold it
+ * up for good — over content that stays unreachable, since the veil takes the
+ * pointer and, with it, the keyboard.
+ */
+const MAX_VISIBLE = 10_000;
+
 /** How far the readout may climb before each real milestone lands. */
 const PARSED = 55;
 const FONTS = 78;
@@ -77,6 +85,16 @@ export const enhancePageLoader = () => {
     return;
   }
 
+  /*
+   * The veil already stops the pointer, so it has to stop the keyboard too.
+   * Without this, Tab walks straight into the content the veil is covering and
+   * the reader arrives somewhere they cannot see. The attribute is lifted with
+   * the veil rather than at the end of the fade, so the page is interactive
+   * from the moment it starts to appear.
+   */
+  const page = document.querySelector<HTMLElement>(".drawer-content");
+  page?.setAttribute("inert", "");
+
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const started = performance.now();
 
@@ -112,6 +130,7 @@ export const enhancePageLoader = () => {
   const lift = () => {
     if (settled) return;
     settled = true;
+    page?.removeAttribute("inert");
     loader.classList.add("is-done");
     /* Nothing will see the animation again, so stop it before it is orphaned. */
     animation?.destroy();
@@ -152,4 +171,12 @@ export const enhancePageLoader = () => {
   };
 
   window.requestAnimationFrame(tick);
+
+  /*
+   * The loop above is the ordinary path, and it is driven a frame at a time. The
+   * timer is the backstop for it: a timer is the one thing that still runs when
+   * frames have stopped arriving, which is the state a hung image leaves a page
+   * in.
+   */
+  window.setTimeout(lift, MAX_VISIBLE);
 };
