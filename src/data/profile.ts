@@ -52,8 +52,8 @@ export const rows: Cell[][] = [
 ];
 
 /*
- * The two eras, in the order and with the default the source page uses: PAST
- * first, NOW current.
+ * The two eras, in the order and with the default the source page uses: the
+ * past first, the present current.
  *
  * Both descriptions are placeholders, carried over from the page this replaced.
  * The real text goes here and renders as it is written.
@@ -65,7 +65,7 @@ export const rows: Cell[][] = [
  */
 export const eras = {
   past: {
-    label: "PAST",
+    label: "過去",
     quote: "カワイイものなら、何でもウェルカムだよ♪",
     description: [
       "可愛いものが大好きな気分屋。たまたま聴いた奏の曲に惹かれるものを感じ、MVをつくって投稿する。それが奏自身の目に留まり、動画担当として誘われた。サークルメンバーの誰も知らない秘密がある。 ",
@@ -73,7 +73,7 @@ export const eras = {
     video: { src: "https://object.amia.work/assets/mizuki-past.mp4" },
   },
   now: {
-    label: "NOW",
+    label: "現在",
     quote: "ボクは、ボクのままでいいかなって、思えたんだ",
     description: [
       "『25時、ナイトコードで。』の動画担当。母親と関係が悪化していくまふゆのことを心配していたが、瑞希自身、自分の秘密と向きあえずにいる現状から無力感を覚えていた。だが、その経験から逃げることで得られるものがあることにも気づき、まふゆに「逃げていい」と助言する。 ",
@@ -85,8 +85,8 @@ export const eras = {
 export type Era = keyof typeof eras;
 
 /*
- * PAST first, and NOW is what the page opens on, which is the way round the
- * source page has it.
+ * The past first, and the present is what the page opens on, which is the way
+ * round the source page has it.
  */
 export const eraKeys = ["past", "now"] as const;
 export const defaultEra: Era = "now";

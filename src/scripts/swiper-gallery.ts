@@ -12,6 +12,23 @@
 const GALLERY_SELECTOR = ".swiper-gallery";
 const ENHANCED_ATTRIBUTE = "data-swiper-enhanced";
 
+/*
+ * The gallery's own words. Swiper's accessibility module writes its messages
+ * onto the controls it is handed, so the buttons built below and the messages
+ * passed to Swiper are read from one place rather than kept in step by hand.
+ *
+ * `{{index}}` and `{{slidesLength}}` are Swiper's placeholders, not ours.
+ */
+const A11Y_TEXTS = {
+  prevSlideMessage: "前のスライド",
+  nextSlideMessage: "次のスライド",
+  firstSlideMessage: "最初のスライドです",
+  lastSlideMessage: "最後のスライドです",
+  paginationBulletMessage: "スライド{{index}}へ移動",
+  slideLabelMessage: "{{index}} / {{slidesLength}}",
+  containerRoleDescriptionMessage: "カルーセル",
+} as const;
+
 const createControl = (className: string, label: string) => {
   const control = document.createElement("button");
   control.type = "button";
@@ -36,8 +53,11 @@ const buildGallery = (gallery: HTMLElement) => {
 
   const pagination = document.createElement("div");
   pagination.className = "swiper-pagination";
-  const previous = createControl("swiper-button-prev", "Previous slide");
-  const next = createControl("swiper-button-next", "Next slide");
+  const previous = createControl(
+    "swiper-button-prev",
+    A11Y_TEXTS.prevSlideMessage,
+  );
+  const next = createControl("swiper-button-next", A11Y_TEXTS.nextSlideMessage);
 
   gallery.replaceChildren(wrapper, pagination, previous, next);
   gallery.classList.add("swiper");
@@ -76,7 +96,7 @@ export const enhanceSwiperGalleries = () => {
           },
           a11y: {
             containerRole: "group",
-            containerRoleDescriptionMessage: "carousel",
+            ...A11Y_TEXTS,
           },
         });
       }

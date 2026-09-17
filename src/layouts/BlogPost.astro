@@ -43,7 +43,7 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
 >
   <article class="site-container py-10 sm:py-14">
     <div class="article-grid">
-      <nav class="article-crumbs" aria-label="Breadcrumb">
+      <nav class="article-crumbs" aria-label="パンくずリスト">
         <ol class="data flex flex-wrap items-center gap-x-2 gap-y-1">
           {crumbs.map((crumb, position) => (
             <li class="flex min-w-0 items-center gap-2">
@@ -170,6 +170,14 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
       gallery,
       children: "a.pswp-item",
       pswpModule: () => import("photoswipe"),
+      /*
+       * PhotoSwipe labels its own chrome in English and has no locale files, so
+       * the words the gallery speaks are set here.
+       */
+      closeTitle: "閉じる",
+      zoomTitle: "拡大",
+      arrowPrevTitle: "前の画像",
+      arrowNextTitle: "次の画像",
     });
 
     // Captions fall back to each image's `alt` text and are placed beside or

@@ -187,6 +187,12 @@ const siteKey = env.TURNSTILE_SITEKEY;
     widgetId = turnstileWindow.turnstile.render(container, {
       sitekey,
       action: "vault-unlock",
+      /*
+       * The widget writes its own text and follows the visitor's browser
+       * language unless told otherwise. The page is Japanese, so it is pinned
+       * rather than left to detect.
+       */
+      language: "ja",
       callback: () => {
         challengeSolved = true;
         syncSubmit();
