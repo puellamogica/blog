@@ -43,7 +43,7 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
 >
   <article class="site-container py-10 sm:py-14">
     <div class="article-grid">
-      <nav class="article-crumbs" aria-label="Breadcrumb">
+      <nav class="article-crumbs" aria-label="パンくずリスト">
         <ol class="data flex flex-wrap items-center gap-x-2 gap-y-1">
           {crumbs.map((crumb, position) => (
             <li class="flex min-w-0 items-center gap-2">
@@ -58,7 +58,7 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
                 </a>
               ) : (
                 <span
-                  class="text-base-content/60 max-w-[18rem] truncate"
+                  class="text-[color:var(--ink-muted)] max-w-[18rem] truncate"
                   aria-current="page"
                 >
                   {crumb.label}
@@ -109,7 +109,7 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
                 inventing a heading or a box for either. */}
             <div class="divider"></div>
 
-            <figure class="border-base-300 border">
+            <figure class="media-frame">
               <Image
                 width={1020}
                 height={680}
@@ -170,6 +170,14 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
       gallery,
       children: "a.pswp-item",
       pswpModule: () => import("photoswipe"),
+      /*
+       * PhotoSwipe labels its own chrome in English and has no locale files, so
+       * the words the gallery speaks are set here.
+       */
+      closeTitle: "閉じる",
+      zoomTitle: "拡大",
+      arrowPrevTitle: "前の画像",
+      arrowNextTitle: "次の画像",
     });
 
     // Captions fall back to each image's `alt` text and are placed beside or
@@ -201,20 +209,11 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
 </script>
 
 <script>
-  // Markdown emits raw <audio>/<video> elements, so Plyr is wired up here in
-  // the browser. It is only fetched on pages that actually contain media, and
-  // the icons are served from this site rather than Plyr's default CDN.
-  const media = document.querySelectorAll<HTMLMediaElement>(
-    ".prose audio, .prose video",
-  );
+  import { enhanceMediaPlayers } from "../scripts/media-player";
 
-  if (media.length > 0) {
-    void import("plyr").then(({ default: Plyr }) => {
-      for (const element of media) {
-        new Plyr(element, { iconUrl: "/plyr.svg" });
-      }
-    });
-  }
+  // Markdown emits raw <audio>/<video> elements, so Plyr is wired up in the
+  // browser, only on pages that actually contain media.
+  enhanceMediaPlayers(".prose audio, .prose video");
 </script>
 
 <script>

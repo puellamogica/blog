@@ -117,6 +117,20 @@ export const enhanceWeatherWidget = () => {
   const loading = query<HTMLElement>(root, "[data-weather-loading]");
   const content = query<HTMLElement>(root, "[data-weather-content]");
   const error = query<HTMLElement>(root, "[data-weather-error]");
+  const live = query<HTMLElement>(root, "[data-weather-live]");
+
+  /*
+   * The reading, the details and any alerts all land in the one live region, and
+   * a polite region announces each insertion as it arrives. Holding the region
+   * busy across the request batches them into a single announcement of the
+   * finished reading, which is the thing worth hearing once.
+   *
+   * Set from here rather than in the markup, so a browser without scripting is
+   * never left holding a region that is permanently busy.
+   */
+  live?.setAttribute("aria-busy", "true");
+
+  const settle = () => live?.setAttribute("aria-busy", "false");
 
   const fail = (message: string) => {
     if (loading) loading.hidden = true;
@@ -125,6 +139,7 @@ export const enhanceWeatherWidget = () => {
       error.textContent = message;
       error.hidden = false;
     }
+    settle();
   };
 
   const render = (weather: Weather) => {
@@ -160,6 +175,7 @@ export const enhanceWeatherWidget = () => {
 
     if (loading) loading.hidden = true;
     if (content) content.hidden = false;
+    settle();
   };
 
   const load = async () => {

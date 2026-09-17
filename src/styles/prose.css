@@ -19,16 +19,12 @@
   --tw-prose-lead: var(--color-base-content);
 
   /*
-   * Links mix the accent toward the body ink. The accent alone is only 3.5:1
-   * against this page, which is fine for a border but not for text; the 55/45
-   * mix measures 5.8:1 light and 8.5:1 dark, and keeps enough of the hue to read
-   * as a link alongside the underline.
+   * Links mix the accent toward the body ink, for the reason spelled out beside
+   * `--ink-accent` in theme.css. The rest of the site that puts the accent on
+   * words takes the same value, so a link in the prose and the current entry in
+   * the table of contents cannot drift apart.
    */
-  --tw-prose-links: color-mix(
-    in oklab,
-    var(--color-primary) 55%,
-    var(--color-base-content)
-  );
+  --tw-prose-links: var(--ink-accent);
   --tw-prose-bold: var(--color-base-content);
   --tw-prose-counters: color-mix(
     in oklab,
@@ -80,9 +76,23 @@
   font-style: normal;
 }
 
-.prose :where(h2, h3, h4, h5, h6) {
-  /* Table of contents links jump to a heading, so leave room for the running
-   * head instead of landing underneath it. */
+/*
+ * Every in-page jump target has to clear the running head or it lands
+ * underneath it. The table of contents jumps to a heading; a note's
+ * back-reference jumps to the `<sup>` in the body, and the note itself is
+ * reached from that same superscript, so all three take the same offset.
+ */
+.prose
+  :where(
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    [data-footnote-ref],
+    [data-footnote-backref],
+    [data-footnotes] li
+  ) {
   scroll-margin-top: 6rem;
 }
 
@@ -200,4 +210,17 @@
  */
 .prose .expressive-code .gutter .ln {
   color: color-mix(in oklab, var(--color-base-content) 70%, transparent);
+}
+
+/*
+ * Expressive Code fixes its copy button at a 2.5rem square, which is a cursor
+ * size, and offers no variable for it. A coarse pointer gets the 44px floor
+ * instead; the icon is drawn by absolutely positioned children, so growing the
+ * box only grows the target.
+ */
+@media (pointer: coarse) {
+  .prose .expressive-code .copy button {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
 }

@@ -76,18 +76,30 @@ const drawerId = "site-drawer";
         aria-hidden="true"
       />
       <div class="drawer-content flex min-h-dvh flex-col">
+        <!--
+          First in the tab order, so the chrome below it can be stepped over.
+          The header carries the wordmark, three nav links and the theme toggle
+          on every page, and the drawer button as well on a phone.
+
+          The destination is focusable because a skip link that only scrolls
+          leaves the reader's focus behind in the header, where the next Tab
+          would carry them back into the nav they just skipped.
+        -->
+        <a class="skip-link" href="#main">
+          本文へスキップ
+        </a>
         <Header />
-        <main class="flex-1">
+        <main id="main" tabindex="-1" class="flex-1">
           <slot />
         </main>
         <Footer />
       </div>
-      <nav class="drawer-side z-50" aria-label="Mobile navigation">
+      <nav class="drawer-side z-50" aria-label="モバイルナビゲーション">
         <label
           for={drawerId}
           id="drawer-overlay"
           class="drawer-overlay"
-          aria-label="Close navigation"
+          aria-label="ナビゲーションを閉じる"
         ></label>
         <div
           id="drawer-panel"
@@ -103,8 +115,8 @@ const drawerId = "site-drawer";
             <button
               id="drawer-close"
               type="button"
-              class="btn btn-ghost btn-square btn-sm"
-              aria-label="Close navigation"
+              class="btn btn-ghost btn-square btn-sm min-h-11 min-w-11"
+              aria-label="ナビゲーションを閉じる"
             >
               <Icon name="close" class="text-[1.25rem]" />
             </button>
@@ -139,16 +151,30 @@ const drawerId = "site-drawer";
         )
           return;
 
+        /*
+         * The open drawer covers the page, so the page has to stop answering.
+         * Without this, Tab walks out of the open drawer and into the header
+         * button and wordmark sitting behind it. `inert` also takes the covered
+         * page out of the accessibility tree, which is the same promise a dialog
+         * makes, and it is why no focus trap is hand-rolled here.
+         *
+         * The attribute comes off before the trigger is refocused, because the
+         * trigger lives inside the subtree being made interactive again.
+         */
+        const content = document.querySelector(".drawer-content");
+
         const setOpen = (open) => {
           toggle.checked = open;
           openButton.setAttribute("aria-expanded", String(open));
           if (open) {
+            content?.setAttribute("inert", "");
             window.setTimeout(() => {
               if (!toggle.checked) return;
               const first = panel?.querySelector("a, button");
               if (first instanceof HTMLElement) first.focus();
             }, 250);
           } else {
+            content?.removeAttribute("inert");
             openButton.focus();
           }
         };

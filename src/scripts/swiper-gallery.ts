@@ -12,6 +12,24 @@
 const GALLERY_SELECTOR = ".swiper-gallery";
 const ENHANCED_ATTRIBUTE = "data-swiper-enhanced";
 
+/*
+ * The gallery's own words. Swiper's accessibility module writes its messages
+ * onto the controls it is handed, so the buttons built below and the messages
+ * passed to Swiper are read from one place rather than kept in step by hand.
+ *
+ * `{{index}}` and `{{slidesLength}}` are Swiper's placeholders, not ours, and
+ * the slide label is the same `n / total` the pagination readout prints, so what
+ * a screen reader hears and what the page shows cannot drift apart.
+ */
+const A11Y_TEXTS = {
+  prevSlideMessage: "前のスライド",
+  nextSlideMessage: "次のスライド",
+  firstSlideMessage: "最初のスライドです",
+  lastSlideMessage: "最後のスライドです",
+  slideLabelMessage: "{{index}} / {{slidesLength}}",
+  containerRoleDescriptionMessage: "カルーセル",
+} as const;
+
 const createControl = (className: string, label: string) => {
   const control = document.createElement("button");
   control.type = "button";
@@ -36,9 +54,11 @@ const buildGallery = (gallery: HTMLElement) => {
 
   const pagination = document.createElement("div");
   pagination.className = "swiper-pagination";
-  const previous = createControl("swiper-button-prev", "Previous slide");
-  const next = createControl("swiper-button-next", "Next slide");
-
+  const previous = createControl(
+    "swiper-button-prev",
+    A11Y_TEXTS.prevSlideMessage,
+  );
+  const next = createControl("swiper-button-next", A11Y_TEXTS.nextSlideMessage);
   gallery.replaceChildren(wrapper, pagination, previous, next);
   gallery.classList.add("swiper");
 
@@ -70,13 +90,20 @@ export const enhanceSwiperGalleries = () => {
             prevEl: controls.previous,
             nextEl: controls.next,
           },
+          /*
+           * A fraction, not one bullet per slide. This gallery holds 41 drawings,
+           * and the default would print 41 eight-pixel dots across the page:
+           * targets far under the 44px floor the rest of the site keeps, with the
+           * current slide marked by colour alone. A readout says the same thing
+           * in words and stays legible however many drawings are added.
+           */
           pagination: {
             el: controls.pagination,
-            clickable: true,
+            type: "fraction",
           },
           a11y: {
             containerRole: "group",
-            containerRoleDescriptionMessage: "carousel",
+            ...A11Y_TEXTS,
           },
         });
       }

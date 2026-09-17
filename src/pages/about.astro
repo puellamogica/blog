@@ -21,6 +21,7 @@ import {
   videoTitle,
   type Era,
 } from "../data/profile";
+import { toSrcset } from "../utils/srcset";
 
 /*
  * The two layers of the character band, per era: the world she is standing in,
@@ -45,19 +46,8 @@ const stage = {
   },
 } satisfies Record<Era, { world: Layer; figure: Layer }>;
 
-// A `<source>` needs a srcset rather than an <Image>, so the widths are built
-// here. Both art directions are wider than any viewport they are shown at, so
-// these stay below the source size and nothing is ever upscaled.
-const srcset = async (src: ImageMetadata, widths: number[]) =>
-  (
-    await Promise.all(
-      widths.map(async (width) => {
-        const { src: url } = await getImage({ src, width, format: "webp" });
-        return `${url} ${width}w`;
-      }),
-    )
-  ).join(", ");
-
+// Both art directions are wider than any viewport they are shown at, so these
+// widths stay below the source size and nothing is ever upscaled.
 const layers = await Promise.all(
   eraKeys.map(async (era) => ({
     era,
@@ -69,7 +59,7 @@ const layers = await Promise.all(
           format: "webp",
         })
       ).src,
-      pc: await srcset(stage[era].world.pc, [1280, 1920, 2560]),
+      pc: await toSrcset(stage[era].world.pc, [1280, 1920, 2560]),
     },
     figure: {
       phone: (
@@ -79,7 +69,7 @@ const layers = await Promise.all(
           format: "webp",
         })
       ).src,
-      pc: await srcset(stage[era].figure.pc, [1024, 1600]),
+      pc: await toSrcset(stage[era].figure.pc, [1024, 1600]),
     },
   })),
 );
@@ -159,9 +149,14 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
         class="stage-art relative isolate h-(--stage-art) w-full md:absolute md:inset-0 md:h-full"
         aria-hidden="true"
       >
-        <!-- The era's world, edge to edge behind everything. -->
+        <!--
+          The era's world, edge to edge behind everything. `data-layer` says
+          which of the two kinds of picture this is: the stylesheet lets a world
+          dissolve into the other era's, because every pixel of it is opaque, and
+          makes a figure take turns instead, because that one is a cut-out.
+        -->
         {layers.map(({ era, world }) => (
-          <picture data-era={era} class="absolute inset-0">
+          <picture data-era={era} data-layer="world" class="absolute inset-0">
             <source media="(width >= 48rem)" srcset={world.pc} sizes="100vw" />
             <img
               src={world.phone}
@@ -188,7 +183,11 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
           <div class="grid h-full md:grid-cols-2 md:gap-12">
             <div class="relative h-full">
               {layers.map(({ era, figure }) => (
-                <picture data-era={era} class="absolute inset-0">
+                <picture
+                  data-era={era}
+                  data-layer="figure"
+                  class="absolute inset-0"
+                >
                   <source
                     media="(width >= 48rem)"
                     srcset={figure.pc}
@@ -255,7 +254,7 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
               -->
               {eraKeys.map((era) => (
                 <div data-era={era}>
-                  <h2 class="section-title mt-10">PROFILE</h2>
+                  <h2 class="section-title mt-10">プロフィール</h2>
 
                   <table class="table mt-4">
                     <colgroup>
@@ -308,7 +307,7 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
                   -->
                   <h2 class="section-title mt-10">{videoTitle}</h2>
 
-                  <figure class="border-base-300 mt-4 border" data-media>
+                  <figure class="media-frame mt-4" data-media>
                     <video
                       class="aspect-video h-auto w-full"
                       controls
@@ -337,20 +336,11 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
 </BaseLayout>
 
 <script>
-  /*
-   * The same media pattern the article layout uses: the markup is a plain
-   * <video controls>, so it plays with scripting off, and Plyr is fetched only
-   * on a page that actually has one. The icons are served from this site rather
-   * than from Plyr's default CDN.
-   */
-  const media =
-    document.querySelectorAll<HTMLMediaElement>("[data-media] video");
+  import { enhanceMediaPlayers } from "../scripts/media-player";
 
-  if (media.length > 0) {
-    void import("plyr").then(({ default: Plyr }) => {
-      for (const element of media) {
-        new Plyr(element, { iconUrl: "/plyr.svg" });
-      }
-    });
-  }
+  /*
+   * The character film is a plain <video controls>, so it plays with scripting
+   * off and Plyr is fetched only in the browser, on this page.
+   */
+  enhanceMediaPlayers("[data-media] video");
 </script>

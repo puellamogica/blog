@@ -7,16 +7,110 @@
 }
 
 /*
- * Motion tokens.
+ * Motion.
  *
- * The loader's arrival is the only staged sequence on the site; everything else
- * is a transition on an interactive state change, so this is the whole motion
- * vocabulary. Declared here, as a theme value, so the loader consumes it as an
- * ordinary `animate-*` utility rather than as a one-off rule.
+ * The whole movement vocabulary: two decelerating curves, a short ladder of
+ * durations, and the one reveal every arriving element shares. Nothing here is
+ * decorative. Each value answers a question about how long the eye needs to
+ * follow a change, so a rule that reaches for a raw number instead of a name is
+ * the thing to fix.
+ *
+ * The curves are plain custom properties rather than theme values because every
+ * one of them is consumed by a rule in a stylesheet, and Tailwind only emits a
+ * theme value it can see a utility asking for.
+ *
+ * Both curves decelerate hard and settle. By the time the eye has followed an
+ * element to where it is going, the movement has shed its speed; an ease that
+ * arrives gently reads as hesitation instead. Colour settling into place does
+ * not need either and keeps the browser default.
+ */
+:root {
+  --motion-tap: 100ms; /* a control acknowledging a press */
+  --motion-exit: 150ms; /* something leaving, or settling into a new colour */
+  --motion-state: 200ms; /* a control changing state under the pointer */
+  --motion-reveal: 280ms; /* an element arriving in space already held for it */
+  --motion-swap: 320ms; /* the character page changing era */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* How far back ink is held. All three are argued below. */
+  --ink-muted: color-mix(in oklab, var(--color-base-content) 70%, transparent);
+  --ink-mark: color-mix(in oklab, var(--color-base-content) 55%, transparent);
+  --ink-accent: color-mix(
+    in oklab,
+    var(--color-primary) 55%,
+    var(--color-base-content)
+  );
+}
+
+/*
+ * The arrival. Anything that appears in space its parent already reserved fades
+ * up into it: enough to say that it arrived, too little to carry meaning on its
+ * own. Shared rather than restated, so a filtered row, a weather reading and an
+ * era panel all arrive the same way and the page reads as one surface.
+ *
+ * Filled `backwards`, so an element given a delay is held at its start state for
+ * the whole of it. That is what lets a sequence stagger without a flash of the
+ * finished state first.
+ */
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*
+ * Two muted tiers, and why they stop where they do.
+ *
+ * Secondary text is held back from full contrast so it never competes with the
+ * writing, but "held back" cannot mean "under the floor", and the brief already
+ * calls contrast a floor rather than a preference. Measured against the page
+ * surface, base-content at 55% reads 3.06:1 in nord and 4.09:1 in night, and at
+ * 60% reads 3.49:1 and 4.70:1. The light theme fails AA for text at both, which
+ * is where every label, date, nav link, caption and lead paragraph on this site
+ * sat.
+ *
+ * 70% is the lowest value that clears 4.5:1 in both themes: 4.59:1 in nord and
+ * 5.89:1 in night. That is the muted tier. It still sits a long way under the
+ * body's 10.84:1, so it reads as secondary rather than as competing, which is
+ * the whole reason it is held back.
+ *
+ * The row marker is a glyph rather than text, so it answers to 3:1 instead, and
+ * 55% measures 3.06:1 in nord and 4.09:1 in night. It was 35%, or 1.95:1, which
+ * is why the arrows down the index were barely there.
+ *
+ * The third is the accent, and only where it carries text. On its own it
+ * measures 3.5:1 against this page, which is fine for a border, a focus ring or
+ * a one-pixel rule and not fine for a word. Mixed 55/45 toward the body ink it
+ * measures 5.8:1 in nord and 8.5:1 in night, and keeps enough of the hue to
+ * still read as the accent. prose.css found this first, for links; it is named
+ * here because the current entry in the table of contents, the hovered index
+ * row and the quiet link all put the accent on words too.
+ *
+ * One value per tier, declared once, so a rule cannot drift; and written as
+ * `color-mix` over `transparent` because that is exactly what Tailwind's `/NN`
+ * opacity modifier emits. These are the numbers the call sites already spoke,
+ * given a name and moved onto the floor.
+ *
+ * The declarations live in the `:root` above, beside the motion tokens, because
+ * a stylesheet may only carry one block per selector. Tailwind writes its own
+ * fallback for engines without `color-mix`, where the tier degrades to full
+ * contrast rather than to no colour at all.
+ */
+
+/*
+ * The loader's arrival, the one staged sequence on the site. Declared as a
+ * theme value so the loader consumes it as an ordinary `animate-*` utility
+ * rather than as a one-off rule.
  */
 @theme {
-  --animate-loader-rise: loader-rise 420ms cubic-bezier(0.16, 1, 0.3, 1)
-    backwards;
+  --animate-loader-rise: loader-rise 420ms var(--ease-out-expo) backwards;
 
   @keyframes loader-rise {
     from {
@@ -75,6 +169,16 @@
   :focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
+  }
+
+  /*
+   * A tap on a control should not have to wait out the double-tap-zoom delay
+   * before it acts. Pinch-to-zoom is untouched, and so is the page around them:
+   * this is on the elements that are meant to be tapped, not on the text beside
+   * them.
+   */
+  :where(a, button, label, summary, input, select, textarea) {
+    touch-action: manipulation;
   }
 
   @media (prefers-reduced-motion: reduce) {

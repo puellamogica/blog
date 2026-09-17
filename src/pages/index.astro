@@ -1,5 +1,5 @@
 ---
-import { Image, getImage } from "astro:assets";
+import { Image } from "astro:assets";
 import CategoryBadge from "../components/CategoryBadge.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import PostEntry from "../components/PostEntry.astro";
@@ -7,6 +7,7 @@ import WeatherWidget from "../components/WeatherWidget.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 import { byPinnedThenDate, getArticles, getVaultEntries } from "../utils/posts";
+import { toSrcset } from "../utils/srcset";
 /*
  * The masthead art is two pictures, not one: a portrait frame for phones and a
  * landscape frame for wide screens, the way the site this borrows from art
@@ -40,15 +41,7 @@ const since =
 const PC_BREAKPOINT = "48rem";
 const PC_WIDTHS = [1024, 1440, 1920, 2560];
 
-/* getImage() is what puts this srcset through the same pipeline as <Image>. */
-const heroPcSrcset = (
-  await Promise.all(
-    PC_WIDTHS.map(async (width) => {
-      const { src } = await getImage({ src: HeroPc, width, format: "webp" });
-      return `${src} ${width}w`;
-    }),
-  )
-).join(", ");
+const heroPcSrcset = await toSrcset(HeroPc, PC_WIDTHS);
 ---
 
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
@@ -110,7 +103,7 @@ const heroPcSrcset = (
           <h2 class="display-title mt-5">
             <a
               href={`/${lead.collection}/${lead.data.slug}`}
-              class="hover:text-primary transition-colors"
+              class="hover:text-[color:var(--ink-accent)] transition-colors"
             >
               {lead.data.title}
             </a>
@@ -119,7 +112,7 @@ const heroPcSrcset = (
         </div>
 
         {lead.data.heroImage && (
-          <figure class="border-base-300 border">
+          <figure class="media-frame">
             <Image
               width={720}
               height={480}
