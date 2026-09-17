@@ -80,9 +80,23 @@
   font-style: normal;
 }
 
-.prose :where(h2, h3, h4, h5, h6) {
-  /* Table of contents links jump to a heading, so leave room for the running
-   * head instead of landing underneath it. */
+/*
+ * Every in-page jump target has to clear the running head or it lands
+ * underneath it. The table of contents jumps to a heading; a note's
+ * back-reference jumps to the `<sup>` in the body, and the note itself is
+ * reached from that same superscript, so all three take the same offset.
+ */
+.prose
+  :where(
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    [data-footnote-ref],
+    [data-footnote-backref],
+    [data-footnotes] li
+  ) {
   scroll-margin-top: 6rem;
 }
 
