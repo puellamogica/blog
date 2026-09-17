@@ -2,16 +2,20 @@ export const prerender = false;
 
 import { env } from "cloudflare:workers";
 import type { APIContext, APIRoute } from "astro";
-import { verifyPassword } from "../../utils/argon2-verify";
+import { isVerified, verifyPassword } from "../../utils/argon2-verify";
+import { jsonResponse } from "../../utils/http";
 import { isValidPassword } from "../../utils/password";
 import { getVaultEntry } from "../../utils/posts";
+import { allowRequest } from "../../utils/rate-limit";
 import { TURNSTILE_ACTION, verifyTurnstile } from "../../utils/turnstile";
 import { storeUnlock } from "../../utils/vault-auth";
 
-const json = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), {
-    status,
-    headers: { "content-type": "application/json" },
+const IP_LIMIT_RETRY_AFTER_SECONDS = "10";
+const SLUG_LIMIT_RETRY_AFTER_SECONDS = "60";
+
+const rateLimited = (retryAfter: string) =>
+  jsonResponse({ ok: false, error: "rate_limited" }, 429, {
+    "retry-after": retryAfter,
   });
 
 const handlePost = async ({
@@ -21,6 +25,21 @@ const handlePost = async ({
   site,
   url,
 }: APIContext) => {
+  /*
+   * Every check below this point either costs a network round trip or an Argon2
+   * verification, so the cheapest refusal goes first.
+   */
+  if (!(await allowRequest(env.AUTH_IP_RATE_LIMIT, clientAddress))) {
+    console.error(
+      JSON.stringify({
+        message: "auth rate limited",
+        scope: "address",
+        address: clientAddress,
+      }),
+    );
+    return rateLimited(IP_LIMIT_RETRY_AFTER_SECONDS);
+  }
+
   const form = await request.formData();
   const slug = form.get("slug");
   const password = form.get("password");
@@ -32,7 +51,24 @@ const handlePost = async ({
     typeof password !== "string" ||
     session === undefined
   ) {
-    return json({ ok: false, error: "server" }, 400);
+    return jsonResponse({ ok: false, error: "server" }, 400);
+  }
+
+  /*
+   * A per-address limit cannot bound guesses against one post — a rotating set
+   * of addresses never trips it. This one can, which is what keeps a distributed
+   * attempt on a single vault entry finite.
+   */
+  if (!(await allowRequest(env.AUTH_SLUG_RATE_LIMIT, slug))) {
+    console.error(
+      JSON.stringify({
+        message: "auth rate limited",
+        scope: "post",
+        slug,
+        address: clientAddress,
+      }),
+    );
+    return rateLimited(SLUG_LIMIT_RETRY_AFTER_SECONDS);
   }
 
   const allowedHostnames = new Set<string>();
@@ -52,16 +88,16 @@ const handlePost = async ({
   });
 
   if (!verified) {
-    return json({ ok: false, error: "blocked" }, 403);
+    return jsonResponse({ ok: false, error: "blocked" }, 403);
   }
 
   const post = await getVaultEntry(slug);
   if (post === undefined) {
-    return json({ ok: false, error: "server" }, 404);
+    return jsonResponse({ ok: false, error: "server" }, 404);
   }
 
   if (!isValidPassword(password)) {
-    return json({ ok: false, error: "invalid" });
+    return jsonResponse({ ok: false, error: "invalid" });
   }
 
   const [endpoint, hmacSecret, bypass] = await Promise.all([
@@ -78,7 +114,7 @@ const handlePost = async ({
     bypass,
   });
 
-  if (result.errcode === 0) {
+  if (isVerified(result)) {
     await session.regenerate();
 
     let userid = await session.get("userid");
@@ -89,20 +125,27 @@ const handlePost = async ({
 
     await storeUnlock(env.DB, userid, slug, Math.floor(Date.now() / 1000));
 
-    return json({ ok: true, redirect: `/vault/${slug}` });
+    return jsonResponse({ ok: true, redirect: `/vault/${slug}` });
   }
 
   if (result.errcode === 6) {
-    return json({ ok: false, error: "invalid" });
+    console.error(
+      JSON.stringify({
+        message: "unlock mismatch",
+        slug,
+        address: clientAddress,
+      }),
+    );
+    return jsonResponse({ ok: false, error: "invalid" });
   }
 
-  return json({ ok: false, error: "server" }, 502);
+  return jsonResponse({ ok: false, error: "server" }, 502);
 };
 
 export const POST: APIRoute = async (context) => {
   try {
     return await handlePost(context);
   } catch {
-    return json({ ok: false, error: "server" }, 500);
+    return jsonResponse({ ok: false, error: "server" }, 500);
   }
 };

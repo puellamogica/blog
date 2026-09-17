@@ -49,6 +49,35 @@
       "bucket_name": "blog",
     },
   ],
+  /*
+   * Abuse control for /api/auth, inside the Worker rather than only at the edge
+   * (see the dashboard rule for POST /api/auth, which cannot count per post and
+   * whose block page is not the JSON the unlock form parses).
+   *
+   * The address limit sits one below the edge rule's 10 per 10s so this one is
+   * reached first and the reader gets the in-page "too many attempts" message.
+   * The per-post limit is what bounds guesses against a single vault entry when
+   * they come from many addresses. Bindings are simple counters with
+   * per-location eventual consistency: abuse control, not a quota.
+   */
+  "ratelimits": [
+    {
+      "name": "AUTH_IP_RATE_LIMIT",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 8,
+        "period": 10,
+      },
+    },
+    {
+      "name": "AUTH_SLUG_RATE_LIMIT",
+      "namespace_id": "1002",
+      "simple": {
+        "limit": 30,
+        "period": 60,
+      },
+    },
+  ],
   "secrets_store_secrets": [
     {
       "binding": "ARGON2_ENDPOINT",

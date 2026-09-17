@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { hmacHex, signRequest } from "../src/utils/argon2-verify";
+import { hmacHex, isVerified, signRequest } from "../src/utils/argon2-verify";
 
 describe("hmacHex", () => {
   it("matches the known HMAC-SHA256 vector", async () => {
@@ -24,5 +24,23 @@ describe("signRequest", () => {
     await expect(signRequest("secret", timestamp, body)).resolves.toBe(
       await hmacHex("secret", `${timestamp}.${body}`),
     );
+  });
+});
+
+describe("isVerified", () => {
+  it("accepts only a success with the OK errcode", () => {
+    expect(isVerified({ success: true, errcode: 0 })).toBe(true);
+  });
+
+  it("refuses the OK errcode when success is false", () => {
+    expect(isVerified({ success: false, errcode: 0 })).toBe(false);
+  });
+
+  it("refuses a match errcode", () => {
+    expect(isVerified({ success: true, errcode: 6 })).toBe(false);
+  });
+
+  it("refuses an internal error", () => {
+    expect(isVerified({ success: false, errcode: 5 })).toBe(false);
   });
 });

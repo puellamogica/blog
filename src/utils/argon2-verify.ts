@@ -33,6 +33,14 @@ export type Argon2VerifyResult = {
   errcode: number;
 };
 
+/*
+ * The endpoint's answer is only a match when both halves agree. Checking one
+ * alone would unlock on a response that says `errcode: 0` while reporting that
+ * the password did not verify.
+ */
+export const isVerified = (result: Argon2VerifyResult): boolean =>
+  result.success === true && result.errcode === 0;
+
 export type VerifyPasswordOptions = {
   hash: string;
   input: string;
@@ -65,7 +73,18 @@ export const verifyPassword = async ({
       },
       body,
       signal: AbortSignal.timeout(10_000),
+      /*
+       * `follow` would forward every header — including the signature and the
+       * Vercel bypass — to whatever host a redirect names. A redirect is not an
+       * answer to a verify request, so it is treated as a failed call.
+       */
+      redirect: "manual",
     });
+
+    if (response.status >= 300 && response.status < 400) {
+      return { success: false, errcode: 5 };
+    }
+
     const result = (await response.json()) as Partial<Argon2VerifyResult>;
 
     if (typeof result.errcode !== "number") {

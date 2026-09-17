@@ -48,6 +48,8 @@ export const verifyTurnstile = async ({
       method: "POST",
       headers: { "content-type": "application/x-www-form-urlencoded" },
       signal: AbortSignal.timeout(10_000),
+      // The body carries the site's secret, so it is never sent onward.
+      redirect: "manual",
       body: new URLSearchParams({
         secret,
         response: token,
