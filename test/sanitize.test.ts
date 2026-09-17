@@ -157,5 +157,39 @@ describe("sanitizeHtml", () => {
       expect(sanitized).toContain('encoding="application/x-tex"');
       expect(sanitized).toContain('aria-hidden="true"');
     });
+
+    /*
+     * KaTeX draws a radical, a stretchy brace or a vector arrow as inline SVG.
+     * Unwrapped, the drawing vanished while the space it reserved stayed, which
+     * pushed the numerator of a fraction off its centre.
+     */
+    it("keeps the inline SVG the drawing is made of", () => {
+      const svg =
+        '<svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" ' +
+        'viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice">' +
+        '<path d="M95,702"/></svg>';
+
+      expect(sanitizeHtml(svg)).toBe(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" ' +
+          'viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice">' +
+          '<path d="M95,702"></svg>',
+      );
+    });
+
+    it("restores the camelCase SVG attribute names HTML lower-cases", () => {
+      expect(
+        sanitizeHtml(
+          '<svg viewbox="0 0 1 1" preserveaspectratio="none"></svg>',
+        ),
+      ).toBe('<svg viewBox="0 0 1 1" preserveAspectRatio="none"></svg>');
+    });
+
+    it("still refuses a link or an event handler on the drawing", () => {
+      expect(
+        sanitizeHtml(
+          '<svg><path d="M0,0" onclick="alert(1)" xlink:href="javascript:alert(1)"/></svg>',
+        ),
+      ).toBe('<svg><path d="M0,0"></svg>');
+    });
   });
 });

@@ -8,6 +8,7 @@
 import { escapePreservingEntities, serializeTag, tokenize } from "./html";
 import type { Tag } from "./html";
 import {
+  ATTRIBUTE_NAMES,
   ATTRIBUTES,
   CLASS_PREFIXES,
   CLOBBER,
@@ -97,7 +98,13 @@ export const createSanitizer = ({
     const kept: Array<readonly [string, string]> = [];
 
     for (const [rawName, value] of tag.attributes) {
-      const name = rawName.toLowerCase();
+      /*
+       * Matched in lower case, but serialized in the canonical spelling: SVG's
+       * `viewBox` and `preserveAspectRatio` are case-sensitive, so a lower-cased
+       * name would leave the drawing without its coordinate system.
+       */
+      const lower = rawName.toLowerCase();
+      const name = ATTRIBUTE_NAMES[lower] ?? lower;
       if (isEventHandler(name)) continue;
       if (!attributeAllowed(tag.name, name)) continue;
 

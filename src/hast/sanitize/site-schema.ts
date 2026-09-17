@@ -45,6 +45,16 @@ export const SITE_TAG_NAMES: readonly string[] = [
   "mpadded",
   "mphantom",
   "menclose",
+  /*
+   * KaTeX draws what it cannot take from a font — the radical of a root, a
+   * stretchy brace, the arrow over a vector — as inline SVG beside the MathML.
+   * Those elements have to survive with it: unwrapped, the drawing disappears
+   * while the space it reserved stays, which is what pushed the numerator of a
+   * fraction off its centre.
+   */
+  "svg",
+  "path",
+  "line",
 ];
 
 /*
@@ -67,6 +77,18 @@ export const SITE_ATTRIBUTES: Readonly<Record<string, readonly string[]>> = {
     "height",
   ],
   span: ["className", "style", "aria-hidden"],
+  /*
+   * The drawing's own geometry, and nothing else: no `href`, so an SVG cannot
+   * carry a link, and no event handlers are reachable from here anyway.
+   *
+   * `viewBox` and `preserveAspectRatio` are camelCase in SVG. HTML lower-cases
+   * attribute names, so they are restored to their canonical spelling in
+   * `filter.ts`; serialized as `viewbox` the drawing would lose its coordinate
+   * system.
+   */
+  svg: ["xmlns", "width", "height", "viewBox", "preserveAspectRatio", "style"],
+  path: ["d"],
+  line: ["x1", "y1", "x2", "y2", "stroke-width"],
   math: ["xmlns", "display"],
   annotation: ["encoding"],
   "annotation-xml": ["encoding"],

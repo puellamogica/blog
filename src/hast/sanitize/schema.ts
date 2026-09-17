@@ -117,6 +117,20 @@ export const PROTOCOLS: Readonly<Record<string, readonly string[]>> = {
 /** Attributes that can clobber `document` properties and so get a prefix. */
 export const CLOBBER: readonly string[] = ["id", "name"];
 
+/**
+ * Attributes whose canonical spelling is not lower case.
+ *
+ * HTML lower-cases attribute names, and the sanitiser matches the allowlist in
+ * that form, but SVG's names are case-sensitive: an `<svg>` serialized with
+ * `viewbox` loses the coordinate system KaTeX draws with. The canonical spelling
+ * is restored from here at serialization time, so the allowlist keeps one
+ * comparison form.
+ */
+export const ATTRIBUTE_NAMES: Readonly<Record<string, string>> = {
+  viewbox: "viewBox",
+  preserveaspectratio: "preserveAspectRatio",
+};
+
 export const CLOBBER_PREFIX = "user-content-";
 
 /**
