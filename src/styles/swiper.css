@@ -39,11 +39,8 @@
   --swiper-theme-color: var(--color-primary);
   --swiper-navigation-size: 2.25rem;
   --swiper-navigation-color: var(--color-base-content);
-  --swiper-pagination-color: var(--color-primary);
-  --swiper-pagination-bullet-inactive-color: var(--color-base-content);
-  --swiper-pagination-bullet-inactive-opacity: 0.35;
 
-  /* Shared by the arrow buttons and the bullet pill. */
+  /* Shared by the arrow buttons and the readout's pill. */
   --swiper-gallery-control-surface: color-mix(
     in oklab,
     var(--color-base-100) 75%,
@@ -90,8 +87,29 @@
 }
 
 /*
- * Swiper centres the bullets by stretching the pagination across the container.
- * Shrink it to its contents so it can carry the surface as a pill.
+ * The readout, set in the site's data voice — mono, tracked, tabular — so it
+ * reads as one of the page's own numbers rather than as a widget's. Full
+ * contrast rather than the muted tier, because it sits on the control surface
+ * over a photo, the same way the arrows do.
+ *
+ * Swiper's own pagination is one bullet per slide, which this gallery cannot
+ * use: it holds 41 drawings, so the default is a ruler of 41 eight-pixel dots
+ * whose targets are far below the 44px floor the rest of the site holds to, and
+ * whose current position is carried by colour alone. The fraction says where you
+ * are out of how many, in words, and stays legible however many are added.
+ */
+.swiper-gallery.swiper .swiper-pagination-fraction {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: var(--color-base-content);
+}
+
+/*
+ * Swiper centres the readout by stretching the pagination across the container.
+ * Shrink it to its contents so it can carry the surface as a pill, the way the
+ * arrows do, and the two read as one set of controls.
  */
 .swiper-gallery.swiper .swiper-pagination {
   right: 0;

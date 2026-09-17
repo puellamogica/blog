@@ -481,6 +481,19 @@
   }
 
   /*
+   * The selected era, filled the way a selected chip is.
+   *
+   * daisyUI gives the checked tab the same surface as the box it sits in, so
+   * selection was being carried by the label's opacity alone: a 50% label
+   * against a 100% one, with nothing changing about the surface. On a control
+   * whose entire job is to say which era you are looking at, that is too quiet
+   * to read, and it spends no accent either way.
+   */
+  .era .tab:has(input:checked) {
+    @apply bg-base-content text-base-100;
+  }
+
+  /*
    * daisyUI draws the focus ring on the tab that is already selected, so tabbing
    * to the other one shows nothing at all. This is the same ring the filter
    * chips use, and it goes on the label because the input is invisible.
@@ -853,4 +866,28 @@
 .theme-toggle:has(input:focus-visible) {
   border-color: color-mix(in oklab, var(--color-base-content) 40%, transparent);
   background-color: var(--color-base-200);
+}
+
+/*
+ * The selected era, filled the way a selected chip is.
+ *
+ * daisyUI's `tabs-box` paints the checked tab with `--tab-bg`, which for a box
+ * sitting on `base-100` is `base-100` again. The toggle's own markup sets the
+ * track to `bg-base-100` for the same reason, so the fill landed on the exact
+ * colour it was meant to stand out from, and selection was being carried by the
+ * label's opacity alone: 50% against 100%, with nothing changing about the
+ * surface. On a control whose entire job is to say which era you are looking at,
+ * that is too quiet to read, and it spends no accent either way.
+ *
+ * Inverting to ink is what the filter chips do, and the toggle is the same kind
+ * of thing, a radio group: the state survives grayscale and does not spend the
+ * accent on something that is not an action.
+ *
+ * Unlayered for the reason above: daisyUI emits its tab rules into its own layer,
+ * which outranks the components layer whatever the specificity, so a layered
+ * rule here measured as never applied at all.
+ */
+.era .tab:has(input:checked) {
+  background-color: var(--color-base-content);
+  color: var(--color-base-100);
 }
