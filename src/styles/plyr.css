@@ -41,3 +41,20 @@
    */
   border-radius: var(--radius-box);
 }
+
+/*
+ * Plyr draws its controls for a cursor — an 18px icon plus equal padding, a
+ * 32px box — and has no touch rule of its own, which leaves every control under
+ * the 44px floor once a finger is doing the pointing.
+ *
+ * The padding is what grows, rather than the box: a control is its icon plus
+ * equal padding, so this keeps the icon centred, and it leaves Plyr's own
+ * `display` rules alone. Setting `display` here would un-hide the controls
+ * Plyr hides on a narrow bar, and the extra three would push the play button
+ * off the left edge of a phone's player.
+ */
+@media (pointer: coarse) {
+  .prose .plyr .plyr__control {
+    padding: calc((44px - var(--plyr-control-icon-size, 18px)) / 2);
+  }
+}

@@ -52,6 +52,18 @@
 }
 
 /*
+ * The arrows take their box from this one variable, and 2.25rem is sized for a
+ * cursor. A coarse pointer gets the 44px floor instead; the glyph inside is
+ * fixed by the `.swiper-navigation-icon` rule below, so only the box grows. The
+ * swipe gesture remains the primary way through a gallery on touch.
+ */
+@media (pointer: coarse) {
+  .swiper-gallery {
+    --swiper-navigation-size: 2.75rem;
+  }
+}
+
+/*
  * The controls sit on top of a photo rather than on the page background, so
  * they carry their own surface instead of using the surrounding color. Bullets
  * and arrows share it, so they read as one set of controls, and the theme

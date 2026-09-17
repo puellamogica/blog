@@ -215,3 +215,16 @@
 .prose .expressive-code .gutter .ln {
   color: color-mix(in oklab, var(--color-base-content) 70%, transparent);
 }
+
+/*
+ * Expressive Code fixes its copy button at a 2.5rem square, which is a cursor
+ * size, and offers no variable for it. A coarse pointer gets the 44px floor
+ * instead; the icon is drawn by absolutely positioned children, so growing the
+ * box only grows the target.
+ */
+@media (pointer: coarse) {
+  .prose .expressive-code .copy button {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}

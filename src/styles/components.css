@@ -592,3 +592,16 @@
   border-color: var(--color-base-300);
   color: color-mix(in oklab, var(--color-base-content) 70%, transparent);
 }
+
+/*
+ * The footer's two links are the smallest targets on the site: a 20px line box
+ * each, sized for a cursor. A coarse pointer gets the 44px floor as padding
+ * rather than as a box, so the text does not move and only the touch case
+ * grows. Unlayered for the same reason as the rule above: daisyUI emits `.link`
+ * into the `components` layer.
+ */
+@media (pointer: coarse) {
+  .footer nav a {
+    padding-block: 0.75rem;
+  }
+}
