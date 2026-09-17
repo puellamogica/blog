@@ -116,8 +116,15 @@ export const enhancePageLoader = () => {
     window.addEventListener("load", () => mark(LOADED), { once: true });
   }
 
+  /*
+   * The animation is decoration on top of the progress line, never the loader
+   * itself, so the preference that asks for less movement costs the reader the
+   * loop and nothing else. The line, the readout and the milestones all still
+   * run, and they are the part that says the page is genuinely arriving rather
+   * than merely late.
+   */
   let animation: LottieAnimation | undefined;
-  if (stage) {
+  if (stage && !reduced) {
     void play(stage).then((result) => {
       animation = result;
     });

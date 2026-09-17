@@ -7,16 +7,62 @@
 }
 
 /*
- * Motion tokens.
+ * Motion.
  *
- * The loader's arrival is the only staged sequence on the site; everything else
- * is a transition on an interactive state change, so this is the whole motion
- * vocabulary. Declared here, as a theme value, so the loader consumes it as an
- * ordinary `animate-*` utility rather than as a one-off rule.
+ * The whole movement vocabulary: two decelerating curves, a short ladder of
+ * durations, and the one reveal every arriving element shares. Nothing here is
+ * decorative. Each value answers a question about how long the eye needs to
+ * follow a change, so a rule that reaches for a raw number instead of a name is
+ * the thing to fix.
+ *
+ * The curves are plain custom properties rather than theme values because every
+ * one of them is consumed by a rule in a stylesheet, and Tailwind only emits a
+ * theme value it can see a utility asking for.
+ *
+ * Both curves decelerate hard and settle. By the time the eye has followed an
+ * element to where it is going, the movement has shed its speed; an ease that
+ * arrives gently reads as hesitation instead. Colour settling into place does
+ * not need either and keeps the browser default.
+ */
+:root {
+  --motion-tap: 100ms; /* a control acknowledging a press */
+  --motion-exit: 150ms; /* something leaving, or settling into a new colour */
+  --motion-state: 200ms; /* a control changing state under the pointer */
+  --motion-reveal: 280ms; /* an element arriving in space already held for it */
+  --motion-swap: 320ms; /* the character page changing era */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/*
+ * The arrival. Anything that appears in space its parent already reserved fades
+ * up into it: enough to say that it arrived, too little to carry meaning on its
+ * own. Shared rather than restated, so a filtered row, a weather reading and an
+ * era panel all arrive the same way and the page reads as one surface.
+ *
+ * Filled `backwards`, so an element given a delay is held at its start state for
+ * the whole of it. That is what lets a sequence stagger without a flash of the
+ * finished state first.
+ */
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*
+ * The loader's arrival, the one staged sequence on the site. Declared as a
+ * theme value so the loader consumes it as an ordinary `animate-*` utility
+ * rather than as a one-off rule.
  */
 @theme {
-  --animate-loader-rise: loader-rise 420ms cubic-bezier(0.16, 1, 0.3, 1)
-    backwards;
+  --animate-loader-rise: loader-rise 420ms var(--ease-out-expo) backwards;
 
   @keyframes loader-rise {
     from {
