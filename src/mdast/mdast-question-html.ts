@@ -1,17 +1,23 @@
 import { defineMdastPlugin, markdownToHtml } from "satteri";
-import { hastSanitize } from "../hast/hast-sanitize";
-import { markdownFeatures } from "../markdown";
+import {
+  markdownFeatures,
+  markdownHastPlugins,
+  markdownMdastPlugins,
+} from "../markdown";
 import { renderQuestionHtml } from "./question-html";
 
 /*
- * The question is the one field of a locked post that is rendered to HTML on a
- * public page, and this compile is separate from the one Astro runs for a post
- * body — so the sanitiser has to be passed here as well as in the config.
+ * A question is the one field of a locked post that is rendered to HTML on a
+ * public page, and it is compiled on its own — so it is given the same plugin
+ * set as a post body, rather than the feature flags alone. Without that, maths
+ * in a question stayed the `language-math` code block Sätteri emits when no
+ * plugin renders it, while the same source rendered as KaTeX in a body.
  */
 const renderMarkdown = (markdown: string) =>
   markdownToHtml(markdown, {
     features: markdownFeatures,
-    hastPlugins: [hastSanitize],
+    mdastPlugins: markdownMdastPlugins,
+    hastPlugins: markdownHastPlugins,
   }).html;
 
 export const mdastQuestionHtmlPlugin = defineMdastPlugin({
