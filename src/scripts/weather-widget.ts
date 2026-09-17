@@ -166,7 +166,12 @@ export const enhanceWeatherWidget = () => {
     try {
       const response = await fetch(WEATHER_ENDPOINT, {
         headers: { accept: "application/json" },
-        cache: "no-store",
+        /*
+         * No `cache: "no-store"` here. The snapshot is served with its own
+         * `max-age`, so opting out of the HTTP cache only meant every page view
+         * re-downloaded an unchanged file; the crawler rewrites the object every
+         * ten minutes anyway.
+         */
         signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
       });
 
