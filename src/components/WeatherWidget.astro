@@ -16,8 +16,18 @@ const { location = "根室市" } = Astro.props;
   for the reader who wants them. The snapshot is crawled every ten minutes and
   served from object storage, so it is filled in by `enhanceWeatherWidget`
   rather than at build time.
+
+  The plate is `self-start` rather than stretched to the index column's height,
+  which is what a grid item does by default. It holds a reading, and when the
+  crawl has not come back the only honest height is the height of the sentence
+  that says so; stretched, a failed request left a 427px bordered box holding
+  16px of text.
 -->
-<section class="plate" data-weather aria-labelledby="weather-heading">
+<section
+  class="plate self-start"
+  data-weather
+  aria-labelledby="weather-heading"
+>
   <div class="plate-head">
     <h2 id="weather-heading" class="label">
       天気
