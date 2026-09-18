@@ -1,18 +1,31 @@
 import { hash } from "argon2";
 import { password as passwordPrompt } from "@inquirer/prompts";
+import {
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+  findPasswordProblem,
+} from "../src/utils/password.ts";
 
-const PASSWORD_MIN_LENGTH = 15;
-const PASSWORD_MAX_LENGTH = 128;
-const PASSWORD_PATTERN = /^[A-Za-z0-9!@#$%^&*]+$/;
+/*
+ * The character set, worded for the reader rather than derived.
+ *
+ * The rule itself is `findPasswordProblem`, imported from the module the Worker
+ * validates with, so a password this script accepts is one the unlock form and
+ * the endpoint accept — the three cannot describe different rules. Naming the
+ * symbols is the only part left to do here, and it is prose on purpose, the same
+ * split the unlock form's hint uses.
+ */
+const PASSWORD_CHARACTERS = "A-Z a-z 0-9 ! @ # $ % ^ & *";
 
 const BASE64_PATTERN = /^[A-Za-z0-9+/]+={0,2}$/;
 const MIN_PEPPER_BYTES = 32;
 
-const isValidPassword = (value: string) =>
-  value.length >= PASSWORD_MIN_LENGTH &&
-  value.length <= PASSWORD_MAX_LENGTH &&
-  PASSWORD_PATTERN.test(value);
-
+/*
+ * The pepper rule is restated rather than shared: its authority is
+ * `hasSufficientEntropy` in ../argon2/src/config.ts, which is module-private and
+ * lives in another repo. Keep the two in step by hand, and change the endpoint
+ * first.
+ */
 const isValidPepper = (value: string) =>
   BASE64_PATTERN.test(value) &&
   Buffer.from(value, "base64").length >= MIN_PEPPER_BYTES;
@@ -20,11 +33,11 @@ const isValidPepper = (value: string) =>
 const readPassword = async (): Promise<string> => {
   for (;;) {
     const value = await passwordPrompt({
-      message: `Vault password (${PASSWORD_MIN_LENGTH}-${PASSWORD_MAX_LENGTH} chars: A-Z a-z 0-9 ! @ # $ % ^ & *)`,
+      message: `Vault password (${PASSWORD_MIN_LENGTH}-${PASSWORD_MAX_LENGTH} chars: ${PASSWORD_CHARACTERS})`,
       mask: "*",
       validate: (candidate) =>
-        isValidPassword(candidate) ||
-        `Must be ${PASSWORD_MIN_LENGTH}-${PASSWORD_MAX_LENGTH} characters from A-Z a-z 0-9 ! @ # $ % ^ & *`,
+        findPasswordProblem(candidate) === undefined ||
+        `Must be ${PASSWORD_MIN_LENGTH}-${PASSWORD_MAX_LENGTH} characters from ${PASSWORD_CHARACTERS}`,
     });
 
     const confirmation = await passwordPrompt({
