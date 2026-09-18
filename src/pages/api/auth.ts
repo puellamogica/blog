@@ -3,12 +3,17 @@ export const prerender = false;
 import { env } from "cloudflare:workers";
 import type { APIContext, APIRoute } from "astro";
 import { isVerified, verifyPassword } from "../../utils/argon2-verify";
-import { jsonResponse } from "../../utils/http";
+import {
+  isBodyWithinLimit,
+  jsonResponse,
+  MAX_AUTH_BODY_BYTES,
+} from "../../utils/http";
 import { isValidPassword } from "../../utils/password";
 import { getVaultEntry } from "../../utils/posts";
 import { allowRequest } from "../../utils/rate-limit";
 import { TURNSTILE_ACTION, verifyTurnstile } from "../../utils/turnstile";
 import { storeUnlock } from "../../utils/vault-auth";
+import { isVaultSlug } from "../../utils/vault-slug";
 
 const IP_LIMIT_RETRY_AFTER_SECONDS = "10";
 const SLUG_LIMIT_RETRY_AFTER_SECONDS = "60";
@@ -26,9 +31,19 @@ const handlePost = async ({
   url,
 }: APIContext) => {
   /*
-   * Every check below this point either costs a network round trip or an Argon2
-   * verification, so the cheapest refusal goes first.
+   * Cheap refusals first, and this is the cheapest: a body larger than the form
+   * could possibly be is turned away from its declared length alone, before a
+   * rate-limit call, before the body is read.
    */
+  if (
+    !isBodyWithinLimit(
+      request.headers.get("content-length"),
+      MAX_AUTH_BODY_BYTES,
+    )
+  ) {
+    return jsonResponse({ ok: false, error: "server" }, 413);
+  }
+
   if (!(await allowRequest(env.AUTH_IP_RATE_LIMIT, clientAddress))) {
     console.error(
       JSON.stringify({
@@ -47,7 +62,7 @@ const handlePost = async ({
 
   if (
     typeof slug !== "string" ||
-    slug === "" ||
+    !isVaultSlug(slug) ||
     typeof password !== "string" ||
     session === undefined
   ) {
@@ -55,20 +70,13 @@ const handlePost = async ({
   }
 
   /*
-   * A per-address limit cannot bound guesses against one post — a rotating set
-   * of addresses never trips it. This one can, which is what keeps a distributed
-   * attempt on a single vault entry finite.
+   * The post is resolved before the challenge, so a slug that names nothing is
+   * answered for the cost of a lookup: it never spends a token and never becomes
+   * a rate-limit key.
    */
-  if (!(await allowRequest(env.AUTH_SLUG_RATE_LIMIT, slug))) {
-    console.error(
-      JSON.stringify({
-        message: "auth rate limited",
-        scope: "post",
-        slug,
-        address: clientAddress,
-      }),
-    );
-    return rateLimited(SLUG_LIMIT_RETRY_AFTER_SECONDS);
+  const post = await getVaultEntry(slug);
+  if (post === undefined) {
+    return jsonResponse({ ok: false, error: "server" }, 404);
   }
 
   const allowedHostnames = new Set<string>();
@@ -91,9 +99,25 @@ const handlePost = async ({
     return jsonResponse({ ok: false, error: "blocked" }, 403);
   }
 
-  const post = await getVaultEntry(slug);
-  if (post === undefined) {
-    return jsonResponse({ ok: false, error: "server" }, 404);
+  /*
+   * The per-post budget is charged only after the challenge, so it cannot be
+   * spent by anyone who is not solving one: a burst of junk requests costs a
+   * token each and never touches a post's allowance. What is left for the
+   * counter to do is bound guesses against a single post, which the per-address
+   * limit cannot — a rotating set of addresses never trips it. The key is the
+   * resolved slug rather than the submitted one, so the counter holds one entry
+   * per real post and nothing else.
+   */
+  if (!(await allowRequest(env.AUTH_SLUG_RATE_LIMIT, post.data.slug))) {
+    console.error(
+      JSON.stringify({
+        message: "auth rate limited",
+        scope: "post",
+        slug: post.data.slug,
+        address: clientAddress,
+      }),
+    );
+    return rateLimited(SLUG_LIMIT_RETRY_AFTER_SECONDS);
   }
 
   if (!isValidPassword(password)) {
