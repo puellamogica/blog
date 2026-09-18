@@ -118,17 +118,7 @@ export const enhanceWeatherWidget = () => {
   const content = query<HTMLElement>(root, "[data-weather-content]");
   const error = query<HTMLElement>(root, "[data-weather-error]");
   const live = query<HTMLElement>(root, "[data-weather-live]");
-
-  /*
-   * The reading, the details and any alerts all land in the one live region, and
-   * a polite region announces each insertion as it arrives. Holding the region
-   * busy across the request batches them into a single announcement of the
-   * finished reading, which is the thing worth hearing once.
-   *
-   * Set from here rather than in the markup, so a browser without scripting is
-   * never left holding a region that is permanently busy.
-   */
-  live?.setAttribute("aria-busy", "true");
+  const retry = query<HTMLButtonElement>(root, "[data-weather-retry]");
 
   const settle = () => live?.setAttribute("aria-busy", "false");
 
@@ -139,6 +129,7 @@ export const enhanceWeatherWidget = () => {
       error.textContent = message;
       error.hidden = false;
     }
+    if (retry) retry.hidden = false;
     settle();
   };
 
@@ -174,11 +165,31 @@ export const enhanceWeatherWidget = () => {
     renderAlerts(root, weather.alerts);
 
     if (loading) loading.hidden = true;
+    if (error) error.hidden = true;
+    if (retry) retry.hidden = true;
     if (content) content.hidden = false;
     settle();
   };
 
   const load = async () => {
+    /*
+     * Every attempt starts from the same place, so a retry puts the skeleton
+     * back rather than leaving the failed line on screen while the request it
+     * just replaced is still in flight.
+     *
+     * The reading, the details and any alerts all land in the one live region,
+     * and a polite region announces each insertion as it arrives. Holding the
+     * region busy across the request batches them into a single announcement of
+     * the finished reading, which is the thing worth hearing once. Set from here
+     * rather than in the markup, so a browser without scripting is never left
+     * holding a region that is permanently busy.
+     */
+    if (loading) loading.hidden = false;
+    if (error) error.hidden = true;
+    if (retry) retry.hidden = true;
+    if (content) content.hidden = true;
+    live?.setAttribute("aria-busy", "true");
+
     try {
       const response = await fetch(WEATHER_ENDPOINT, {
         headers: { accept: "application/json" },
@@ -206,6 +217,16 @@ export const enhanceWeatherWidget = () => {
       fail("天気を読み込めませんでした。");
     }
   };
+
+  /*
+   * The button is unmounted by its own action, so focus is parked on the plate
+   * first. Left on the button, it would fall through to `body` and the next Tab
+   * would restart at the top of the page.
+   */
+  retry?.addEventListener("click", () => {
+    root.focus();
+    void load();
+  });
 
   void load();
 };
