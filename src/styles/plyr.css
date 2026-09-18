@@ -3,11 +3,21 @@
  *
  * Plyr exposes its appearance through `--plyr-*` custom properties. They are
  * remapped here onto daisyUI color tokens, the same way prose.css remaps the
- * typography plugin, so both the nord/dim themes and every future theme follow
- * without a `dark:` variant. Scoped to `.prose` so only post content changes.
+ * typography plugin, so both the nord/night themes and every future theme
+ * follow without a `dark:` variant.
+ *
+ * The remap is unscoped. It was written as `.prose .plyr`, on the reading that
+ * Plyr only ever appears in post content, but the character page's film is a
+ * Plyr instance too and it sits in a `.media-frame` inside the sheet, outside
+ * `.prose`. Nothing themed it, so that player kept Plyr's stock blue for its
+ * controls, range fill and focus ring while every article player was themed:
+ * the one place on the site where a component invented a colour, which is what
+ * the remap rule exists to prevent. Matching the plugin rather than a page
+ * section is what keeps it from recurring the next time a player is added
+ * somewhere new.
  */
 
-.prose .plyr {
+.plyr {
   --plyr-color-main: var(--color-primary);
   --plyr-font-family: var(--font-sans);
 
@@ -37,7 +47,7 @@
   /*
    * `.plyr__video-wrapper` and `.plyr--audio .plyr__controls` both use
    * `border-radius: inherit`, so rounding the container is enough to match the
-   * media the layout already rounds via `.prose :where(img, video)`.
+   * media the layout already rounds, in `.prose` and in a `.media-frame` alike.
    */
   border-radius: var(--radius-box);
 }
@@ -54,7 +64,7 @@
  * off the left edge of a phone's player.
  */
 @media (pointer: coarse) {
-  .prose .plyr .plyr__control {
+  .plyr .plyr__control {
     padding: calc((44px - var(--plyr-control-icon-size, 18px)) / 2);
   }
 }
