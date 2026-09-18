@@ -882,3 +882,42 @@
   background-color: var(--color-base-content);
   color: var(--color-base-100);
 }
+
+/*
+ * The unlock form's two lines of guidance, and its rejected state.
+ *
+ * A hint and an error are instructional text rather than metadata, so they take
+ * the body's smaller size instead of the `data` face every date and reading on
+ * the site wears. The hint uses the muted tier, which is the floor the rest of
+ * the secondary text clears; the error uses the field's own colour mixed toward
+ * the body ink, the same way prose.css and the ink tokens handle the accent
+ * wherever it has to carry words.
+ *
+ * `aria-invalid` has been set on a rejected password since the form was written,
+ * but nothing ever drew it: the attribute reached a screen reader and stopped
+ * there, so the reader who came back to the field after the toast had left saw
+ * an ordinary input. The border marks which field, the message beside it says
+ * what to do, and neither is the only signal.
+ *
+ * Unlayered for the same reason as the rules above: daisyUI emits `.input` into
+ * its own layer, which outranks this file's components layer whatever the
+ * specificity.
+ */
+.unlock-hint {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--ink-muted);
+}
+
+.unlock-error {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.6;
+  text-wrap: pretty;
+  color: color-mix(in oklab, var(--color-error) 75%, var(--color-base-content));
+}
+
+#unlock-password[aria-invalid="true"] {
+  border-color: var(--color-error);
+  background-color: color-mix(in oklab, var(--color-error) 8%, transparent);
+}
