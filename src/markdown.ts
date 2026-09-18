@@ -1,5 +1,6 @@
 import { hastEagerImages } from "./hast/hast-eager-images";
 import { hastSanitize } from "./hast/hast-sanitize";
+import { hastTaskListLabels } from "./hast/hast-task-list-labels";
 import { mdastKatexPlugin } from "./mdast/mdast-katex";
 import { mdastReadingTimePlugin } from "./mdast/mdast-reading-time";
 import type { Features } from "satteri";
@@ -31,4 +32,8 @@ export const markdownFeatures = {
  */
 export const markdownMdastPlugins = [mdastReadingTimePlugin, mdastKatexPlugin];
 
-export const markdownHastPlugins = [hastEagerImages, hastSanitize];
+export const markdownHastPlugins = [
+  hastEagerImages,
+  hastSanitize,
+  hastTaskListLabels,
+];
