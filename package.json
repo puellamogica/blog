@@ -1,7 +1,7 @@
 {
   "name": "blog",
   "type": "module",
-  "version": "26.9.13",
+  "version": "26.9.18",
   "scripts": {
     "dev": "astro dev",
     "build": "astro check && astro build",
@@ -52,7 +52,7 @@
     "jiti": "^2.7.0",
     "lint-staged": "^17.5.1",
     "prettier": "^3.9.7",
-    "prettier-plugin-astro": "^1.0.0",
+    "prettier-plugin-astro": "^1.0.1",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "stylelint": "^17.15.0",
     "stylelint-config-standard": "^40.0.0",
