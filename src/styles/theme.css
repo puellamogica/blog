@@ -9,29 +9,45 @@
 /*
  * Motion.
  *
- * The whole movement vocabulary: two decelerating curves, a short ladder of
- * durations, and the one reveal every arriving element shares. Nothing here is
- * decorative. Each value answers a question about how long the eye needs to
- * follow a change, so a rule that reaches for a raw number instead of a name is
- * the thing to fix.
+ * The whole movement vocabulary: three curves, a short ladder of durations, the
+ * beats a staged sequence steps by, and the one reveal every arriving element
+ * shares. Nothing here is decorative. Each value answers a question about how
+ * long the eye needs to follow a change, so a rule that reaches for a raw number
+ * instead of a name is the thing to fix.
  *
  * The curves are plain custom properties rather than theme values because every
  * one of them is consumed by a rule in a stylesheet, and Tailwind only emits a
  * theme value it can see a utility asking for.
  *
- * Both curves decelerate hard and settle. By the time the eye has followed an
- * element to where it is going, the movement has shed its speed; an ease that
- * arrives gently reads as hesitation instead. Colour settling into place does
- * not need either and keeps the browser default.
+ * The two decelerating curves carry everything that arrives or changes in place.
+ * By the time the eye has followed an element to where it is going, the movement
+ * has shed its speed; an ease that arrives gently reads as hesitation instead.
+ * Colour settling into place does not need either and keeps the browser default.
+ *
+ * The third is the exception, and it is named rather than restated for that
+ * reason: the loader's veil *leaving* is the one motion on the site that is not
+ * an arrival. It accelerates out of the start and decelerates into the end, so
+ * it could not borrow either of the others without changing how the veil feels.
+ * `--motion-veil` and `--ease-leave` are that motion's two values, given names
+ * so the rule that uses them is not the only place they are written down.
+ *
+ * It is `--ease-leave` and not `--ease-in-out` because Tailwind's own default
+ * theme already defines the latter, for its utility of that name. A second
+ * declaration here would shadow more than a stray value — it would quietly
+ * change what `ease-in-out` means the day any rule reaches for the utility.
  */
 :root {
   --motion-tap: 100ms; /* a control acknowledging a press */
   --motion-exit: 150ms; /* something leaving, or settling into a new colour */
   --motion-state: 200ms; /* a control changing state under the pointer */
   --motion-reveal: 280ms; /* an element arriving in space already held for it */
+  --motion-veil: 300ms; /* the loader's veil leaving the viewport */
   --motion-swap: 320ms; /* the character page changing era */
+  --motion-stagger: 80ms; /* one step of a staged entrance */
+  --motion-beat: 140ms; /* the panel arriving behind the art */
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-leave: cubic-bezier(0.2, 0, 0, 1);
 
   /* How far back ink is held. All three are argued below. */
   --ink-muted: color-mix(in oklab, var(--color-base-content) 74%, transparent);

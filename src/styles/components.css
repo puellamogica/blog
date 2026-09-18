@@ -84,7 +84,11 @@
    * reader who tabs during the veil still lands on something real.
    */
   .skip-link {
-    @apply bg-base-100 border-base-300 fixed start-4 top-4 z-[200] -translate-y-[calc(100%+1rem)] border px-4 py-3 text-sm font-medium transition-transform duration-150 ease-out;
+    @apply bg-base-100 border-base-300 fixed start-4 top-4 z-[200] -translate-y-[calc(100%+1rem)] border px-4 py-3 text-sm font-medium;
+
+    transition-property: transform;
+    transition-duration: var(--motion-exit);
+    transition-timing-function: var(--ease-out-quint);
   }
 
   .skip-link:focus-visible {
@@ -136,10 +140,18 @@
    *
    * Below the first break the metadata drops under the title, so the title
    * keeps the full measure instead of competing with it.
+   *
+   * Its three transitions are declared on three elements because they animate
+   * three different properties, but they share one duration and one curve: the
+   * tint, the title and the marker are a single answer to a single pointer, and
+   * they have to land together rather than in three tempos.
    */
   .post-row {
-    @apply border-base-300 grid items-baseline gap-x-6 gap-y-1 border-b py-5 transition-colors;
+    @apply border-base-300 grid items-baseline gap-x-6 gap-y-1 border-b py-5;
 
+    transition-property: background-color;
+    transition-duration: var(--motion-state);
+    transition-timing-function: var(--ease-out-quint);
     grid-template-columns: minmax(0, 1fr) 1.25rem;
     grid-template-areas:
       "title mark"
@@ -164,14 +176,20 @@
   }
 
   .post-row-title {
-    @apply text-lg leading-snug font-bold tracking-tight text-balance transition-colors sm:text-xl;
+    @apply text-lg leading-snug font-bold tracking-tight text-balance sm:text-xl;
 
+    transition-property: color;
+    transition-duration: var(--motion-state);
+    transition-timing-function: var(--ease-out-quint);
     grid-area: title;
   }
 
   .post-row-mark {
-    @apply self-start transition-transform duration-200 ease-[var(--ease-out-quint)];
+    @apply self-start;
 
+    transition-property: transform, color;
+    transition-duration: var(--motion-state);
+    transition-timing-function: var(--ease-out-quint);
     color: var(--ink-mark);
     grid-area: mark;
   }
@@ -496,8 +514,8 @@
   }
 
   .era .card-body [data-era] {
-    animation: reveal-rise var(--motion-reveal) var(--ease-out-quint) 140ms
-      backwards;
+    animation: reveal-rise var(--motion-reveal) var(--ease-out-quint)
+      var(--motion-beat) backwards;
   }
 
   /*
@@ -746,24 +764,31 @@
 
   /*
    * Arrival is a short staged rise: the animation, the mark, the rule, then the
-   * readout, 80ms apart. The entrance is over in about two thirds of a second,
-   * which leaves the rest of the minimum time to the progress itself.
+   * readout, one `--motion-stagger` apart. The entrance is over in about two
+   * thirds of a second, which leaves the rest of the minimum time to the
+   * progress itself.
    */
   @media (prefers-reduced-motion: no-preference) {
     html[data-loader="on"] .loader-chunk {
       @apply animate-loader-rise;
     }
 
+    /*
+     * `animation-delay`, not the `delay-*` utility: these chunks are animated
+     * rather than transitioned, and the utility writes `transition-delay`, so
+     * every chunk arrived together and the stagger the note above describes
+     * never happened.
+     */
     html[data-loader="on"] .loader-chunk:nth-child(2) {
-      @apply delay-[80ms];
+      animation-delay: var(--motion-stagger);
     }
 
     html[data-loader="on"] .loader-chunk:nth-child(3) {
-      @apply delay-[160ms];
+      animation-delay: calc(var(--motion-stagger) * 2);
     }
 
     html[data-loader="on"] .loader-chunk:nth-child(4) {
-      @apply delay-[240ms];
+      animation-delay: calc(var(--motion-stagger) * 3);
     }
   }
 
@@ -771,20 +796,32 @@
    * Leaving is faster than arriving. The script adds `is-done`, the veil fades
    * and its contents lift a little, and the element is removed once the fade has
    * run so it can never hold a click or a tab stop.
+   *
+   * Both halves take the veil's own two values rather than either of the
+   * decelerating curves, because this is the one motion on the site that is a
+   * departure rather than an arrival.
    */
   .loader.is-done {
-    @apply pointer-events-none opacity-0 transition-opacity duration-300 ease-[cubic-bezier(0.2,0,0,1)];
+    @apply pointer-events-none opacity-0;
+
+    transition-property: opacity;
+    transition-duration: var(--motion-veil);
+    transition-timing-function: var(--ease-leave);
   }
 
   @media (prefers-reduced-motion: no-preference) {
     .loader.is-done .loader-inner {
-      @apply -translate-y-3 transition-transform duration-300 ease-[cubic-bezier(0.2,0,0,1)];
+      @apply -translate-y-3;
+
+      transition-property: transform;
+      transition-duration: var(--motion-veil);
+      transition-timing-function: var(--ease-leave);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .loader.is-done {
-      @apply duration-150;
+      transition-duration: var(--motion-exit);
     }
   }
 }

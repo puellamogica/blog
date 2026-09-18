@@ -70,7 +70,9 @@
   border-radius: var(--radius-selector);
   background-color: var(--swiper-gallery-control-surface);
   backdrop-filter: blur(0.25rem);
-  transition: background-color 150ms ease-out;
+  transition-property: background-color;
+  transition-duration: var(--motion-exit);
+  transition-timing-function: var(--ease-out-quint);
 }
 
 .swiper-gallery :where(.swiper-button-prev, .swiper-button-next):hover {
