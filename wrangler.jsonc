@@ -43,12 +43,6 @@
       "id": "e084ddd8c2c243d789c4dac46dd105fa",
     },
   ],
-  "r2_buckets": [
-    {
-      "binding": "VAULT_BUCKET",
-      "bucket_name": "blog",
-    },
-  ],
   /*
    * Abuse control for /api/auth, inside the Worker rather than only at the edge
    * (see the dashboard rule for POST /api/auth, which cannot count per post and

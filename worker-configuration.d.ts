@@ -3,7 +3,6 @@
 // Runtime types generated with workerd@1.20260911.1 2026-09-08 global_fetch_strictly_public
 interface __BaseEnv_Env {
 	SESSION: KVNamespace;
-	VAULT_BUCKET: R2Bucket;
 	DB: D1Database;
 	ARGON2_ENDPOINT: SecretsStoreSecret;
 	ARGON2_HMAC_SECRET: SecretsStoreSecret;
