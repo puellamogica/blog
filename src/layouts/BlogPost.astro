@@ -48,7 +48,7 @@ const crumbs: Crumb[] = Astro.url.pathname.startsWith("/article")
           {crumbs.map((crumb, position) => (
             <li class="flex min-w-0 items-center gap-2">
               {position > 0 && (
-                <span class="text-base-content/30" aria-hidden="true">
+                <span class="text-[color:var(--ink-mark)]" aria-hidden="true">
                   /
                 </span>
               )}

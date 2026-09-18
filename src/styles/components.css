@@ -880,6 +880,39 @@
 }
 
 /*
+ * The era that is not selected, which the fill below never covered.
+ *
+ * daisyUI paints an unselected tab's label at 50% of base-content and the rule
+ * below only ever addressed the checked half, so the resting label sat at
+ * 2.74:1 in nord and 3.65:1 in night against the `base-100` track: under AA in
+ * both, and under even the 3:1 a glyph is held to in nord. daisyUI also repaints
+ * `:hover` at full contrast, so the label cleared the floor only while a pointer
+ * was over it and stayed under it the rest of the time, which is the state a
+ * touch reader never leaves.
+ *
+ * The muted tier is the value here, and it is the same one the footer and the
+ * latest-post lane are held to: 5.10:1 in nord and 6.48:1 in night on this
+ * surface. Resting on the tier and spending the full ink on hover keeps the
+ * pointer feedback the library was already giving, without letting the label
+ * fall under the floor to get it. The hover rule takes the `:not` because the
+ * checked tab's label is base-100 on a base-content fill, where full ink would
+ * erase it.
+ *
+ * Unlayered for the same reason as the rules around it: daisyUI emits its tab
+ * rules into its own layer, which outranks this file's components layer whatever
+ * the specificity.
+ */
+.era .tab {
+  color: var(--ink-muted);
+}
+
+@media (hover: hover) {
+  .era .tab:not(:has(input:checked)):hover {
+    color: var(--color-base-content);
+  }
+}
+
+/*
  * The selected era, filled the way a selected chip is.
  *
  * daisyUI's `tabs-box` paints the checked tab with `--tab-bg`, which for a box
