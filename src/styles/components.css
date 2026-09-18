@@ -665,18 +665,9 @@
     @apply bg-primary absolute start-0 -bottom-0.5 h-px w-full content-[''];
   }
 
-  /*
-   * The wordmark. The date is set as a Mincho numeral and the domain suffix
-   * hangs off it in mono, like an imprint on a colophon.
-   */
+  /* The site name, in the header and at the head of the drawer. */
   .wordmark {
     @apply text-lg font-bold tracking-tight;
-  }
-
-  .wordmark-suffix {
-    @apply font-mono text-[0.6875rem] font-normal tracking-[0.08em];
-
-    color: var(--ink-muted);
   }
 
   /*

@@ -5,7 +5,7 @@ import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import HeaderLink from "../components/HeaderLink.astro";
 import Icon from "../components/Icon.astro";
-import { NAV_ITEMS, SITE_TITLE, SITE_WORDMARK } from "../consts";
+import { NAV_ITEMS, SITE_TITLE } from "../consts";
 
 interface Props {
   title: string;
@@ -107,10 +107,7 @@ const drawerId = "site-drawer";
         >
           <div class="flex items-center justify-between gap-2">
             <a href="/" class="wordmark">
-              {SITE_WORDMARK.name}
-              {SITE_WORDMARK.suffix && (
-                <span class="wordmark-suffix">.{SITE_WORDMARK.suffix}</span>
-              )}
+              {SITE_TITLE}
             </a>
             <button
               id="drawer-close"
