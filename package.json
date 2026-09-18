@@ -9,9 +9,8 @@
     "astro": "astro",
     "test": "vitest run --config vitestconfig.ts",
     "hash:vault": "node scripts/hash-vault-password.mts",
-    "generate-types": "wrangler types",
-    "deploy": "astro build && wrangler deploy",
     "cf-typegen": "wrangler types",
+    "deploy": "astro build && wrangler deploy",
     "prepare": "husky"
   },
   "dependencies": {
