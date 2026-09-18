@@ -229,6 +229,26 @@
   }
 
   /*
+   * The empty result.
+   *
+   * A filter combination can legitimately match nothing, and this is the one
+   * place a reader has to be told what happened and how to get back. It used to
+   * be a single line of `data` type, which is the quietest voice on the page;
+   * set that way, an empty result read as a page that had failed to render
+   * rather than as an answer about the filters.
+   *
+   * It closes on the same hairline the last row would have drawn, so an empty
+   * result still reads as the end of the index rather than as a gap in it.
+   */
+  .post-empty {
+    @apply border-base-300 border-b py-12;
+  }
+
+  .post-empty-title {
+    @apply text-lg leading-snug font-bold tracking-tight text-balance sm:text-xl;
+  }
+
+  /*
    * A media frame is a hairline box around a single media element: the home
    * lead image, a post hero, the character film, an error-page illustration. It
    * has no padding and no head, which is the whole of what separates it from the

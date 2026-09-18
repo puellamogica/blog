@@ -27,8 +27,14 @@ const years = getPostYears(posts.map(toFilterablePost));
       ))}
     </div>
 
-    <p class="data mt-8 hidden" data-post-empty>
-      条件に一致する記事がありません。
-    </p>
+    <div class="post-empty" data-post-empty hidden>
+      <p class="post-empty-title">条件に一致する記事がありません。</p>
+      <p class="page-lead mt-3">
+        カテゴリーと年を「すべて」に戻すと、全 {posts.length} 件が表示されます。
+      </p>
+      <button type="button" class="btn mt-6 min-h-11" data-post-filter-reset>
+        絞り込みを解除
+      </button>
+    </div>
   </section>
 </BaseLayout>
