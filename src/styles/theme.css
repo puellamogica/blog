@@ -57,6 +57,23 @@
     var(--color-primary) 55%,
     var(--color-base-content)
   );
+
+  /* The theme that wants the character page's art held back sets it below. */
+  --stage-art-wash: transparent;
+}
+
+/*
+ * The one value in the stylesheets that has to be told which theme it is in.
+ *
+ * The character page's art is drawn light and stays light in both themes, so in
+ * the dark theme it needs holding back or it reads as a hole punched in the
+ * page. Everything else here reads a daisyUI token that already carries both
+ * values, which is why this is a named declaration in the one file that owns
+ * theme values rather than a `[data-theme]` selector in a component stylesheet —
+ * and why a third theme would override this one line and inherit the rest.
+ */
+:root[data-theme="night"] {
+  --stage-art-wash: color-mix(in oklab, var(--color-base-100) 62%, transparent);
 }
 
 /*

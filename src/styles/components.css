@@ -547,16 +547,15 @@
    * a wash rather than a filter: a token mixed over the layers costs one layer
    * to composite, where a filter on artwork this size would have to be
    * rasterised again as it moves.
+   *
+   * Which theme wants the wash is the one theme question in the stylesheets, and
+   * theme.css answers it; here the value is simply transparent when it does not.
    */
-  :root[data-theme="night"] .stage-art::after {
+  .stage-art::after {
     content: "";
     position: absolute;
     inset: 0;
-    background-color: color-mix(
-      in oklab,
-      var(--color-base-100) 62%,
-      transparent
-    );
+    background-color: var(--stage-art-wash);
   }
 
   /*

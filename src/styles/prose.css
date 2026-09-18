@@ -92,14 +92,16 @@
  * Content images sit in the same square, rule-bounded system as the rest of the
  * page. The `outline` sits inside the image edge, so it never shifts layout and
  * never fights the hairline above the caption.
+ *
+ * The rule is mixed from the body ink rather than written as a black or a white,
+ * which is what lets one declaration hold in both themes: the ink is near-black
+ * in nord and near-white in night, so each theme keeps the hairline it already
+ * had, and a third theme needs nothing here.
  */
 .prose :where(img, video) {
-  outline: 1px solid oklch(0% 0 0deg / 10%);
+  outline: 1px solid
+    color-mix(in oklab, var(--color-base-content) 10%, transparent);
   outline-offset: -1px;
-}
-
-:root[data-theme="night"] .prose :where(img, video) {
-  outline-color: oklch(100% 0 0deg / 12%);
 }
 
 /*
