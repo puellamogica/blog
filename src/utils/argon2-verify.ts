@@ -28,7 +28,7 @@ export const signRequest = (
   body: string,
 ): Promise<string> => hmacHex(secret, `${timestamp}.${body}`);
 
-export type Argon2VerifyResult = {
+type Argon2VerifyResult = {
   success: boolean;
   errcode: number;
 };
@@ -41,7 +41,7 @@ export type Argon2VerifyResult = {
 export const isVerified = (result: Argon2VerifyResult): boolean =>
   result.success === true && result.errcode === 0;
 
-export type VerifyPasswordOptions = {
+type VerifyPasswordOptions = {
   hash: string;
   input: string;
   endpoint: string;

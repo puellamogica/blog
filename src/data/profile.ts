@@ -23,9 +23,9 @@ export const profile = {
  * twice would have meant keeping six identical rows in step by hand, and the
  * next difference would have had nowhere to go but a third copy.
  */
-export type Value = string | { past: string; now: string };
+type Value = string | { past: string; now: string };
 
-export type Cell = { label: string; value: Value };
+type Cell = { label: string; value: Value };
 
 /*
  * The spec sheet is table-shaped, so it is stored as table rows rather than as

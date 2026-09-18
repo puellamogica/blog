@@ -11,13 +11,13 @@
 export const WEATHER_ENDPOINT = "https://object.amia.work/weather.json";
 
 /** The crawler is configured for coordinates in Hokkaido, so readings are shown in JST. */
-export const WEATHER_TIME_ZONE = "Asia/Tokyo";
+const WEATHER_TIME_ZONE = "Asia/Tokyo";
 
 /** Shown in place of a reading the snapshot does not carry. */
 export const WEATHER_PLACEHOLDER = "—";
 
 /** The icon codes OpenWeatherMap can return; only these are ever requested. */
-export const WEATHER_ICON_CODES = [
+const WEATHER_ICON_CODES = [
   "01d",
   "01n",
   "02d",
@@ -70,7 +70,7 @@ export interface Weather {
   alerts: WeatherAlert[];
 }
 
-export interface WeatherDetail {
+interface WeatherDetail {
   label: string;
   value: string;
 }
@@ -157,12 +157,12 @@ const round = (value: number, decimals: number): number => {
 export const formatTemperature = (celsius?: number): string | undefined =>
   celsius === undefined ? undefined : `${round(celsius, 1)}°C`;
 
-export const formatSpeed = (metresPerSecond?: number): string | undefined =>
+const formatSpeed = (metresPerSecond?: number): string | undefined =>
   metresPerSecond === undefined
     ? undefined
     : `${round(metresPerSecond, 1)} m/s`;
 
-export const formatMillimetres = (millimetres?: number): string | undefined =>
+const formatMillimetres = (millimetres?: number): string | undefined =>
   millimetres === undefined ? undefined : `${round(millimetres, 1)} mm`;
 
 export const formatPressure = (hectopascals?: number): string | undefined =>

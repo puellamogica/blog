@@ -4,7 +4,7 @@ import type { CategoryKey } from "../data/categories";
 export const FILTER_ALL = "all";
 
 export type CategoryFilter = CategoryKey | typeof FILTER_ALL;
-export type YearFilter = number | typeof FILTER_ALL;
+type YearFilter = number | typeof FILTER_ALL;
 
 export interface PostFilter {
   category: CategoryFilter;
@@ -16,11 +16,6 @@ export interface FilterablePost {
   category: CategoryKey;
   year: number;
 }
-
-export const DEFAULT_POST_FILTER: PostFilter = {
-  category: FILTER_ALL,
-  year: FILTER_ALL,
-};
 
 export const toFilterablePost = (post: {
   data: { category: CategoryKey; pubDate: Date };

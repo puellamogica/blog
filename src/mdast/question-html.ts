@@ -1,6 +1,6 @@
 import { DEFAULT_VAULT_QUESTION } from "../consts";
 
-export type QuestionRenderer = (markdown: string) => string;
+type QuestionRenderer = (markdown: string) => string;
 
 export const renderQuestionHtml = (
   frontmatter: Record<string, unknown>,

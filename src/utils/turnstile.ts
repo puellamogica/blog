@@ -4,7 +4,7 @@ const SITEVERIFY_URL =
   "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 const MAX_TOKEN_LENGTH = 2048;
 
-export type SiteverifyResult = {
+type SiteverifyResult = {
   success?: boolean;
   action?: string;
   hostname?: string;
@@ -19,7 +19,7 @@ export const isSiteverifyResultValid = (
   typeof result.hostname === "string" &&
   options.allowedHostnames.has(result.hostname);
 
-export type VerifyTurnstileOptions = {
+type VerifyTurnstileOptions = {
   token: string;
   secret: string;
   remoteIp?: string;

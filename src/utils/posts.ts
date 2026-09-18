@@ -1,6 +1,6 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 
-export type Post = CollectionEntry<"article"> | CollectionEntry<"vault">;
+type Post = CollectionEntry<"article"> | CollectionEntry<"vault">;
 
 export const getArticles = () =>
   getCollection("article", ({ data }) => !data.draft);

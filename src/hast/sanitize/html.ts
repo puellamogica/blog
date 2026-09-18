@@ -23,7 +23,7 @@ export type Tag = {
   readonly attributes: ReadonlyArray<readonly [string, string]>;
 };
 
-export type Token = Tag | { readonly kind: "text"; readonly value: string };
+type Token = Tag | { readonly kind: "text"; readonly value: string };
 
 const ESCAPES: Record<string, string> = {
   "&": "&#x26;",

@@ -11,7 +11,7 @@
  * does: the content collection is behind `astro:content`, which the test runtime
  * cannot resolve, and a rule this cheap to get wrong is worth a test.
  */
-export const VAULT_SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,63}$/;
+const VAULT_SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,63}$/;
 
 export const isVaultSlug = (value: string): boolean =>
   VAULT_SLUG_PATTERN.test(value);

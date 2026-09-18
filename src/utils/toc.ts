@@ -1,6 +1,6 @@
 import type { MarkdownHeading } from "astro";
 
-export interface TocItem {
+interface TocItem {
   heading: MarkdownHeading;
   children: MarkdownHeading[];
 }

@@ -20,7 +20,7 @@ import {
 } from "./schema";
 import { isAllowedUrl } from "./url";
 
-export type SanitizeOptions = {
+type SanitizeOptions = {
   /** Elements to keep. Anything else is unwrapped, keeping its children. */
   tagNames?: readonly string[];
   /** Extra attributes per element, merged over the defaults. */
@@ -167,5 +167,3 @@ export const createSanitizer = ({
       allowedProtocols[name],
   };
 };
-
-export type Sanitizer = ReturnType<typeof createSanitizer>;
