@@ -18,18 +18,27 @@ const { images, label = "画像ギャラリー" } = Astro.props;
   are screen widths rather than a column's. The drawings are all wider than
   1920, so nothing here is ever upscaled.
 
-  Every slide loads up front rather than on approach, so the carousel is whole
-  by the time the page loader lifts and no slide is ever a blank frame waiting
-  to be dragged into view.
+  The lead slide is eager and the rest load on approach. Every slide used to be
+  eager, so the carousel was whole by the time the page loader lifted and no
+  slide was ever a blank frame waiting to be dragged into view. That reading does
+  not survive the loader's own mechanics: it lifts on `window.load`, and this
+  carousel sits at the bottom of the page, so holding it open for art nobody
+  could see yet delayed the lift instead of filling it. Measured on the character
+  page, the two together pulled 7.16 MB across 45 eager images with four of them
+  in the viewport.
+
+  Keeping the lead slide eager preserves the original promise where it applies —
+  the carousel is never a blank frame on arrival — and `lazy` covers the rest.
+  The browser's own preload margin is what keeps them ready ahead of a drag.
 -->
 <div class="swiper-gallery" aria-label={label}>
-  {images.map((image) => (
+  {images.map((image, index) => (
     <Image
       src={image.src}
       alt={image.alt}
       widths={[480, 768, 1280, 1920]}
       sizes="100vw"
-      loading="eager"
+      loading={index === 0 ? "eager" : "lazy"}
       decoding="async"
     />
   ))}
