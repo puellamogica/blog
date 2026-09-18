@@ -34,6 +34,13 @@ const questionHtml =
   (remarkPluginFrontmatter.questionHtml as string | undefined) ?? "";
 
 const siteKey = env.TURNSTILE_SITEKEY;
+
+/*
+ * The password rule, worded once. It is the field's tooltip and the line
+ * printed under the field, so the requirement is readable before the field is
+ * used rather than only after it has been rejected.
+ */
+const passwordHint = `${PASSWORD_MIN_LENGTH}〜${PASSWORD_MAX_LENGTH}文字。半角英数字と ! @ # $ % ^ & * が使えます`;
 ---
 
 <BaseLayout
@@ -65,12 +72,17 @@ const siteKey = env.TURNSTILE_SITEKEY;
         method="POST"
         action="/api/auth"
         class="mt-8 flex flex-col gap-5"
+        novalidate
       >
         <input type="hidden" name="slug" value={slug} />
 
-        <label class="flex flex-col gap-2">
-          <span class="label">パスワード</span>
+        <div class="flex flex-col gap-2">
+          <label class="label" for="unlock-password">
+            {" "}
+            パスワード{" "}
+          </label>
           <input
+            id="unlock-password"
             type="password"
             name="password"
             class="input input-bordered w-full text-base"
@@ -78,10 +90,15 @@ const siteKey = env.TURNSTILE_SITEKEY;
             minlength={PASSWORD_MIN_LENGTH}
             maxlength={PASSWORD_MAX_LENGTH}
             pattern={PASSWORD_PATTERN.source}
-            title={`${PASSWORD_MIN_LENGTH}〜${PASSWORD_MAX_LENGTH}文字。半角英数字と ! @ # $ % ^ & * が使えます`}
+            title={passwordHint}
+            aria-describedby="unlock-password-hint unlock-password-error"
             required
           />
-        </label>
+          <p id="unlock-password-hint" class="unlock-hint text-pretty">
+            {passwordHint}
+          </p>
+          <p id="unlock-password-error" class="unlock-error" hidden></p>
+        </div>
 
         <div
           id="turnstile-container"
@@ -89,11 +106,23 @@ const siteKey = env.TURNSTILE_SITEKEY;
           class="min-h-16"
         ></div>
 
+        <!--
+          The button below stays live.
+
+          It used to be disabled until the challenge answered, which meant a
+          widget that never called back left the page's only action dead with
+          nothing on screen to explain it and nothing to act on. The requirement
+          is stated here instead, and pressing 解除 without it is answered where
+          the reader is already looking.
+        -->
+        <p id="unlock-challenge-note" class="unlock-hint text-pretty">
+          上の認証を完了すると解除できます。
+        </p>
+
         <button
           id="unlock-submit"
           type="submit"
-          class="btn btn-primary"
-          disabled
+          class="btn btn-primary min-h-11"
         >
           解除
         </button>
@@ -105,14 +134,43 @@ const siteKey = env.TURNSTILE_SITEKEY;
 </BaseLayout>
 
 <script>
+  import {
+    PASSWORD_MAX_LENGTH,
+    PASSWORD_MIN_LENGTH,
+    findPasswordProblem,
+    type PasswordProblem,
+  } from "../../utils/password";
+
   const TURNSTILE_SRC =
     "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 
   const ERROR_MESSAGES: Record<string, string> = {
     invalid: "パスワードが違います。",
     blocked: "認証に失敗しました。もう一度お試しください。",
+    challenge: "上の認証を完了してください。",
     rate_limited: "試行回数が多すぎます。しばらくしてからお試しください。",
     server: "エラーが発生しました。もう一度お試しください。",
+  };
+
+  /*
+   * What the field says when it is rejected.
+   *
+   * The rule itself is not restated here: `findPasswordProblem` is the same
+   * function the server's `isValidPassword` is built on, so the field cannot
+   * describe a rule the Worker is not applying. What is written here is only the
+   * wording.
+   *
+   * The check runs in the page rather than being left to the browser because a
+   * `pattern` and a `minlength` are answered with the browser's own bubble,
+   * drawn in the browser's language and outside the page's type: on a page that
+   * speaks Japanese, the likeliest error a reader meets was the one written in a
+   * voice the site does not have. Checking here puts format failures on the same
+   * path as every other failure, written next to the field, in the page's own
+   * words, with the reader's input left alone.
+   */
+  const PASSWORD_PROBLEM_MESSAGES: Record<PasswordProblem, string> = {
+    length: `パスワードは${PASSWORD_MIN_LENGTH}〜${PASSWORD_MAX_LENGTH}文字です。`,
+    characters: "半角英数字と ! @ # $ % ^ & * だけが使えます。",
   };
 
   type TurnstileApi = {
@@ -129,6 +187,8 @@ const siteKey = env.TURNSTILE_SITEKEY;
   const container = document.getElementById("turnstile-container");
   const toast = document.getElementById("toast");
   const toastMessage = document.getElementById("toast-message");
+  const fieldError = document.getElementById("unlock-password-error");
+  const challengeNote = document.getElementById("unlock-challenge-note");
 
   if (
     !(form instanceof HTMLFormElement) ||
@@ -146,22 +206,40 @@ const siteKey = env.TURNSTILE_SITEKEY;
   const password = form.querySelector<HTMLInputElement>("input[name=password]");
 
   /*
-   * The toast is where the brief puts the error, but the field records its own
-   * state as well: a reader who comes back to it once the toast has gone should
-   * still be told that what they typed was rejected, rather than only that the
-   * form did not go through.
+   * The toast is the site's error register, but it leaves after six seconds and
+   * the field is where the fix happens. The same message is written beside the
+   * field, so a reader who comes back to it once the toast has gone is still
+   * told what was rejected and why, rather than only that the form did not go
+   * through.
    */
-  const markInvalid = (invalid: boolean) => {
+  const setFieldError = (message?: string) => {
     if (!password) return;
-    if (invalid) password.setAttribute("aria-invalid", "true");
-    else password.removeAttribute("aria-invalid");
+
+    if (message === undefined) {
+      password.removeAttribute("aria-invalid");
+    } else {
+      password.setAttribute("aria-invalid", "true");
+    }
+
+    if (fieldError) {
+      fieldError.textContent = message ?? "";
+      fieldError.hidden = message === undefined;
+    }
   };
 
-  password?.addEventListener("input", () => markInvalid(false));
+  password?.addEventListener("input", () => setFieldError());
 
+  /*
+   * The button is live from the first paint. Only an in-flight request takes it
+   * out of play, and the note above it says what the challenge still needs, so
+   * its state is never a mystery.
+   */
   const syncSubmit = () => {
-    submit.disabled = submitting || !challengeSolved;
+    submit.disabled = submitting;
     submit.textContent = submitting ? "確認中…" : "解除";
+    if (challengeNote) {
+      challengeNote.hidden = submitting || challengeSolved;
+    }
   };
 
   const showToast = (message: string) => {
@@ -260,8 +338,25 @@ const siteKey = env.TURNSTILE_SITEKEY;
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    /*
+     * Cheapest and most actionable refusal first: the field is the reader's own
+     * input, and it is answered without spending a request on it.
+     */
+    const problem = findPasswordProblem(password?.value ?? "");
+    if (problem !== undefined) {
+      setFieldError(PASSWORD_PROBLEM_MESSAGES[problem]);
+      password?.focus();
+      return;
+    }
+
     if (widgetId === undefined) {
       showToast(ERROR_MESSAGES.blocked);
+      return;
+    }
+
+    if (!challengeSolved) {
+      showToast(ERROR_MESSAGES.challenge);
       return;
     }
 
@@ -292,8 +387,20 @@ const siteKey = env.TURNSTILE_SITEKEY;
       }
 
       const error = data.error ?? "server";
-      markInvalid(error === "invalid");
-      showToast(ERROR_MESSAGES[error] ?? ERROR_MESSAGES.server);
+      const message = ERROR_MESSAGES[error] ?? ERROR_MESSAGES.server;
+
+      /*
+       * Only a rejected password is the field's problem, so only that one is
+       * written against it; the rest are about the request, not the typing.
+       */
+      if (error === "invalid") {
+        setFieldError(message);
+        password?.focus();
+      } else {
+        setFieldError();
+      }
+
+      showToast(message);
     } catch {
       showToast(ERROR_MESSAGES.server);
     } finally {

@@ -20,6 +20,7 @@ const GRID_SELECTOR = "[data-post-grid]";
 const CARD_SELECTOR = "[data-post]";
 const COUNT_SELECTOR = "[data-post-filter-count]";
 const EMPTY_SELECTOR = "[data-post-empty]";
+const RESET_SELECTOR = "[data-post-filter-reset]";
 
 const readFilter = (container: HTMLElement): PostFilter => {
   const checkedValue = (group: string) =>
@@ -74,6 +75,25 @@ export const enhancePostFilter = () => {
 
     if (empty) empty.hidden = visible > 0;
   };
+
+  /*
+   * The empty result's way out. It lives inside the panel the reset hides, so
+   * pressing it unmounts the control that was just used: focus is handed to the
+   * first row that came back rather than dropped on the body, where the next Tab
+   * would send the reader back to the top of the page.
+   */
+  document
+    .querySelector<HTMLButtonElement>(RESET_SELECTOR)
+    ?.addEventListener("click", () => {
+      for (const input of container.querySelectorAll<HTMLInputElement>(
+        "input[data-filter-group]",
+      )) {
+        input.checked = input.value === FILTER_ALL;
+      }
+
+      apply();
+      grid.querySelector<HTMLElement>(CARD_SELECTOR)?.focus();
+    });
 
   container.addEventListener("change", apply);
   apply();

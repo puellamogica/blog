@@ -5,13 +5,6 @@ export const SITE_TITLE = "Puella Mogica";
 export const SITE_DESCRIPTION = "一緒に歌おう！";
 
 /*
- * The wordmark sets the name and the top-level domain apart, so both halves are
- * derived from the one source rather than repeated here.
- */
-const [siteName = SITE_TITLE, ...siteTld] = SITE_TITLE.split(".");
-export const SITE_WORDMARK = { name: siteName, suffix: siteTld.join(".") };
-
-/*
  * The loader animation, served from the same object storage as the weather
  * snapshot so the site keeps one origin for its runtime assets.
  *

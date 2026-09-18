@@ -79,55 +79,63 @@ const heroPcSrcset = await toSrcset(HeroPc, PC_WIDTHS);
       />
     </picture>
 
-    <div class="site-container pt-10 pb-10">
-      <h1 class="display-title max-w-3xl text-balance">{SITE_DESCRIPTION}</h1>
-      <p class="data mt-8">
-        {archive.length} 件{since !== undefined && <>（{since}年以降）</>}
-      </p>
+    <div class="site-container pt-8 pb-8">
+      <div class="rule-ink"></div>
+      <div class="mt-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
+        <h1 class="display-title max-w-3xl text-balance">{SITE_DESCRIPTION}</h1>
+        <p class="data shrink-0">
+          {archive.length} 件{since !== undefined && <>（{since}年以降）</>}
+        </p>
+      </div>
     </div>
   </section>
 
   {lead && (
-    <section class="site-container pb-16 sm:pb-20">
-      <div class="rule-ink"></div>
-      <p class="label mt-4">最新</p>
-
-      <article class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:items-start lg:gap-12">
-        <div>
-          <div class="flex flex-wrap items-baseline gap-x-4 gap-y-2">
-            <CategoryBadge category={lead.data.category} />
-            <span class="data">
-              <FormattedDate date={lead.data.pubDate} />
-            </span>
+    <section class="bg-base-200">
+      <div class="site-container py-12 sm:py-14">
+        <article
+          class:list={[
+            "grid gap-8 lg:gap-12",
+            lead.data.heroImage && "lg:grid-cols-2 lg:items-center",
+          ]}
+        >
+          <div>
+            <p class="label">最新</p>
+            <div class="mt-5 flex flex-wrap items-baseline gap-x-4 gap-y-2">
+              <CategoryBadge category={lead.data.category} />
+              <span class="data">
+                <FormattedDate date={lead.data.pubDate} />
+              </span>
+            </div>
+            <h2 class="display-title mt-4">
+              <a
+                href={`/${lead.collection}/${lead.data.slug}`}
+                class="hover:text-[color:var(--ink-accent)] transition-colors"
+              >
+                {lead.data.title}
+              </a>
+            </h2>
+            <p class="page-lead mt-5">{lead.data.description}</p>
           </div>
-          <h2 class="display-title mt-5">
-            <a
-              href={`/${lead.collection}/${lead.data.slug}`}
-              class="hover:text-[color:var(--ink-accent)] transition-colors"
-            >
-              {lead.data.title}
-            </a>
-          </h2>
-          <p class="page-lead mt-5">{lead.data.description}</p>
-        </div>
 
-        {lead.data.heroImage && (
-          <figure class="media-frame">
-            <Image
-              width={720}
-              height={480}
-              src={lead.data.heroImage}
-              alt=""
-              loading="eager"
-              class="h-full w-full object-cover"
-            />
-          </figure>
-        )}
-      </article>
+          {lead.data.heroImage && (
+            <figure class="media-frame">
+              <Image
+                width={720}
+                height={480}
+                src={lead.data.heroImage}
+                alt=""
+                loading="eager"
+                class="h-full w-full object-cover"
+              />
+            </figure>
+          )}
+        </article>
+      </div>
     </section>
   )}
 
-  <section class="site-container pb-20">
+  <section class="site-container pt-14 pb-20 sm:pt-16">
     <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-16">
       <div>
         <div class="flex items-baseline justify-between gap-4">
@@ -138,7 +146,7 @@ const heroPcSrcset = await toSrcset(HeroPc, PC_WIDTHS);
         </div>
         <div class="border-base-300 mt-6 border-t">
           {index.map((post) => (
-            <PostEntry post={post} />
+            <PostEntry post={post} level={3} />
           ))}
         </div>
       </div>

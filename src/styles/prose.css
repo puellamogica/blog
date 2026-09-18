@@ -26,11 +26,7 @@
    */
   --tw-prose-links: var(--ink-accent);
   --tw-prose-bold: var(--color-base-content);
-  --tw-prose-counters: color-mix(
-    in oklab,
-    var(--color-base-content) 60%,
-    transparent
-  );
+  --tw-prose-counters: var(--ink-muted);
   --tw-prose-bullets: var(--color-base-300);
   --tw-prose-hr: var(--color-base-300);
   --tw-prose-quotes: color-mix(
@@ -39,11 +35,7 @@
     transparent
   );
   --tw-prose-quote-borders: var(--color-base-300);
-  --tw-prose-captions: color-mix(
-    in oklab,
-    var(--color-base-content) 60%,
-    transparent
-  );
+  --tw-prose-captions: var(--ink-muted);
   --tw-prose-kbd: var(--color-base-content);
   --tw-prose-kbd-shadows: color-mix(
     in oklab,
@@ -200,16 +192,17 @@
  */
 .prose :where(blockquote footer) {
   margin-top: 0.5em;
-  color: color-mix(in oklab, var(--color-base-content) 65%, transparent);
+  color: var(--ink-muted);
 }
 
 /*
  * Expressive Code renders line numbers in the theme's dim gutter color, which
  * falls under the contrast floor on light code blocks. Re-point the gutter at
- * the page text color so code stays readable in both themes.
+ * the muted tier, which holds its floor on the `base-200` panel a code block is
+ * drawn on and not only on the page surface.
  */
 .prose .expressive-code .gutter .ln {
-  color: color-mix(in oklab, var(--color-base-content) 70%, transparent);
+  color: var(--ink-muted);
 }
 
 /*

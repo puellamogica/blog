@@ -2,8 +2,43 @@ import { describe, expect, it } from "vitest";
 import {
   PASSWORD_MAX_LENGTH,
   PASSWORD_MIN_LENGTH,
+  findPasswordProblem,
   isValidPassword,
 } from "../src/utils/password";
+
+/*
+ * The unlock form writes the message a reader sees from this result, so each
+ * rejection has to keep naming the half of the rule that was actually missed.
+ * A password can be outside the length and outside the character set at once;
+ * length is what it is told, because that is the fix it can make from the
+ * keyboard alone.
+ */
+describe("findPasswordProblem", () => {
+  it("returns nothing for a compliant password", () => {
+    expect(findPasswordProblem("2#XswLoPePQG9qcEnyLe8$*x!AdL9pza")).toBe(
+      undefined,
+    );
+  });
+
+  it("names the length when the value is too short or too long", () => {
+    expect(findPasswordProblem("a".repeat(PASSWORD_MIN_LENGTH - 1))).toBe(
+      "length",
+    );
+    expect(findPasswordProblem("a".repeat(PASSWORD_MAX_LENGTH + 1))).toBe(
+      "length",
+    );
+    expect(findPasswordProblem("")).toBe("length");
+  });
+
+  it("names the character set when the length is fine", () => {
+    expect(findPasswordProblem("aaaaaaaaaaaaaa-")).toBe("characters");
+    expect(findPasswordProblem("aaaaaaaaaaaaaa_")).toBe("characters");
+  });
+
+  it("reports length ahead of the character set when both are broken", () => {
+    expect(findPasswordProblem("short-")).toBe("length");
+  });
+});
 
 describe("isValidPassword", () => {
   it("accepts a compliant password", () => {

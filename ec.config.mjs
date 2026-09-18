@@ -22,5 +22,22 @@ export default defineEcConfig({
     // in. `prose.css` points inline code at the same two tokens.
     codeBackground: "var(--color-base-200)",
     borderRadius: "var(--radius-box)",
+    /*
+     * The tab surface, which `codeBackground` does not reach.
+     *
+     * A titled frame draws its title in a tab, and the plugin resolves that
+     * tab's background and label from the syntax theme: on kanagawa-lotus the
+     * pair measured 3.95:1, under AA and under even the 3:1 a glyph is held to.
+     * Both halves are re-pointed at the page's own tokens, so the title reads as
+     * a label on the panel rather than as a surviving piece of the theme, and the
+     * fix covers a tab bar with more than one tab rather than only the single
+     * title the content happens to use today.
+     */
+    frames: {
+      editorTabBarBackground: "var(--color-base-300)",
+      editorActiveTabBackground: "var(--color-base-300)",
+      editorActiveTabForeground: "var(--color-base-content)",
+      editorTabBarForeground: "var(--color-base-content)",
+    },
   },
 });

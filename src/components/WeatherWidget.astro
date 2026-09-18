@@ -26,6 +26,7 @@ const { location = "根室市" } = Astro.props;
 <section
   class="plate self-start"
   data-weather
+  tabindex="-1"
   aria-labelledby="weather-heading"
 >
   <div class="plate-head">
@@ -37,7 +38,16 @@ const { location = "根室市" } = Astro.props;
 
   <div class="plate-body">
     <div aria-live="polite" data-weather-live>
-      <div class="flex items-center gap-4" data-weather-loading>
+      <!--
+        The skeleton belongs to the script, not to the page. It used to be drawn
+        from the first paint and hidden by the script once the crawl answered,
+        which meant a browser without scripting shimmered here for as long as the
+        tab stayed open: a placeholder for work nothing was going to do.
+
+        Revealed by `load()` now, the same way the loader is revealed by the head
+        script, so it is only ever shown to a browser that can also take it away.
+      -->
+      <div class="flex items-center gap-4" data-weather-loading hidden>
         <div class="skeleton size-10 shrink-0"></div>
         <div class="w-full space-y-2">
           <div class="skeleton h-7 w-24"></div>
@@ -74,6 +84,35 @@ const { location = "根室市" } = Astro.props;
 
       <div class="mt-5 space-y-3" data-weather-alerts hidden></div>
     </div>
+
+    <!--
+      What a reader without scripting gets. The reading is fetched from the
+      crawler's object at request time and cannot be baked into the page, so the
+      honest thing to say is that it is not there rather than to leave an empty
+      plate.
+    -->
+    <noscript>
+      <p class="data text-pretty">
+        天気は JavaScript を有効にすると表示されます。
+      </p>
+    </noscript>
+
+    <!--
+      The way out of a failed or empty reading. Both are answered by the same
+      action: the snapshot is a file the crawler rewrites every ten minutes, so
+      asking again is the whole of what a reader can do about it.
+
+      It sits outside the live region on purpose. Inside it, the button would be
+      announced as part of the reading it is meant to be a response to.
+    -->
+    <button
+      type="button"
+      class="btn btn-sm mt-4 min-h-11"
+      data-weather-retry
+      hidden
+    >
+      再読み込み
+    </button>
   </div>
 
   <div class="weather-report">

@@ -11,6 +11,22 @@ import PastWorldPc from "../assets/about/past-background-pc.webp";
 import PastWorldPhone from "../assets/about/past-background.webp";
 import PastFigurePc from "../assets/about/past-foreground-pc.webp";
 import PastFigurePhone from "../assets/about/past-foreground.webp";
+/*
+ * The card this page unfurls into, which is a gallery card rather than one of
+ * the band's layers.
+ *
+ * An OG card wants a landscape frame with a subject in it, and the band cannot
+ * supply one at any era: its world layer is the room with nobody in it, and its
+ * figure layer is a cut-out that is 92% transparent, so neither works alone and
+ * they can only be composited by the page itself. The band's phone frame is
+ * 1500x1400, so the 1200x630 card discards 44% of its height and returns an
+ * empty room either way.
+ *
+ * The gallery's newest card is 2338x1440, which loses 15% to the same crop and
+ * arrives with the character in it. It is also the first card the carousel on
+ * this page shows, so the card and the page lead with the same picture.
+ */
+import OgCard from "../assets/mizuki-gallery/056.webp";
 import { SITE_TITLE } from "../consts";
 import {
   defaultEra,
@@ -82,7 +98,7 @@ const columns = Math.max(...rows.map((row) => row.length)) * 2;
 <BaseLayout
   title={`プロフィール · ${SITE_TITLE}`}
   description={`${profile.unit}の${profile.role}。`}
-  image={stage[defaultEra].world.phone}
+  image={OgCard}
 >
   <!--
     The era toggle, and the two views it switches between.
