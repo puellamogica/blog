@@ -1,4 +1,6 @@
-# Puella Mogica
+# puellamogica/blog
+
+An astro framework blog theme
 
 A Japanese-language blog about _Project SEKAI_ and the character 暁山 瑞希, built with Astro and deployed as a Cloudflare Worker.
 
