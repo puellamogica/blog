@@ -1,7 +1,7 @@
 {
   "name": "blog",
   "type": "module",
-  "version": "26.9.18",
+  "version": "26.9.19",
   "scripts": {
     "dev": "astro dev",
     "build": "astro check && astro build",
@@ -25,7 +25,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.3.3",
     "astro-expressive-code": "^0.44.2",
-    "daisyui": "^5.7.39",
+    "daisyui": "^5.7.42",
     "katex": "^0.18.7",
     "lottie-web": "^5.13.0",
     "photoswipe": "^5.4.4",
@@ -39,7 +39,7 @@
     "typescript": "^6.0.3"
   },
   "devDependencies": {
-    "@cloudflare/vitest-plugin": "^1.1.11",
+    "@cloudflare/vitest-plugin": "^1.1.12",
     "@eslint/js": "^10.0.1",
     "@inquirer/prompts": "^8.7.2",
     "@types/node": "^24.13.5",
@@ -50,14 +50,14 @@
     "husky": "^9.1.7",
     "jiti": "^2.7.0",
     "lint-staged": "^17.5.1",
-    "prettier": "^3.9.7",
+    "prettier": "^3.9.8",
     "prettier-plugin-astro": "^1.0.1",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "stylelint": "^17.15.0",
     "stylelint-config-standard": "^40.0.0",
     "typescript-eslint": "^8.70.0",
     "vitest": "^4.1.11",
-    "wrangler": "^4.133.0"
+    "wrangler": "^4.134.0"
   },
   "lint-staged": {
     "*.{js,mjs,cjs,ts,mts,cts}": [
