@@ -87,7 +87,8 @@ Bindings, routes, and rate limits are declared in `wrangler.jsonc`:
 
 - **Assets** (`ASSETS`) serve the built `dist/` output; **`IMAGES`** backs Cloudflare Images.
 - **KV** (`SESSION`) stores sessions; **D1** (`DB`) stores vault unlocks (see `migrations/`).
-- Secrets (`ARGON2_ENDPOINT`, `ARGON2_HMAC_SECRET`, `ARGON2_PEPPER`, `VERCEL_PROTECTION_BYPASS`, `TURNSTILE_SECRET`) are read from the Cloudflare secrets store, never from plaintext vars. `TURNSTILE_SITEKEY` is a public var.
+- Secrets (`ARGON2_ENDPOINT`, `ARGON2_HMAC_SECRET`, `VERCEL_PROTECTION_BYPASS`, `TURNSTILE_SECRET`) are read from the Cloudflare secrets store, never from plaintext vars. `TURNSTILE_SITEKEY` is a public var.
+- `ARGON2_PEPPER` is not a Worker binding: only the argon2 service holds the pepper, so nothing in the Worker reads it. It is read from the local shell by `pnpm hash:vault`, which must hash with the same pepper the endpoint verifies with.
 
 Vault passwords are never verified in the Worker: the request is HMAC-signed and sent to a separate argon2 service, so no hashing code is bundled.
 

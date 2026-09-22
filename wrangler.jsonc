@@ -90,11 +90,6 @@
       "secret_name": "ARGON2_HMAC_SECRET",
     },
     {
-      "binding": "ARGON2_PEPPER",
-      "store_id": "c5b03c1fc22547d0bb1ee70629d4b6dd",
-      "secret_name": "ARGON2_PEPPER",
-    },
-    {
       "binding": "VERCEL_PROTECTION_BYPASS",
       "store_id": "c5b03c1fc22547d0bb1ee70629d4b6dd",
       "secret_name": "VERCEL_PROTECTION_BYPASS",
