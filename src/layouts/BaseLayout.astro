@@ -67,6 +67,19 @@ const drawerId = "site-drawer";
 
       enhancePageLoader();
     </script>
+    <!--
+      The click burst. It sits over the whole page, takes no pointer events, and
+      is decoration the page never depends on: the script drops it entirely for a
+      reader who has asked for less motion, and nothing here is reachable by
+      keyboard or announced to a screen reader.
+    -->
+    <canvas class="fireworks" aria-hidden="true"></canvas>
+
+    <script>
+      import { enhanceFireworks } from "../scripts/fireworks";
+
+      enhanceFireworks();
+    </script>
     <div class="drawer">
       <input
         id={drawerId}

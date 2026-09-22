@@ -90,6 +90,8 @@ Rules:
 - Shared values live in one source of truth (`src/consts.ts`, `src/data/*`); schemas and components derive from it.
 - Every Markdown compile path goes through the shared pipeline in `src/markdown.ts`; never list plugins per call site.
 - Pure helpers belong in `src/utils/` with a Vitest test under `test/`.
+- Client-side behaviour lives in `src/scripts/` as one `enhanceX()` per effect, mounted by the component that needs it and guarding on its own target element. Any library it needs is pulled in with a dynamic `import()` from inside, so a page that never shows the effect never downloads it.
+- Decorative motion is dropped, not shortened, under `prefers-reduced-motion: reduce`: the loader's animation and the click burst (`src/scripts/fireworks.ts`) both decline to attach at all.
 - Front-end third-party assets are self-hosted (e.g. `public/plyr.svg`); rendered pages must not request third-party CDNs.
 - Raw HTML is sanitized by the vendored sanitizer in `src/hast/sanitize/` (MIT, from `satteri-sanitize`).
 

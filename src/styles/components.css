@@ -708,6 +708,36 @@
   }
 
   /*
+   * The click burst. A canvas pinned over the page that the script paints into.
+   *
+   * It takes no pointer events, so the page beneath it answers exactly as it did
+   * before: the burst is decoration, and the only thing it ever covers is itself.
+   *
+   * The size has to be stated, and it is the one thing here that is not obvious.
+   * A canvas is a replaced element, and `inset: 0` does not stretch one: with the
+   * width left to itself it takes its own buffer as its display size, so on a
+   * screen the script scales the buffer for, the element would be drawn at that
+   * larger size and every burst would land at double its distance from the corner.
+   * Percentages resolve against the viewport for a fixed box, so this is the width
+   * the buffer was measured against.
+   */
+  .fireworks {
+    @apply pointer-events-none fixed inset-0 z-[90] block h-full w-full;
+  }
+
+  /*
+   * A reader who has asked for less motion gets no effect at all rather than a
+   * quieter one, which is the same answer the loader's animation gets. The script
+   * does not attach in this case either; the rule is here so the empty canvas can
+   * never be the one thing left over.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .fireworks {
+      display: none;
+    }
+  }
+
+  /*
    * The page loader. A veil over the first paint of a session, while the
    * webfonts and the first images arrive, that lifts once the page is really
    * loaded and a minimum time has passed.
