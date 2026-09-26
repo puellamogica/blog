@@ -1,7 +1,7 @@
 {
   "name": "blog",
   "type": "module",
-  "version": "26.9.22",
+  "version": "26.9.26",
   "scripts": {
     "dev": "astro dev",
     "build": "astro check && astro build",
@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
-    "@astrojs/cloudflare": "^14.3.2",
-    "@astrojs/markdown-satteri": "^0.4.1",
+    "@astrojs/cloudflare": "^14.3.3",
+    "@astrojs/markdown-satteri": "^0.4.2",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
     "@expressive-code/plugin-collapsible-sections": "^0.44.2",
@@ -24,10 +24,10 @@
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.3.3",
     "animejs": "^4.5.0",
-    "astro": "^7.3.3",
+    "astro": "^7.3.5",
     "astro-expressive-code": "^0.44.2",
-    "daisyui": "^5.7.42",
-    "katex": "^0.18.7",
+    "daisyui": "^5.7.46",
+    "katex": "^0.18.9",
     "lottie-web": "^5.13.0",
     "photoswipe": "^5.4.4",
     "photoswipe-dynamic-caption-plugin": "^1.2.7",
@@ -40,7 +40,7 @@
     "typescript": "^6.0.3"
   },
   "devDependencies": {
-    "@cloudflare/vitest-plugin": "^1.2.0",
+    "@cloudflare/vitest-plugin": "^1.2.7",
     "@eslint/js": "^10.0.1",
     "@inquirer/prompts": "^8.7.2",
     "@types/node": "^24.13.6",
@@ -51,14 +51,14 @@
     "husky": "^9.1.7",
     "jiti": "^2.7.0",
     "lint-staged": "^17.5.1",
-    "prettier": "^3.9.8",
-    "prettier-plugin-astro": "^1.0.1",
+    "prettier": "^3.9.9",
+    "prettier-plugin-astro": "^1.1.0",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "stylelint": "^17.15.0",
     "stylelint-config-standard": "^40.0.0",
-    "typescript-eslint": "^8.70.0",
+    "typescript-eslint": "^8.70.1",
     "vitest": "^4.1.11",
-    "wrangler": "^4.136.0"
+    "wrangler": "^4.140.0"
   },
   "lint-staged": {
     "*.{js,mjs,cjs,ts,mts,cts}": [
