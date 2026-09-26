@@ -37,7 +37,7 @@
     "sharp": "^0.35.4",
     "swiper": "^14.2.0",
     "tailwindcss": "^4.3.3",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "devDependencies": {
     "@cloudflare/vitest-plugin": "^1.2.7",
