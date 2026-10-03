@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildDetails,
+  formatDateTime,
   formatPercent,
   formatPressure,
   formatTemperature,
@@ -216,15 +217,23 @@ describe("times", () => {
     expect(formatTime(undefined)).toBeUndefined();
   });
 
+  it("renders date and time together", () => {
+    expect(formatDateTime(1789475291)).toBe("09/15 21:28");
+    expect(formatDateTime(1789415790)).toBe("09/15 04:56");
+    expect(formatDateTime(undefined)).toBeUndefined();
+  });
+
   it("exposes a machine readable observation time", () => {
     expect(toDateTime(1789475291)).toBe("2026-09-15T12:28:11.000Z");
     expect(toDateTime(undefined)).toBeUndefined();
   });
 
   it("pairs alert start and end, falling back to whichever exists", () => {
-    expect(formatTimeRange(1789415790, 1789460998)).toBe("04:56 – 17:29");
-    expect(formatTimeRange(1789415790, undefined)).toBe("04:56");
-    expect(formatTimeRange(undefined, 1789460998)).toBe("17:29");
+    expect(formatTimeRange(1789415790, 1789460998)).toBe(
+      "09/15 04:56 – 09/15 17:29",
+    );
+    expect(formatTimeRange(1789415790, undefined)).toBe("09/15 04:56");
+    expect(formatTimeRange(undefined, 1789460998)).toBe("09/15 17:29");
     expect(formatTimeRange(undefined, undefined)).toBeUndefined();
   });
 });

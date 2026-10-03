@@ -238,6 +238,21 @@ export const formatTime = (unixSeconds?: number): string | undefined =>
     ? undefined
     : timeFormatter.format(new Date(unixSeconds * 1000));
 
+/* Used where the day matters as much as the time: a reading's update and an alert's span. */
+const dateTimeFormatter = new Intl.DateTimeFormat("ja-JP", {
+  timeZone: WEATHER_TIME_ZONE,
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+});
+
+export const formatDateTime = (unixSeconds?: number): string | undefined =>
+  unixSeconds === undefined
+    ? undefined
+    : dateTimeFormatter.format(new Date(unixSeconds * 1000));
+
 export const toDateTime = (unixSeconds?: number): string | undefined =>
   unixSeconds === undefined
     ? undefined
@@ -247,8 +262,8 @@ export const formatTimeRange = (
   start?: number,
   end?: number,
 ): string | undefined => {
-  const from = formatTime(start);
-  const to = formatTime(end);
+  const from = formatDateTime(start);
+  const to = formatDateTime(end);
 
   if (from && to) return `${from} – ${to}`;
   return from ?? to;
