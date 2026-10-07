@@ -56,6 +56,23 @@ export const enhancePostFilter = () => {
   const count = container.querySelector<HTMLElement>(COUNT_SELECTOR);
   const empty = document.querySelector<HTMLElement>(EMPTY_SELECTOR);
 
+  /*
+   * The filter is addressable. A category rail on the home page, a tag under an
+   * article and a re-shared link all point at `/posts?category=...`, and the URL
+   * is kept in step on every change so the state can be copied out of the
+   * address bar. `replaceState` rather than `pushState`: a filter is a change to
+   * the same page, not a new page to go back to, and a back button that stepped
+   * through every press would bury the page the reader arrived from.
+   */
+  const syncUrl = (filter: PostFilter) => {
+    const url = new URL(window.location.href);
+    if (filter.category === FILTER_ALL) url.searchParams.delete("category");
+    else url.searchParams.set("category", filter.category);
+    if (filter.year === FILTER_ALL) url.searchParams.delete("year");
+    else url.searchParams.set("year", String(filter.year));
+    window.history.replaceState(null, "", `${url.pathname}${url.search}`);
+  };
+
   const apply = () => {
     const filter = readFilter(container);
     let visible = 0;
@@ -74,6 +91,8 @@ export const enhancePostFilter = () => {
     }
 
     if (empty) empty.hidden = visible > 0;
+
+    syncUrl(filter);
   };
 
   /*
@@ -88,12 +107,42 @@ export const enhancePostFilter = () => {
       for (const input of container.querySelectorAll<HTMLInputElement>(
         "input[data-filter-group]",
       )) {
-        input.checked = input.value === FILTER_ALL;
+        input.checked = false;
       }
 
       apply();
       grid.querySelector<HTMLElement>(CARD_SELECTOR)?.focus();
     });
+
+  /*
+   * daisyUI's filter reset is a `type="reset"` inside the form. A `reset` event
+   * does not bubble, so it is caught in the capture phase, and the form's own
+   * values are restored only after the handler runs, so the re-read is deferred
+   * one tick.
+   */
+  container.addEventListener(
+    "reset",
+    () => {
+      window.setTimeout(apply, 0);
+    },
+    true,
+  );
+
+  /*
+   * The state the URL asks for, applied before the first `apply` so the list
+   * opens on the filter the link named. An unknown value is ignored and the
+   * group stays on すべて, which is the safe direction: a stale link shows more
+   * than it asked for rather than an empty page.
+   */
+  const params = new URLSearchParams(window.location.search);
+  for (const group of ["category", "year"]) {
+    const value = params.get(group);
+    if (!value) continue;
+    const input = container.querySelector<HTMLInputElement>(
+      `input[data-filter-group="${group}"][value="${CSS.escape(value)}"]`,
+    );
+    if (input) input.checked = true;
+  }
 
   container.addEventListener("change", apply);
   apply();

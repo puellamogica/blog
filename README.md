@@ -16,7 +16,7 @@ A Japanese-language blog about _Project SEKAI_ and the character 暁山 瑞希, 
 - **Syntax-highlighted code** — Expressive Code with the Kanagawa light/dark pair, collapsible sections, and line numbers.
 - **Post filter** — client-side category/year filtering that still works without JavaScript.
 - **Weather widget** — a snapshot from a separate crawler Worker, normalized defensively and shown in JST.
-- **Progressive enhancements** — Plyr media players, a PhotoSwipe lightbox, and a Swiper gallery, each dynamically imported only on pages that use them.
+- **Progressive enhancements** — Video.js media players, a PhotoSwipe lightbox, and a Swiper gallery, each dynamically imported only on pages that use them.
 - **Feeds and metadata** — RSS, sitemap, `robots.txt`, and Open Graph / Twitter cards.
 - **Light and dark themes** with an instant toggle.
 
